@@ -5,3 +5,4 @@
 *.map
 *.xml
 Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.tmpl
+Workspace/STM32_sleepy_sensors/STM32_sleepy_sensors.elf.xcodeproj/project.pbxproj
