@@ -1,0 +1,7 @@
+*.o
+*.bin
+*.elf
+*.hex
+*.map
+*.xml
+Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.tmpl
