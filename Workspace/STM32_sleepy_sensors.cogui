@@ -56,7 +56,7 @@
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.coocox.builder.ui.views.ProjectView" activePerspective="org.coocox.builder.perspective.CoBuilder">
+<perspectives activePart="org.coocox.welcome.ui.WelcomePage" activePerspective="org.coocox.builder.perspective.CoBuilder">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.coocox.builder.ui.PerspectiveCoBuilder" id="org.coocox.builder.perspective.CoBuilder" label="CooCox CoBuilder"/>
 <alwaysOnActionSet id="org.coocox.component.ui.actionSet"/>
@@ -257,10 +257,10 @@
 <editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
 <org.coocox.welcome.ui.WelcomePage/>
 </editor>
+<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
+<org.coocox.welcome.ui.WelcomePage/>
+</editor>
 </editors>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="7826" y="0"/>
-</item>
 <item historyLabel="main.c" index="0">
 <position info="not_deleted" x="7992" y="41"/>
 </item>
@@ -395,7 +395,8 @@
 <item historyLabel="main.c" index="7">
 <position info="not_deleted" x="300" y="0"/>
 </item>
-<item active="true" historyLabel="welcome" index="11"/>
+<item historyLabel="welcome" index="11"/>
+<item active="true" historyLabel="welcome" index="12"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
