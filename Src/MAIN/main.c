@@ -99,6 +99,7 @@ void delay_ms(u16_t ms)
 }
 
 
+
 void delay_us(u16_t us)
 {
 	asm volatile (	"MOV R0,%[loops]\n\t"\
@@ -153,7 +154,7 @@ int main(void)
 		/* Disable LED */
 		GPIO_SetBits(GPIOC, GPIO_Pin_13);
 
-		battery_voltage_mv_s = HAL_ADC_sample_batt_voltage();
+		//battery_voltage_mv_s = HAL_ADC_sample_batt_voltage();
 
 #if( DEBUG==1)
 	/* Handle the serial messages */
