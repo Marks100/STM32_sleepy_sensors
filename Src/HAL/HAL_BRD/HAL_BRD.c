@@ -7,14 +7,6 @@
 #include "HAL_BRD.h"
 
 
-u8_t counter;
-EXTITrigger_TypeDef trigger;
-
-low_high_et previous_pin_a;
-low_high_et previous_pin_b;
-low_high_et pin_a;
-low_high_et pin_b;
-
 
 
 
@@ -183,10 +175,27 @@ EXTERNAL API's
 
 
 
-
-
-
-
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the rf enable pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_Set_rf_enable_pin( disable_enable_et state )
+{
+	if( state == ENABLE )
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+	else
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+}
 
 
 

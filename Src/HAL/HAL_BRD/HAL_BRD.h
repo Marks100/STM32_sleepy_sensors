@@ -48,6 +48,7 @@ void HAL_BRD_init( void );
 low_high_et HAL_BRD_Read_Pin_state( GPIO_TypeDef * port, u16_t pin );
 void HAL_BRD_Set_Pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state );
 void HAL_BRD_Set_batt_monitor_state( disable_enable_et state );
+void HAL_BRD_Set_rf_enable_pin( disable_enable_et state );
 
 
 
