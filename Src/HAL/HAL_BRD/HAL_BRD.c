@@ -1,5 +1,6 @@
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_exti.h"
+#include "stm32f10x_rcc.h"
 #include "misc.h"
 
 #include "HAL_BRD.h"
@@ -19,7 +20,8 @@ low_high_et pin_b;
 /*!
 ****************************************************************************************************
 *
-*   \brief         Initialise the Pins
+*   \brief         Initialise the Pins,
+*   			   lets just do gpio pins here and let other modules handle themselves
 *
 *   \author        MS
 *
@@ -31,100 +33,38 @@ void HAL_BRD_init( void )
 	/* Disable the JTAG as this saves us some pins :) */
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-	GPIO_InitTypeDef  GPIO_InitStructure;
+	/* Configure the GPIOs */
+	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Setup the Power switch input pin */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_12 );
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	/* Setup the Vreg Enable pin */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_13 );
+	/* Configure the GPIO_LED pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-//
-//	/* Setup the LED NEO_PIXEL pins */
-//	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_13 );
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-//	GPIO_Init(GPIOC, &GPIO_InitStructure);
-//
-//	/* Setup the Rotary encoder pins ( PC14 and PC15 ) */
-//	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_15 | GPIO_Pin_14 );
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-//    GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-	/* Setup the Rotary encoder button ( PA2 ) */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_2 ) ;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-
-    /* Setup the GPIO pins for ADC measurements ( PA0, PA1 ) */
-	GPIO_InitStructure.GPIO_Pin   = ( GPIO_Pin_0 | GPIO_Pin_1 );
-	GPIO_InitStructure.GPIO_Mode  = GPIO_Mode_AIN;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-
-	/* Setup the PWM pins for TIM1 for the motor control output ( PA8, and PA9) */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_8 | GPIO_Pin_9 );
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	/* Setup a heartbeat Pin for the SysTick timer */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_11 );
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	/* Setup a input switch pin ( laser )*/
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_10 );
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	/* Setup an output pin for the laser */
-	GPIO_InitStructure.GPIO_Pin = ( GPIO_Pin_9 );
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-
-    GPIO_EXTILineConfig(GPIO_PortSourceGPIOC, GPIO_PinSource15 );
-
-    EXTI_InitTypeDef EXTI_InitStruct;
-
-    EXTI_InitStruct.EXTI_Line = EXTI_Line15 ;
-    EXTI_InitStruct.EXTI_LineCmd = ENABLE;
-    EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
-    EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Falling;
-    EXTI_Init(&EXTI_InitStruct);
-
-    NVIC_InitTypeDef NVIC_InitStruct;
-
-	/* Add IRQ vector to NVIC */
-	NVIC_InitStruct.NVIC_IRQChannel = EXTI15_10_IRQn;
-	/* Set priority */
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
-	/* Set sub priority */
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
-	/* Enable interrupt */
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	/* Add to NVIC */
-	NVIC_Init(&NVIC_InitStruct);
-
-	previous_pin_a = HIGH;
-	previous_pin_b = HIGH;
-	pin_a = HIGH;
-	pin_b = HIGH;
-	trigger = EXTI_Trigger_Falling;
+	GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
+
+
+
+
+void HAL_BRD_setup_RTC_int( void )
+{
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	/* Configure the GPIOs */
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+
+	/* Configure the wakeup pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
+
 
 
 
@@ -212,81 +152,43 @@ void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
 
 
 
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the battery voltage enable pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_Set_batt_monitor_state( disable_enable_et state )
+{
+	if( state == ENABLE )
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+	else
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+}
+
+
 /**************************************************************************************************
 EXTERNAL API's
 ***************************************************************************************************/
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the Vreg EN pin
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_vreg_enable_pin( low_high_et state )
-{
-    HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_13, state );
-}
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the pwm pin state for the x axis
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_pwmPin_x_axis_state( low_high_et state )
-{
-    HAL_BRD_Set_Pin_state(GPIOA, GPIO_Pin_8, state );
-}
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the pwm pin state for the y axis
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_pwmPin_y_axis_state( low_high_et state )
-{
-    HAL_BRD_Set_Pin_state(GPIOA, GPIO_Pin_9, state );
-}
 
 
 
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the state of the laser
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_laser_Pin_state( off_on_et state )
-{
-    if( state == OFF )
-    {
-        HAL_BRD_Set_Pin_state(GPIOB, GPIO_Pin_9, LOW );
-    }
-    else
-    {
-        HAL_BRD_Set_Pin_state(GPIOB, GPIO_Pin_9, HIGH );
-    }
-}
+
+
+
+
+
+
 
 
 
@@ -307,67 +209,12 @@ void HAL_BRD_Toggle_heartbeat_pin(  void )
 
 
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Reads the input laser switch pin
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-low_high_et HAL_BRD_read_switch_input_laser( void )
-{
-    low_high_et state;
-
-    state = HAL_BRD_Read_Pin_state(GPIOB, GPIO_Pin_10);
-
-    return ( state );
-}
-
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Reads the input of the rotary encoder switch
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-low_high_et HAL_BRD_read_switch_input_rotary_encoder( void )
-{
-    low_high_et state;
-
-    state = HAL_BRD_Read_Pin_state(GPIOA, GPIO_Pin_2);
-
-    return ( state );
-}
 
 
 
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Reads the input of the power button
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-low_high_et HAL_BRD_read_switch_input_power( void )
-{
-	low_high_et state;
 
-	state = HAL_BRD_Read_Pin_state(GPIOB, GPIO_Pin_12);
 
-	return( state );
-}
 
 
 

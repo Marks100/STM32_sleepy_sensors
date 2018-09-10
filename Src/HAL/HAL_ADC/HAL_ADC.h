@@ -10,6 +10,8 @@
 
 
 #define VCC_REFERENCE_VOLTAGE 3300.0f
+#define ADC_MAX_COUNT		  4096.0f
+#define ADC_BANDGAP_VOLTAGE   1400.0f
 
 /***************************************************************************************************
 **                              enumerated Types                                                  **
@@ -35,8 +37,7 @@ typedef enum
 ***************************************************************************************************/
 void HAL_ADC_init( void ) ;
 void HAL_ADC_de_init( void );
-u16_t HAL_ADC_measure_joystick_x_axis( void );
-u16_t HAL_ADC_measure_joystick_y_axis( void );
+u16_t HAL_ADC_sample_batt_voltage( void );
 
 
 
