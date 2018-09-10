@@ -17,30 +17,147 @@
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
 <part id="0"/>
 <part id="1"/>
+<part id="2"/>
+<part id="3"/>
+<part id="4"/>
+<part id="5"/>
+<part id="6"/>
+<part id="7"/>
+<part id="8"/>
+<part id="9"/>
+<part id="10"/>
+<part id="11"/>
+<part id="12"/>
+<part id="13"/>
+<part id="14"/>
+<part id="15"/>
+<part id="16"/>
+<part id="17"/>
+<part id="18"/>
+<part id="19"/>
+<part id="20"/>
+<part id="21"/>
 </presentation>
 </folder>
 </info>
 </editorArea>
-<editor activePart="true" focus="true" id="org.coocox.welcome.ui.WelcomePage" name="" partName="welcome" title="welcome" tooltip="" workbook="DefaultEditorWorkbook">
-<input factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory">
-<org.coocox.welcome.ui.WelcomePage/>
-</input>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="PROJ_config.h" partName="PROJ_config.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/PROJ_CONFIG/PROJ_config.h" title="PROJ_config.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/PROJ_CONFIG/PROJ_config.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/PROJ_CONFIG/PROJ_config.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="65" selectionTopPixel="0"/>
 </editor>
-<editor id="org.coocox.builder.ui.editors.repository.RepositoryBrowser" name="Repository" partName="Repository" title="Repository" tooltip="Repository" workbook="DefaultEditorWorkbook">
-<input factoryID="org.coocox.component.ui.editors.repository.RepositoryElementFactory">&#x0A;<subPage horizontalPosition="0" selectedItemId="0" subPageIndex="2" verticalPosition="0"/>
-</input>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_UART.c" partName="HAL_UART.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_UART/HAL_UART.c" title="HAL_UART.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_UART/HAL_UART.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL_UART/HAL_UART.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="6662" selectionTopPixel="3590"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_UART.h" partName="HAL_UART.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_UART/HAL_UART.h" title="HAL_UART.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_UART/HAL_UART.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL_UART/HAL_UART.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2206" selectionTopPixel="384"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_rcc.h" partName="stm32f10x_rcc.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_rcc.h" title="stm32f10x_rcc.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_rcc.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_rcc.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="402" selectionOffset="22370" selectionTopPixel="10460"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.h" partName="stm32f10x_gpio.h" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_gpio.h" title="stm32f10x_gpio.h" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_gpio.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_gpio.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="13" selectionOffset="2429" selectionTopPixel="750"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_adc.h" partName="stm32f10x_adc.h" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_adc.h" title="stm32f10x_adc.h" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_adc.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_adc.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="12" selectionOffset="17086" selectionTopPixel="4770"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="string.h" partName="string.h" title="string.h" tooltip="C:\SVN_source\Tools\gcc-arm\arm-none-eabi\include\string.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="C:\SVN_source\Tools\gcc-arm\arm-none-eabi\include\string.h" project="STM32_sleepy_sensors"/>
+<editorState selectionHorizontalPixel="0" selectionLength="43" selectionOffset="1313" selectionTopPixel="420"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="printf.c" partName="printf.c" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stdio/printf.c" title="printf.c" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stdio/printf.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stdio/printf.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="709" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.h" partName="stm32f10x_i2c.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_i2c.h" title="stm32f10x_i2c.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/inc/stm32f10x_i2c.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_i2c.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="12" selectionOffset="23706" selectionTopPixel="10594"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_BRD.c" partName="HAL_BRD.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c" title="HAL_BRD.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1245" selectionTopPixel="944"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_I2C.c" partName="HAL_I2C.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_I2C/HAL_I2C.c" title="HAL_I2C.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_I2C/HAL_I2C.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="90" selectionOffset="9157" selectionTopPixel="5684"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_I2C.h" partName="HAL_I2C.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_I2C/HAL_I2C.h" title="HAL_I2C.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_I2C/HAL_I2C.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="27" selectionOffset="757" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_rcc.c" partName="stm32f10x_rcc.c" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_rcc.c" title="stm32f10x_rcc.c" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_rcc.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_rcc.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="22" selectionOffset="39225" selectionTopPixel="16515"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.c" partName="stm32f10x_i2c.c" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_i2c.c" title="stm32f10x_i2c.c" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_i2c.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_i2c.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="35310" selectionTopPixel="15435"/>
+</editor>
+<editor activePart="true" focus="true" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" partName="main.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/MAIN/main.c" title="main.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/MAIN/main.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/MAIN/main.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="3233" selectionTopPixel="2440"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_pwr.c" partName="stm32f10x_pwr.c" path="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_pwr.c" title="stm32f10x_pwr.c" tooltip="C:/Users/mark/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_pwr.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_pwr.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="4903" selectionTopPixel="2400"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_ADC.c" partName="HAL_ADC.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c" title="HAL_ADC.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2002" selectionTopPixel="964"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_ADC.h" partName="HAL_ADC.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.h" title="HAL_ADC.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="19" selectionOffset="481" selectionTopPixel="0"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_BRD.h" partName="HAL_BRD.h" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h" title="HAL_BRD.h" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="2274" selectionTopPixel="464"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_adc.c" partName="stm32f10x_adc.c" path="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_adc.c" title="stm32f10x_adc.c" tooltip="C:/Users/a1037598/Desktop/STM32_sleepy_sensors/Workspace/stm_lib/src/stm32f10x_adc.c" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_adc.c"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="42814" selectionTopPixel="23424"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="string.h" partName="string.h" title="string.h" tooltip="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h" project="STM32_sleepy_sensors"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="4678" selectionTopPixel="2480"/>
+</editor>
+<editor id="org.eclipse.cdt.ui.editor.CEditor" name="stdlib.h" partName="stdlib.h" title="stdlib.h" tooltip="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\stdlib.h" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" path="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\stdlib.h" project="STM32_sleepy_sensors"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1772" selectionTopPixel="1400"/>
 </editor>
 </editors>
 <views>
-<view id="org.coocox.builder.ui.views.ProjectView" partName="Project">
-<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="0">
-<expanded>
-<element path="/STM32_sleepy_sensors"/>
-</expanded>
+<view id="org.eclipse.debug.ui.ExpressionView" partName="Expressions">
+<viewState>
+<ExpressionKeySet ExpKeys="*reg_start_add,data[i],(*reg_start_add ) + i),*reg_add,*data,data,&amp;RTC_EXT_default_register_values[0],data_1,(*((data_1)+0)@16)[13],"/>
 </viewState>
 </view>
-<view id="org.coocox.component.ui.ComponentView" partName="Components">
-<viewState/>
+<view id="org.coocox.builder.ui.views.ProjectView" partName="Project">
+<viewState CommonNavigator.LINKING_ENABLED="0" horizontalPosition="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0" verticalPosition="11">
+<expanded>
+<element path="/STM32_sleepy_sensors"/>
+<element path="/STM32_sleepy_sensors/cmsis"/>
+<element path="/STM32_sleepy_sensors/cmsis_boot"/>
+<element path="/STM32_sleepy_sensors/Src"/>
+<element path="/STM32_sleepy_sensors/Src/HAL"/>
+<element path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC"/>
+<element path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD"/>
+<element path="/STM32_sleepy_sensors/Src/HAL_I2C"/>
+<element path="/STM32_sleepy_sensors/Src/HAL_UART"/>
+<element path="/STM32_sleepy_sensors/Src/MAIN"/>
+<element path="/STM32_sleepy_sensors/Src/PROJ_CONFIG"/>
+<element path="/STM32_sleepy_sensors/stdio"/>
+<element path="/STM32_sleepy_sensors/stm_lib"/>
+<element path="/STM32_sleepy_sensors/stm_lib/inc"/>
+</expanded>
+<selection>
+<element path="/STM32_sleepy_sensors/Src/MAIN/main.c"/>
+</selection>
+</viewState>
 </view>
 <view id="org.coocox.codebugger.trace.ui.traceview" partName="Semihosting">
 <viewState/>
@@ -51,12 +168,22 @@
 <view id="org.eclipse.ui.console.ConsoleView" partName="Console">
 <viewState/>
 </view>
+<view id="org.coocox.coassistant.view.CoAssistantView_debug" partName="Peripherals">
+<viewState horizontalPosition="0" verticalPosition="6">
+<selection>&#x0A;<element name="I2C1"/>
+</selection>
+<registerValues baseAddress="Base Address: 0x40005400" description="Description:  I2C registers"/>
+</viewState>
+</view>
 <view id="org.eclipse.debug.ui.VariableView" partName="Variables"/>
+<view id="org.eclipse.debug.ui.BreakpointView" partName="Breakpoints">
+<viewState/>
+</view>
 <view id="org.coocox.component.ui.Help" partName="Help">
 <viewState/>
 </view>
 </views>
-<perspectives activePart="org.coocox.welcome.ui.WelcomePage" activePerspective="org.coocox.builder.perspective.CoBuilder">
+<perspectives activePart="org.eclipse.cdt.ui.editor.CEditor" activePerspective="org.coocox.builder.perspective.CoBuilder">
 <perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
 <descriptor class="org.coocox.builder.ui.PerspectiveCoBuilder" id="org.coocox.builder.perspective.CoBuilder" label="CooCox CoBuilder"/>
 <alwaysOnActionSet id="org.coocox.component.ui.actionSet"/>
@@ -86,7 +213,6 @@
 <hide_toolbar_item_id id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeAction"/>
 <hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
 <hide_toolbar_item_id id="org.eclipse.debug.ui.commands.TerminateAndRelaunch"/>
-<view id="org.coocox.component.ui.ComponentView"/>
 <view id="org.coocox.builder.ui.views.ProjectView"/>
 <view id="org.coocox.component.ui.Help"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
@@ -94,11 +220,9 @@
 <layout>
 <mainWindow>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1267f23">
-<folder activePageID="org.coocox.component.ui.ComponentView" appearance="2" expanded="2">
-<page content="org.coocox.component.ui.ComponentView" label="Components"/>
-<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
-<part id="0"/>
-</presentation>
+<folder appearance="2" expanded="2">
+<page content="org.coocox.component.ui.ComponentView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
 <info folder="true" part="stickyFolderRight" ratio="0.75" ratioLeft="1194" ratioRight="398" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1267f23">
@@ -115,8 +239,13 @@
 </presentation>
 </folder>
 </info>
-<info part="org.coocox.builder.ui.exampleView" ratio="0.21984924" ratioLeft="350" ratioRight="1242" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1267f23"/>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@1d1ae04" ratio="0.7198068" ratioLeft="894" ratioRight="348" relationship="2" relative="org.coocox.builder.ui.exampleView">
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@fd2738" ratio="0.18334207" ratioLeft="350" ratioRight="1559" relationship="2" relative="org.eclipse.ui.internal.ViewStack@1267f23">
+<folder appearance="2" expanded="2">
+<page content="org.coocox.builder.ui.exampleView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1d1ae04" ratio="0.7198068" ratioLeft="894" ratioRight="348" relationship="2" relative="org.eclipse.ui.internal.ViewStack@fd2738">
 <folder activePageID="org.coocox.component.ui.Help" appearance="2" expanded="2">
 <page content="org.coocox.component.ui.Help" label="Help"/>
 <page content="org.eclipse.debug.ui.BreakpointView" label="LabelNotFound"/>
@@ -128,7 +257,7 @@
 </presentation>
 </folder>
 </info>
-<info part="org.eclipse.ui.editorss" ratio="0.4488189" ratioLeft="342" ratioRight="420" relationship="4" relative="org.coocox.builder.ui.exampleView"/>
+<info part="org.eclipse.ui.editorss" ratio="0.4488189" ratioLeft="342" ratioRight="420" relationship="4" relative="org.eclipse.ui.internal.ViewStack@fd2738"/>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@6503a2" ratio="0.3687664" ratioLeft="281" ratioRight="481" relationship="4" relative="org.eclipse.ui.internal.ViewStack@1267f23">
 <folder activePageID="org.coocox.builder.ui.views.ProjectView" appearance="2" expanded="2">
 <page content="org.coocox.builder.ui.views.ProjectView" label="Project"/>
@@ -152,42 +281,45 @@
 <alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
 <alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
 <alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
-<hide_menu_item_id id="org.coocox.builder.ui.newFile"/>
 <hide_menu_item_id id="org.coocox.builder.ui.newFolder"/>
-<hide_menu_item_id id="org.coocox.builder.ui.openFile"/>
+<hide_menu_item_id id="org.coocox.welcome.ui.action.repository"/>
 <hide_menu_item_id id="org.eclipse.ui.file.save"/>
-<hide_menu_item_id id="org.eclipse.ui.file.saveAs"/>
+<hide_menu_item_id id="org.eclipse.jdt.ui.refactoring.menu"/>
 <hide_menu_item_id id="org.eclipse.ui.file.saveAll"/>
+<hide_menu_item_id id="org.coocox.builder.ui.rebuild"/>
+<hide_menu_item_id id="org.coocox.builder.ui.openFile"/>
+<hide_menu_item_id id="org.eclipse.ui.file.saveAs"/>
 <hide_menu_item_id id="org.coocox.builder.rcp.projectMenu"/>
 <hide_menu_item_id id="org.coocox.builder.rcp.flashMenu"/>
-<hide_menu_item_id id="org.coocox.builder.ui.showHelpViewAction"/>
-<hide_menu_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
 <hide_menu_item_id id="org.coocox.builder.ui.debug"/>
-<hide_menu_item_id id="org.coocox.builder.ui.build"/>
-<hide_menu_item_id id="org.coocox.builder.ui.rebuild"/>
-<hide_menu_item_id id="org.eclipse.jdt.ui.refactoring.menu"/>
-<hide_menu_item_id id="org.eclipse.jdt.ui.source.menu"/>
+<hide_menu_item_id id="org.coocox.builder.ui.showHelpViewAction"/>
+<hide_menu_item_id id="org.coocox.builder.ui.newFile"/>
 <hide_menu_item_id id="org.coocox.builder.ui.actions.ConfigurationAction"/>
+<hide_menu_item_id id="org.eclipse.jdt.ui.source.menu"/>
+<hide_menu_item_id id="org.coocox.builder.ui.build"/>
 <hide_menu_item_id id="org.coocox.welcome.ui.action.welcome"/>
-<hide_menu_item_id id="org.coocox.welcome.ui.action.repository"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.newProject"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.newFile"/>
-<hide_toolbar_item_id id="org.eclipse.ui.file.save"/>
-<hide_toolbar_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.build"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.rebuild"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.debug"/>
-<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
-<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideFlashEraseAction"/>
+<hide_menu_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
 <hide_toolbar_item_id id="org.coocox.builder.ui.actions.TargetManageAction"/>
-<hide_toolbar_item_id id="org.coocox.builder.ui.actions.ConfigurationAction"/>
-<hide_toolbar_item_id id="org.coocox.welcome.ui.action.welcome"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.newProject"/>
 <hide_toolbar_item_id id="org.coocox.welcome.ui.action.repository"/>
+<hide_toolbar_item_id id="org.eclipse.ui.file.save"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.rebuild"/>
+<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideFlashEraseAction"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.debug"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.newFile"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.actions.ConfigurationAction"/>
 <hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<hide_toolbar_item_id id="org.coocox.builder.ui.build"/>
+<hide_toolbar_item_id id="org.coocox.welcome.ui.action.welcome"/>
+<hide_toolbar_item_id id="org.coocox.component.ui.ShowRepositoryAction"/>
+<hide_toolbar_item_id id="org.coocox.codebugger.configuration.coideProgramDownloadAction"/>
 <view id="org.eclipse.ui.console.ConsoleView"/>
 <view id="org.eclipse.debug.ui.DebugView"/>
+<view id="org.eclipse.debug.ui.BreakpointView"/>
 <view id="org.coocox.codebugger.trace.ui.traceview"/>
 <view id="org.eclipse.debug.ui.VariableView"/>
+<view id="org.eclipse.debug.ui.ExpressionView"/>
+<view id="org.coocox.coassistant.view.CoAssistantView_debug"/>
 <view id="org.coocox.builder.ui.views.ProjectView"/>
 <fastViewBars/>
 <viewLayoutRec closeable="false" id="org.eclipse.debug.ui.DebugView"/>
@@ -200,28 +332,31 @@
 <page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@f21a42" ratio="0.69947505" ratioLeft="533" ratioRight="229" relationship="4" relative="org.eclipse.ui.internal.ViewStack@11c9af8">&#x0A;<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@f21a42" ratio="0.69947505" ratioLeft="533" ratioRight="229" relationship="4" relative="org.eclipse.ui.internal.ViewStack@11c9af8">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
 <page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
-<page content="org.eclipse.debug.ui.BreakpointView" label="LabelNotFound"/>
+<page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
+<part id="2"/>
 </presentation>
 </folder>
 </info>
-<info folder="true" part="org.eclipse.ui.internal.ViewStack@99e7a4" ratio="0.5" ratioLeft="796" ratioRight="796" relationship="2" relative="org.eclipse.ui.internal.ViewStack@f21a42">&#x0A;<folder activePageID="org.coocox.codebugger.trace.ui.traceview" appearance="2" expanded="2">&#x0A;<page content="org.coocox.codebugger.trace.ui.traceview" label="Semihosting"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@99e7a4" ratio="0.5" ratioLeft="796" ratioRight="796" relationship="2" relative="org.eclipse.ui.internal.ViewStack@f21a42">&#x0A;<folder activePageID="org.eclipse.debug.ui.ExpressionView" appearance="2" expanded="2">&#x0A;<page content="org.coocox.codebugger.trace.ui.traceview" label="Semihosting"/>
 <page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
-<page content="org.eclipse.debug.ui.ExpressionView" label="LabelNotFound"/>
+<page content="org.eclipse.debug.ui.ExpressionView" label="Expressions"/>
+<page content="org.coocox.coassistant.view.CoAssistantView_debug" label="Peripherals"/>
 <page content="org.eclipse.debug.ui.MemoryView" label="LabelNotFound"/>
 <page content="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
 <part id="1"/>
+<part id="2"/>
+<part id="3"/>
 </presentation>
 </folder>
 </info>
 <info folder="true" part="org.eclipse.ui.internal.ViewStack@1b7c1ec" ratio="0.75" ratioLeft="1194" ratioRight="398" relationship="2" relative="org.eclipse.ui.internal.ViewStack@11c9af8">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.cdt.dsf.debug.ui.disassembly.view" label="LabelNotFound"/>
 <page content="org.eclipse.ui.views.ContentOutline" label="LabelNotFound"/>
 <page content="org.eclipse.debug.ui.RegisterView" label="LabelNotFound"/>
-<page content="org.coocox.coassistant.view.CoAssistantView_debug" label="LabelNotFound"/>
 <presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
 </folder>
 </info>
@@ -233,170 +368,166 @@
 <workingSets/>
 <navigationHistory>
 <editors>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32Test/main.c"/>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
-<org.coocox.welcome.ui.WelcomePage/>
-</editor>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/Example_PWR_Standby/main.c"/>
-<editor factoryID="org.coocox.component.ui.editors.repository.RepositoryElementFactory" id="org.coocox.builder.ui.editors.repository.RepositoryBrowser">
-<subPage/>
-</editor>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
-<org.coocox.welcome.ui.WelcomePage/>
-</editor>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.builder.ui.editors.ConfigEditor">
-<org.coocox.builder.ui.editors.ConfigEditor/>
-</editor>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
-<org.coocox.welcome.ui.WelcomePage/>
-</editor>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_end_device/MAIN/main.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_end_device/HAL/HAL_TIM/HAL_TIM.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_end_device/stm_lib/src/stm32f10x_gpio.c"/>
-<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_end_device/stm_lib/src/stm32f10x_pwr.c"/>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
-<org.coocox.welcome.ui.WelcomePage/>
-</editor>
-<editor factoryID="org.coocox.builder.ui.persistent.PersistentElementFactory" id="org.coocox.welcome.ui.WelcomePage">
-<org.coocox.welcome.ui.WelcomePage/>
-</editor>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/MAIN/main.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL_UART/HAL_UART.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_adc.c"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.h"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" path="/STM32_sleepy_sensors/Src/PROJ_CONFIG/PROJ_config.h"/>
 </editors>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="7992" y="41"/>
+<item historyLabel="HAL_BRD.c" index="4">
+<position info="not_deleted" x="3643" y="62"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="1345" y="0"/>
+<item historyLabel="HAL_BRD.h" index="5">
+<position info="not_deleted" x="2309" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8372" y="19"/>
+<item historyLabel="HAL_BRD.c" index="4">
+<position info="not_deleted" x="3648" y="30"/>
 </item>
-<item historyLabel="main.c" index="0">
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="401" y="27"/>
+</item>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="7559" y="0"/>
+</item>
+<item historyLabel="HAL_BRD.h" index="5">
+<position info="not_deleted" x="2274" y="0"/>
+</item>
+<item historyLabel="HAL_BRD.c" index="4">
+<position info="not_deleted" x="3697" y="0"/>
+</item>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="7571" y="0"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="2143" y="0"/>
+</item>
+<item historyLabel="HAL_BRD.c" index="4">
+<position info="not_deleted" x="3731" y="0"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="2028" y="72"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="1873" y="0"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="462" y="27"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="401" y="27"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3609" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3522" y="0"/>
+</item>
+<item historyLabel="HAL_ADC.c" index="2">
+<position info="not_deleted" x="2002" y="0"/>
+</item>
+<item historyLabel="stm32f10x_adc.c" index="6">
+<position info="not_deleted" x="42814" y="0"/>
+</item>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3044" y="0"/>
+</item>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="7990" y="12"/>
+</item>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="8168" y="0"/>
+</item>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="1889" y="31"/>
+</item>
+<item historyLabel="HAL_I2C.h" index="7">
+<position info="not_deleted" x="713" y="31"/>
+</item>
+<item historyLabel="HAL_I2C.c" index="0">
 <position/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9134" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="2450" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9144" y="67"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="2433" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9280" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="2291" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9183" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="8084" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9000" y="48"/>
+<item historyLabel="HAL_I2C.h" index="7">
+<position info="not_deleted" x="912" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="10414" y="0"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3043" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9000" y="48"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="7990" y="12"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9183" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="9628" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8141" y="39"/>
+<item historyLabel="HAL_I2C.h" index="7">
+<position info="not_deleted" x="1059" y="73"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8613" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8582" y="0"/>
+<item historyLabel="HAL_I2C.h" index="7">
+<position info="not_deleted" x="1097" y="28"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9000" y="48"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="9011" y="41"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8266" y="0"/>
+<item historyLabel="HAL_I2C.h" index="7">
+<position info="not_deleted" x="3080" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9061" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="8608" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8238" y="28"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="2977" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8570" y="0"/>
+<item historyLabel="HAL_BRD.c" index="4">
+<position info="not_deleted" x="1245" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9659" y="77"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3607" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8736" y="0"/>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="6673" y="18"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8602" y="0"/>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="9772" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8349" y="0"/>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="10368" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8562" y="109"/>
+<item historyLabel="PROJ_config.h" index="8">
+<position info="not_deleted" x="65" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="6909" y="0"/>
+<item historyLabel="HAL_I2C.c" index="0">
+<position info="not_deleted" x="9157" y="90"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="9455" y="79"/>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="10213" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="6576" y="0"/>
+<item historyLabel="main.c" index="1">
+<position info="not_deleted" x="3158" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8971" y="0"/>
+<item historyLabel="HAL_UART.c" index="3">
+<position info="not_deleted" x="6662" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="8998" y="0"/>
+<item active="true" historyLabel="main.c" index="1">
+<position info="not_deleted" x="3158" y="0"/>
 </item>
-<item historyLabel="main.c" index="0">
-<position info="not_deleted" x="1410" y="0"/>
-</item>
-<item historyLabel="welcome" index="1"/>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="836" y="0"/>
-</item>
-<item historyLabel="Repository" index="3"/>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="865" y="0"/>
-</item>
-<item historyLabel="welcome" index="4"/>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="865" y="0"/>
-</item>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="610" y="0"/>
-</item>
-<item historyLabel="Configuration" index="5"/>
-<item historyLabel="main.c" index="2">
-<position info="not_deleted" x="756" y="0"/>
-</item>
-<item historyLabel="welcome" index="6"/>
-<item historyLabel="main.c" index="7">
-<position info="not_deleted" x="350" y="0"/>
-</item>
-<item historyLabel="HAL_TIM.c" index="8">
-<position info="not_deleted" x="139" y="23"/>
-</item>
-<item historyLabel="main.c" index="7">
-<position info="not_deleted" x="350" y="0"/>
-</item>
-<item historyLabel="main.c" index="7">
-<position info="not_deleted" x="300" y="0"/>
-</item>
-<item historyLabel="stm32f10x_gpio.c" index="9">
-<position info="not_deleted" x="5202" y="0"/>
-</item>
-<item historyLabel="stm32f10x_pwr.c" index="10">
-<position info="not_deleted" x="5241" y="0"/>
-</item>
-<item historyLabel="main.c" index="7">
-<position info="not_deleted" x="300" y="0"/>
-</item>
-<item historyLabel="welcome" index="11"/>
-<item active="true" historyLabel="welcome" index="12"/>
 </navigationHistory>
 <input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
 </page>
@@ -404,51 +535,50 @@
 <actionBarAdvisor/>
 </window>
 <mruList>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_sleepy_end_device/Src/MAIN/main.c">
-<persistable path="/STM32_sleepy_end_device/Src/MAIN/main.c"/>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stdlib.h" tooltip="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\stdlib.h">
+<persistable path="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\stdlib.h" project="STM32_sleepy_sensors"/>
 </file>
-<file factoryID="org.coocox.component.ui.editors.repository.RepositoryElementFactory" id="org.coocox.builder.ui.editors.repository.RepositoryBrowser" name="Repository" tooltip="Repository">
-<persistable>&#x0A;<subPage/>
-</persistable>
+<file factoryID="org.eclipse.cdt.ui.ExternalEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="string.h" tooltip="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h">
+<persistable path="C:\Program Files (x86)\GNU Tools ARM Embedded\5.4 2016q3\arm-none-eabi\include\string.h" project="STM32_sleepy_sensors"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_sleepy_end_device/MAIN/main.c">
-<persistable path="/STM32_sleepy_end_device/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_adc.c" tooltip="STM32_sleepy_sensors/stm_lib/src/stm32f10x_adc.c">
+<persistable path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_adc.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_ISED/MAIN/main.c">
-<persistable path="/STM32_ISED/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_BRD.h" tooltip="STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h">
+<persistable path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_TIM.c" tooltip="STM32_Interface/Src/HAL/HAL_TIM/HAL_TIM.c">
-<persistable path="/STM32_Interface/Src/HAL/HAL_TIM/HAL_TIM.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_ADC.h" tooltip="STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.h">
+<persistable path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_Interface/Src/MAIN/main.c">
-<persistable path="/STM32_Interface/Src/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_ADC.c" tooltip="STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c">
+<persistable path="/STM32_sleepy_sensors/Src/HAL/HAL_ADC/HAL_ADC.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_Interface/MAIN/main.c">
-<persistable path="/STM32_Interface/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_I2C.h" tooltip="STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.h">
+<persistable path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_SED/main.c">
-<persistable path="/STM32_SED/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_I2C.c" tooltip="STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.c">
+<persistable path="/STM32_sleepy_sensors/Src/HAL_I2C/HAL_I2C.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.h" tooltip="STM32_sleepy_end_device/stm_lib/inc/stm32f10x_i2c.h">
-<persistable path="/STM32_sleepy_end_device/stm_lib/inc/stm32f10x_i2c.h"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="HAL_BRD.c" tooltip="STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c">
+<persistable path="/STM32_sleepy_sensors/Src/HAL/HAL_BRD/HAL_BRD.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_i2c.c" tooltip="STM32_sleepy_end_device/stm_lib/src/stm32f10x_i2c.c">
-<persistable path="/STM32_sleepy_end_device/stm_lib/src/stm32f10x_i2c.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_rcc.h" tooltip="STM32_sleepy_sensors/stm_lib/inc/stm32f10x_rcc.h">
+<persistable path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_rcc.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="STM32_sleepy_end_device/cmsis_boot/startup/startup_stm32f10x_md.c">
-<persistable path="/STM32_sleepy_end_device/cmsis_boot/startup/startup_stm32f10x_md.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="core_cm3.h" tooltip="STM32_sleepy_sensors/cmsis/core_cm3.h">
+<persistable path="/STM32_sleepy_sensors/cmsis/core_cm3.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="system_stm32f10x.c" tooltip="STM32_sleepy_end_device/cmsis_boot/system_stm32f10x.c">
-<persistable path="/STM32_sleepy_end_device/cmsis_boot/system_stm32f10x.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="startup_stm32f10x_md.c" tooltip="STM32_sleepy_sensors/cmsis_boot/startup/startup_stm32f10x_md.c">
+<persistable path="/STM32_sleepy_sensors/cmsis_boot/startup/startup_stm32f10x_md.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_sleepy_end_device/MAIN/main.c">
-<persistable path="/STM32_sleepy_end_device/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_rcc.c" tooltip="STM32_sleepy_sensors/stm_lib/src/stm32f10x_rcc.c">
+<persistable path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_rcc.c"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="main.c" tooltip="STM32_ISED/MAIN/main.c">
-<persistable path="/STM32_ISED/MAIN/main.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_adc.h" tooltip="STM32_sleepy_sensors/stm_lib/inc/stm32f10x_adc.h">
+<persistable path="/STM32_sleepy_sensors/stm_lib/inc/stm32f10x_adc.h"/>
 </file>
-<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="system_stm32f10x.c" tooltip="STM32_sleepy_end_device/cmsis_boot/system_stm32f10x.c">
-<persistable path="/STM32_sleepy_end_device/cmsis_boot/system_stm32f10x.c"/>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="org.eclipse.cdt.ui.editor.CEditor" name="stm32f10x_gpio.c" tooltip="STM32_sleepy_sensors/stm_lib/src/stm32f10x_gpio.c">
+<persistable path="/STM32_sleepy_sensors/stm_lib/src/stm32f10x_gpio.c"/>
 </file>
 </mruList>
 </workbench>

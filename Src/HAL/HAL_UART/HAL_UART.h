@@ -11,8 +11,8 @@
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-/* None */
-
+#define RX_BUF_SIZE 80
+#define TX_BUF_SIZE 100
 
 
 /***************************************************************************************************
@@ -38,9 +38,11 @@
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void HAL_UART_init( void );
-void HAL_UART_write_data( u8_t* const buffer, u16_t length );
-void HAL_UART_send_temp( s8_t temp );
+void SERIAL_init( void );
+void SERIAL_Send_data(u8_t *pucBuffer);
+void SERIAL_clear_RXBuffer(void);
+void SERIAL_clear_TXBuffer(void);
+void SERIAL_msg_handler( void );
 
 
 

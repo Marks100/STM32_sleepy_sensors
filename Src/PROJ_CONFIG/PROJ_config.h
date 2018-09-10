@@ -2,7 +2,8 @@
 #define PROJ_CONFIG_H
 
 
-#define STM32 1
+#define DEBUG	1
+#define STM32 	1
 #define NO_RTOS 1
 #define LCD_BUSY_FLAG_AVAILABLE 0
 
