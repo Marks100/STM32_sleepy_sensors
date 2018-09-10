@@ -101,13 +101,16 @@ STATIC false_true_et SERIAL_stream_mode_s = FALSE;
 ***************************************************************************************************/
 void SERIAL_init( void )
 {
-	/* Enable USART1 and GPIOA clock, should be enabled anyway but just in case */
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE);
+	/* Enable GPIOA clock, should be enabled anyway but just in case */
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE);
+
+	/* Enable USART2 clock */
+	RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2, ENABLE );
 
 	/* NVIC Configuration */
 	NVIC_InitTypeDef NVIC_InitStructure;
 	/* Enable the USARTx Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
@@ -116,18 +119,18 @@ void SERIAL_init( void )
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Configure USART1 Tx (PA.09) as alternate function push-pull */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	/* Configure USART1 Tx (PA.02) as alternate function push-pull */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* Configure USART1 Rx (PA.10) as input floating */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	/* Configure USART1 Rx (PA.3) as input floating */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* Configure the USART1 */
+	/* Configure the USART2 */
 	USART_InitTypeDef USART_InitStructure;
 
 	/* USART1 configuration ------------------------------------------------------*/
@@ -151,14 +154,14 @@ void SERIAL_init( void )
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-	USART_Init(USART1, &USART_InitStructure);
+	USART_Init(USART2, &USART_InitStructure);
 
-	/* Enable USART1 */
-	USART_Cmd(USART1, ENABLE);
+	/* Enable USART2 */
+	USART_Cmd(USART2, ENABLE);
 
-	/* Enable the USART1 Receive interrupt: this interrupt is generated when the
-		USART1 receive data register is not empty */
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	/* Enable the USART2 Receive interrupt: this interrupt is generated when the
+		USART2 receive data register is not empty */
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 
 	SERIAL_stream_mode_s = FALSE;
 	SERIAL_cr_received_s = FALSE;
@@ -308,7 +311,7 @@ void SERIAL_msg_handler( void )
 
 			val = atoi(result);
 
-			sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d\r\n\r\n", val );
+			sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d secs\r\n\r\n", val );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 
 			RTC_set_wakeup_time( val );
@@ -346,8 +349,8 @@ void SERIAL_Send_data(u8_t *pucBuffer)
 {
     while (*pucBuffer)
     {
-        USART_SendData(USART1, *pucBuffer);
-        while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
+        USART_SendData(USART2, *pucBuffer);
+        while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
         {
         }
         pucBuffer += 1;
@@ -384,11 +387,11 @@ void SERIAL_clear_TXBuffer(void)
 ///***************************************************************************************************
 //**                              ISR Handlers                                                      **
 //***************************************************************************************************/
-void USART1_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
-    if ((USART1->SR & USART_FLAG_RXNE) != (u16)RESET)
+    if ((USART2->SR & USART_FLAG_RXNE) != (u16)RESET)
 	{
-		SERIAL_rx_buf_char_s = USART_ReceiveData(USART1);
+		SERIAL_rx_buf_char_s = USART_ReceiveData(USART2);
 		SERIAL_rx_buf_s[SERIAL_rx_buf_idx_s] = SERIAL_rx_buf_char_s;
 		SERIAL_rx_buf_idx_s++;
 

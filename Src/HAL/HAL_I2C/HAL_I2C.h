@@ -11,7 +11,6 @@
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC 60
 #define RTC_EXT_MAX_WAKEUP_TIME_SEC 	15300
 #define RTC_EXT_I2C_ADDRESS				0xA2
 #define RTC_EXT_MAX_NUM_REGS			16
