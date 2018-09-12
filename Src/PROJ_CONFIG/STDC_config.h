@@ -44,8 +44,8 @@
 *   \brief          The Assert strategy should be defined here, They are mutually exclusive.
 ***************************************************************************************************/
 #define STDC_AUTOGEN_ASSERTS_ENABLED    ( 0 )
-#define STDC_BASIC_ASSERT_ENABLED       ( 0 )
-#define STDC_FANCY_ASSERT_ENABLED       ( 1 )
+#define STDC_BASIC_ASSERT_ENABLED       ( 1 )
+#define STDC_FANCY_ASSERT_ENABLED       ( 0 )
 #define STDC_NO_ASSERTS_ENABLED         ( 0 )
 
 /*!*************************************************************************************************

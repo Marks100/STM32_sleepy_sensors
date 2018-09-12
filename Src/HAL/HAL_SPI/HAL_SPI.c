@@ -26,11 +26,11 @@
 **                              Includes                                                          **
 ***************************************************************************************************/
 //#include "stm32f10x_spi.h"
+#include "stm32f10x_spi.h"
 
 #include "C_defs.h"
 #include "COMPILER_defs.h"
 #include "HAL_BRD.h"
-//#include "HAL_UART.h"
 #include "HAL_SPI.h"
 
 
@@ -70,6 +70,9 @@ static false_true_et HAL_SPI_initialised = FALSE;
 ***************************************************************************************************/
 void HAL_SPI_init( void )
 {
+	/* Enable SPI clock */
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_SPI1, ENABLE );
+
 	SPI_InitTypeDef   SPI_InitStructure;
 
 	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
@@ -78,13 +81,13 @@ void HAL_SPI_init( void )
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 	SPI_InitStructure.SPI_CRCPolynomial = 0xAAAA;
 
 	SPI_Init(SPI1, &SPI_InitStructure);
 
-	/* Enable SPIz */
+	/* Enable SPI1 */
 	SPI_Cmd(SPI1, ENABLE);
 
     HAL_SPI_initialised = TRUE;
@@ -95,6 +98,14 @@ void HAL_SPI_init( void )
 
 void HAL_SPI_de_init( void )
 {
+	/* Disable SPI1 */
+	SPI_Cmd(SPI1, DISABLE);
+
+	SPI_I2S_DeInit(SPI1);
+
+	/* Disable SPI clock */
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_SPI1, DISABLE );
+
     HAL_SPI_initialised = FALSE;
 }
 
@@ -128,42 +139,19 @@ false_true_et HAL_SPI_get_init_status( void )
 ***************************************************************************************************/
 u8_t HAL_SPI_write_and_read_data( u8_t tx_data )
 {
-    u16_t i;
-    u8_t dummy_byte;
     u8_t return_value;
 
 	/* First lets do a dummy read to make sure that the interrupt
 	flag is clear and that the buffer is empty*/
-	//dummy_byte = SPI_I2S_ReceiveData( SPI1 );
-
-//	/* Send SPI1 data */
-//	SPI_I2S_SendData(SPI1, tx_data);
-//
-//    /* Wait for SPI1 Tx buffer to empty */
-//	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);
-//
-//	/* Wait for SPI1 Rx buffer to not be empty */
-//	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_RXNE) == RESET);
-//
-//	/* Wait for the SPI busy flag to clear */
-//	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET);
-//
-//	/* Read the bute on the SPE receive register */
-//	return_value = SPI_I2S_ReceiveData( SPI1 );
 
 	/* Send SPI1 data */
 	SPI_I2S_SendData(SPI1, tx_data);
 
 	/* Wait for the SPI busy flag to clear */
-	//while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET);
+	while(SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET);
 
-	/* Read the buffer on the SPE receive register */
+	/* Read the buffer on the SPI receive register */
 	return_value = SPI_I2S_ReceiveData( SPI1 );
-
-
-
-
-
 
 
     return ( return_value );

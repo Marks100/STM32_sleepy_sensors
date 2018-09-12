@@ -28,7 +28,7 @@ u16_t HAL_ADC_sample_batt_voltage( void )
 	u16_t batt_voltage = 0u;
 
 	/* First thing to do is turn on the battery voltage feature by enabling the GPIO pin */
-	HAL_BRD_Set_batt_monitor_state( ENABLE );
+	//HAL_BRD_Set_batt_monitor_state( ENABLE );
 
 	//clock for ADC (max 14MHz --> 72/6=12MHz)
 	RCC_ADCCLKConfig (RCC_PCLK2_Div6);
@@ -72,7 +72,7 @@ u16_t HAL_ADC_sample_batt_voltage( void )
 	HAL_ADC_de_init();
 
 	/* Disable the battery voltage feature by disabling the GPIO pin to save power */
-	HAL_BRD_Set_batt_monitor_state( DISABLE );
+	//HAL_BRD_Set_batt_monitor_state( DISABLE );
 
 	return ( batt_voltage );
 }

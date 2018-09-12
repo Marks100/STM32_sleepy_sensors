@@ -6,8 +6,7 @@
 
 #include "HAL_BRD.h"
 
-
-
+false_true_et HAL_BRD_rtc_triggered_s;
 
 
 /*!
@@ -71,6 +70,8 @@ void HAL_BRD_init( void )
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
 #endif
+
+	HAL_BRD_rtc_triggered_s = TRUE;
 }
 
 
@@ -202,9 +203,9 @@ EXTERNAL API's
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Set_rf_enable_pin( disable_enable_et state )
+void HAL_BRD_RFM69_set_enable_Pin_state( low_high_et state )
 {
-	if( state == ENABLE )
+	if( state == HIGH )
 	{
 		//HAL_BRD_Set_Pin_state();
 	}
@@ -212,6 +213,89 @@ void HAL_BRD_Set_rf_enable_pin( disable_enable_et state )
 	{
 		//HAL_BRD_Set_Pin_state();
 	}
+}
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the rf RST pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_RFM69_set_reset_Pin_state( low_high_et state )
+{
+	if( state == HIGH )
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+	else
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+}
+
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the SPI chip select pin for the RF module
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
+{
+	if( state == HIGH )
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+	else
+	{
+		//HAL_BRD_Set_Pin_state();
+	}
+}
+
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Toggles the led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_Toggle_led( void )
+{
+    HAL_BRD_Toggle_Pin_state( GPIOC, GPIO_Pin_13 );
+}
+
+
+void HAL_BRD_set_LED( off_on_et state )
+{
+	low_high_et val;
+
+	/* LED is inverse logic so flip the states */
+	if( state == OFF )
+	{
+		val = HIGH;
+	}
+	else
+	{
+		val = LOW;
+	}
+	HAL_BRD_Set_Pin_state( GPIOC, GPIO_Pin_13, val);
 }
 
 
@@ -236,11 +320,27 @@ void HAL_BRD_Toggle_heartbeat_pin(  void )
 
 
 
+/*!
+****************************************************************************************************
+*
+*   \brief         returns the  status of the RTC trigger
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+false_true_et HAL_BRD_get_rtc_trigger_status( void )
+{
+	return ( HAL_BRD_rtc_triggered_s );
+}
 
 
 
-
-
+void HAL_BRD_set_rtc_trigger_status( false_true_et state )
+{
+	HAL_BRD_rtc_triggered_s = state;
+}
 
 
 
@@ -254,17 +354,7 @@ void EXTI0_IRQHandler(void)
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 
-		u32_t i = 0u;
-		u32_t j = 0u;
-
-		/* LED blink */
-		for(i=0; i<2; i++)
-		{
-			/* Toggle LED which connected to PC13*/
-			GPIOC->ODR ^= GPIO_Pin_13;
-			/* delay */
-			for(j=0; j<0x10000; j++);
-		}
+		HAL_BRD_rtc_triggered_s = TRUE;
 	}
 }
 

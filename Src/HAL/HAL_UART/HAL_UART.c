@@ -35,6 +35,8 @@
 #include "C_defs.h"
 #include "STDC.h"
 #include "COMPILER_defs.h"
+#include "HAL_I2C.h"
+#include "main.h"
 #include "HAL_UART.h"
 
 
@@ -71,11 +73,11 @@ STATIC const u8_t SERIAL_invalid_cmd_message_s[] =
 
 
 
-STATIC u8_t SERIAL_cr_received_s = FALSE;
-STATIC u8_t SERIAL_rx_buf_idx_s;
-STATIC u8_t SERIAL_rx_buf_char_s;
-STATIC u8_t SERIAL_rx_buf_s[RX_BUF_SIZE] = {'\0'};
-STATIC u8_t SERIAL_tx_buf_s[TX_BUF_SIZE] = {'\0'};
+STATIC char SERIAL_cr_received_s = FALSE;
+STATIC char SERIAL_rx_buf_idx_s;
+STATIC char SERIAL_rx_buf_char_s;
+STATIC char SERIAL_rx_buf_s[RX_BUF_SIZE] = {'\0'};
+STATIC char SERIAL_tx_buf_s[TX_BUF_SIZE] = {'\0'};
 STATIC false_true_et SERIAL_stream_mode_s = FALSE;
 
 
@@ -195,12 +197,14 @@ void SERIAL_msg_handler( void )
 			if( ( *result == '0' ) || ( strstr(result, "off") != 0 ) )
 			{
 				GPIO_SetBits(GPIOC, GPIO_Pin_13);
-				SERIAL_Send_data("\r\nLED turned off\r\n\r\n");
+				sprintf( SERIAL_tx_buf_s, "\r\nLED turned off\r\n\r\n" );
+				SERIAL_Send_data(SERIAL_tx_buf_s);
 			}
 			else if( ( * result == '1' ) || ( strstr(result, "on") != 0 ) )
 			{
 				GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-				SERIAL_Send_data("\r\nLED turned on\r\n\r\n");
+				sprintf( SERIAL_tx_buf_s, "\r\nLED turned on\r\n\r\n" );
+				SERIAL_Send_data(SERIAL_tx_buf_s);
 			}
 			else
 			{
@@ -209,7 +213,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strncmp(strlwr(SERIAL_rx_buf_s), "batt\r", 5) == 0)
 		{
-			u16_t battery_voltage = HAL_ADC_sample_batt_voltage();
+			u16_t battery_voltage = 3000u;
 
 			sprintf( SERIAL_tx_buf_s, "\r\nSupply voltage is %dmV\r\n\r\n", battery_voltage );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
@@ -313,7 +317,7 @@ void SERIAL_msg_handler( void )
 
 			val = atoi(result);
 
-			sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d secs\r\n\r\n", val );
+			sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %ld secs\r\n\r\n", val );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 
 			RTC_set_wakeup_time( val );
@@ -380,7 +384,7 @@ void SERIAL_msg_handler( void )
 				random_number = rand()%100;
 			}
 
-			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n", random_number );
+			sprintf( SERIAL_tx_buf_s, "Random number:\t%ld\r\n", random_number );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "time" ) != 0)
@@ -390,13 +394,13 @@ void SERIAL_msg_handler( void )
 			u8_t secs;
 
 			char *sub_string = strstr(SERIAL_rx_buf_s, "time") + 5;
-			hours = atoi(sub_string);
+			hours = (u8_t)atoi(sub_string);
 
 			*sub_string = strstr(SERIAL_rx_buf_s, "time") + 8;
-			mins = atoi(sub_string);
+			mins = (u8_t)atoi(sub_string);
 
 			*sub_string = strstr(SERIAL_rx_buf_s, "time") + 11;
-			secs = atoi(sub_string);
+			secs = (u8_t)atoi(sub_string);
 
 			sprintf( SERIAL_tx_buf_s, "\r\nTime has been set to\r\nHours:\t%d\r\nMins:\t%d\r\n\r\nSecs:\t%d", hours, mins, secs );
 		}
@@ -423,7 +427,7 @@ void SERIAL_msg_handler( void )
 *   \return        none
 *
 ***************************************************************************************************/
-void SERIAL_Send_data(u8_t *pucBuffer)
+void SERIAL_Send_data(const char *pucBuffer)
 {
     while (*pucBuffer)
     {
