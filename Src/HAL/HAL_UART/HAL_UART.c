@@ -332,7 +332,7 @@ void SERIAL_msg_handler( void )
 			
 			if( ( strstr(sub_string, "conf") != 0 ) )
 			{
-				*sub_string = strstr(SERIAL_rx_buf_s, "conf") + 5;
+				sub_string = strstr(SERIAL_rx_buf_s, "rf") + 8;
 				
 				val = atoi(sub_string);
 				
@@ -343,8 +343,10 @@ void SERIAL_msg_handler( void )
 					
 					sprintf( SERIAL_tx_buf_s, "Selection not valid.. config can be between 0..%d\r\n", MAX_NUM_RF_CONFIGS );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
-					
-					sprintf( SERIAL_tx_buf_s, "Config %d has been selected by default\r\n", val );
+				}
+				else
+				{
+					sprintf( SERIAL_tx_buf_s, "Rf config %d selected\r\n", val );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
 				}
 			}
@@ -371,7 +373,12 @@ void SERIAL_msg_handler( void )
 			srand( get_counter() );
 
 			/* Grab the now "random :)" number */
-			random_number = rand();
+			random_number = rand()%100;
+
+			while( random_number == 0 )
+			{
+				random_number = rand()%100;
+			}
 
 			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n", random_number );
 			SERIAL_Send_data( SERIAL_tx_buf_s );

@@ -147,8 +147,11 @@ int main(void)
 	{
 		/* Power up the RF chip all the time in debug mode */
 		HAL_BRD_Set_rf_enable_pin( ENABLE );
+		HAL_BRD_Set_Pin_state(GPIOC, GPIO_Pin_13, HIGH);
 
-		u8_t i = 0u;
+#if(DEBUG==0)
+		u32_t i = 0u;
+		u32_t j = 0u;
 
 		/* LED blink */
 		for(i=0; i<2; i++)
@@ -156,8 +159,9 @@ int main(void)
 			/* Toggle LED which connected to PC13*/
 			GPIOC->ODR ^= GPIO_Pin_13;
 			/* delay */
-			for(i=0; i<0x10000; i++);
+			for(j=0; j<0x10000; j++);
 		}
+#endif
 
 		/* Power up the RF chip all the time in debug mode */
 		HAL_BRD_Set_rf_enable_pin( DISABLE );
@@ -168,6 +172,10 @@ int main(void)
 		if( ctr >= U32_T_MAX)
 		{
 			ctr = 0u;
+		}
+		else
+		{
+			ctr ++;
 		}
 
 #if( DEBUG==1)

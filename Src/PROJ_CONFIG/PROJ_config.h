@@ -2,9 +2,9 @@
 #define PROJ_CONFIG_H
 
 
-#define DEBUG	1
+#define DEBUG	0
 #define STM32 	1
-#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC 10
+#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC 60
 #define MAX_NUM_RF_CONFIGS 4
 
 
