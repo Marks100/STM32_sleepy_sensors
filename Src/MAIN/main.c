@@ -21,6 +21,7 @@
 u16_t delay_timer = 0u;
 u8_t task_timer_s = 0u;
 u16_t battery_voltage_mv_s = 0u;
+u32_t ctr = 0u;
 
 /*!
 ****************************************************************************************************
@@ -114,7 +115,7 @@ void delay_us(u16_t us)
 
 int main(void)
 {
-	int i, j;
+	ctr = 0;
 	battery_voltage_mv_s = 0u;
 
 	RCC_DeInit();
@@ -131,10 +132,12 @@ int main(void)
 	/* Initialise the RTC */
 	RTC_ext_init();
 
-
 #if( DEBUG==1)
 	/* In debug mode lets init the debug uart as this consumes lots of power */
 	SERIAL_init();
+
+	/* Power up the RF chip all the time in debug mode */
+	HAL_BRD_Set_rf_enable_pin( ENABLE );
 #else
 	// ENABLE Wake Up Pin
 	PWR_WakeUpPinCmd(ENABLE);
@@ -142,19 +145,38 @@ int main(void)
 
 	while (1)
 	{
+		/* Power up the RF chip all the time in debug mode */
+		HAL_BRD_Set_rf_enable_pin( ENABLE );
+		HAL_BRD_Set_Pin_state(GPIOC, GPIO_Pin_13, HIGH);
+
+#if(DEBUG==0)
+		u32_t i = 0u;
+		u32_t j = 0u;
+
 		/* LED blink */
-		for(j=0; j<2; j++)
+		for(i=0; i<2; i++)
 		{
 			/* Toggle LED which connected to PC13*/
 			GPIOC->ODR ^= GPIO_Pin_13;
 			/* delay */
-			for(i=0; i<0x10000; i++);
+			for(j=0; j<0x10000; j++);
 		}
+#endif
+
+		/* Power up the RF chip all the time in debug mode */
+		HAL_BRD_Set_rf_enable_pin( DISABLE );
 
 		/* Disable LED */
 		GPIO_SetBits(GPIOC, GPIO_Pin_13);
 
-		//battery_voltage_mv_s = HAL_ADC_sample_batt_voltage();
+		if( ctr >= U32_T_MAX)
+		{
+			ctr = 0u;
+		}
+		else
+		{
+			ctr ++;
+		}
 
 #if( DEBUG==1)
 	/* Handle the serial messages */
@@ -190,6 +212,11 @@ void SysTick_Handler( void )
 	}
 }
 
+
+u32_t get_counter( void )
+{
+	return ( ctr );
+}
 
 
 
