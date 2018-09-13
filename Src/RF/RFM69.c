@@ -74,7 +74,7 @@ void RFM69_wakeup_and_send( void )
 	RFM69_set_enable_pin_state( HIGH );
     RFM69_set_reset_pin_state( LOW );
 
-    /* Give the RF chip time to stabilize */
+    /* Give the RF chip time to stabilise */
     delay_us(1000);
 
 	/* Go through the elements and reset them to 0xFF */
@@ -91,8 +91,6 @@ void RFM69_wakeup_and_send( void )
 		/* Fire down a config of registers */
 		RFM69_set_configuration( RFM69_433Mhz_OOK, RFM69_433Mhz_CONFIGURATION_SIZE );
 
-		RFM69_read_all_registers();
-
 		/* Put the chip into standby mode ( should be be default */
 		RFM69_set_operating_mode( RFM69_STANDBY_MODE );
 
@@ -108,9 +106,6 @@ void RFM69_wakeup_and_send( void )
 	{
 		STDC_basic_assert();
 	}
-
-	/* Most of the work should have been done in the default config register */
-	RFM69_read_all_registers();
 
 	/* Fill the buffer */
 	RFM69_Send_frame( send_data, sizeof( send_data ) );
@@ -174,32 +169,6 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config, u16_
 
     return ( returnType );
 }
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Reads back all of the registers
-*
-*   \author        MS
-*
-*   \return        none
-*
-*   \note
-*
-***************************************************************************************************/
-pass_fail_et RFM69_read_all_registers( void )
-{
-    pass_fail_et returnType = PASS;
-
-    u8_t read_back_registers[ REGTEMP2 - 1 ] = { 0x00, };
-
-    RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_back_registers, sizeof( read_back_registers ) );
-
-    return ( returnType );
-}
-
-
 
 
 
@@ -516,13 +485,11 @@ u8_t RFM69_read_RSSi_measurement( void )
 
 
 
-false_true_et RFM69_read_FIFO_register( void )
+false_true_et RFM69_read_FIFO_register( u8_t* data_p )
 {
-    u8_t fifo_buffer[ RFM69_MAX_DATA_LEN ];
-
     false_true_et status = FALSE;
 
-    RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGFIFO, fifo_buffer, RFM69_MAX_DATA_LEN );
+    RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGFIFO, data_p, RFM69_MAX_DATA_LEN );
     status = TRUE;
 
     return ( status );

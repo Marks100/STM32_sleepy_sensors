@@ -7,7 +7,7 @@
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
-u8_t debug_mode;
+false_true_et debug_mode;
 
 
 /*!
@@ -44,11 +44,13 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	delay_us(5000);
+
 	debug_mode = HAL_BRD_read_debug_pin();
 
-	if(debug_mode==1)
+	if( debug_mode == ENABLE )
 	{
-		/* Configure the GPIO_LED pin */
+		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
@@ -320,14 +322,14 @@ void HAL_BRD_set_LED( off_on_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-u8_t HAL_BRD_read_debug_pin( void )
+disable_enable_et HAL_BRD_read_debug_pin( void )
 {
 	low_high_et state;
-	u8_t mode;
+	disable_enable_et mode;
 
 	state = HAL_BRD_Read_Pin_state(GPIOA, GPIO_Pin_4 );
 
-	mode = (( state == HIGH ) ? 1 : 0);
+	mode = (( state == HIGH ) ? ENABLE : DISABLE );
 
 	return( mode );
 }

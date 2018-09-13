@@ -38,7 +38,7 @@ int main(void)
 	/* Init the HW */
 	HAL_BRD_init();
 	HAL_I2C_init();
-	//HAL_SPI_init();
+	HAL_SPI_init();
 
 	/* Initialise the RTC */
 	RTC_ext_init();
@@ -46,21 +46,19 @@ int main(void)
 	/* Turn the LED OFF */
 	HAL_BRD_set_LED( OFF );
 
-	if(debug_mode==1)
+	if( debug_mode == ENABLE )
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
 		SERIAL_init();
-	}
-	else
-	{
-		// ENABLE Wake Up Pin
-		PWR_WakeUpPinCmd(ENABLE);
+
+		/* power up the RF chip */
+		RFM69_set_enable_pin_state( HIGH );
+		RFM69_set_reset_pin_state( LOW );
 	}
 
 	while (1)
 	{
-
-		if(debug_mode==0)
+		if( debug_mode != ENABLE )
 		{
 			u32_t i = 0u;
 
@@ -78,11 +76,17 @@ int main(void)
 			/* Turn the LED OFF */
 			HAL_BRD_set_LED( OFF );
 
-			/* Disable the I2C peripheral to save power */
+			/* Disable the I2C peripheral and clock to save power */
 			HAL_I2C_de_init();
-			RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1,  DISABLE);
+
+			/* Disable the ISPI peripheral and clock to save power */
+			HAL_SPI_de_init();
+
 			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, DISABLE);
 			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, DISABLE);
+
+			/* Enable the wakeup pin */
+			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
 			PWR_EnterSTANDBYMode();

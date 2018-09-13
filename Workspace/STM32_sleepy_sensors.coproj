@@ -113,8 +113,8 @@
     <File name="Src/VERSIONS/VERSIONS.h" path="../Src/VERSIONS/VERSIONS.h" type="1"/>
     <File name="stm_lib/inc/stm32f10x_usart.h" path="stm_lib/inc/stm32f10x_usart.h" type="1"/>
     <File name="cmsis_boot/system_stm32f10x.c" path="cmsis_boot/system_stm32f10x.c" type="1"/>
-    <File name="stdio" path="" type="2"/>
     <File name="Src/MAIN/main.c" path="../Src/MAIN/main.c" type="1"/>
+    <File name="stdio" path="" type="2"/>
     <File name="stm_lib/inc/misc.h" path="stm_lib/inc/misc.h" type="1"/>
     <File name="cmsis/core_cmInstr.h" path="cmsis/core_cmInstr.h" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/SELMATH" path="" type="2"/>
@@ -127,8 +127,8 @@
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.o" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.o" type="1"/>
     <File name="Src/HAL" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/STDC/STDC.c" path="../Src/COMMON_MODULES/xINC/STDC/STDC.c" type="1"/>
-    <File name="stm_lib/src" path="" type="2"/>
     <File name="Src/RF/RFM69.c" path="../Src/RF/RFM69.c" type="1"/>
+    <File name="stm_lib/src" path="" type="2"/>
     <File name="cmsis" path="" type="2"/>
     <File name="stm_lib" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/MEM_placement.h" path="../Src/COMMON_MODULES/xINC/MEM_placement.h" type="1"/>
