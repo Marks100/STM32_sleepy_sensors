@@ -37,7 +37,7 @@
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
 /* None */
-
+extern u8_t debug_mode;
 
 
 /***************************************************************************************************
@@ -58,6 +58,7 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state );
 
 false_true_et HAL_BRD_get_rtc_trigger_status( void );
 void HAL_BRD_set_rtc_trigger_status( false_true_et state );
+u8_t HAL_BRD_read_debug_pin( void );
 
 
 
