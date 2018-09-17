@@ -334,6 +334,7 @@ void SERIAL_msg_handler( void )
 			{
 				sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d secs\r\n\r\n", val );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
+
 				RTC_set_wakeup_time( val );
 
 				/* change the value and write to NVM */
