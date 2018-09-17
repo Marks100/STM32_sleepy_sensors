@@ -32,13 +32,14 @@
 
 #include "C_defs.h"
 #include "STDC.h"
+#include "NVM.h"
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"
 
 
 
 
-
+extern NVM_info_st NVM_info_s;
 
 /***************************************************************************************************
 **                              Data declarations and definitions                                 **
@@ -61,13 +62,8 @@ const u8_t RTC_EXT_default_register_values[ RTC_EXT_MAX_NUM_REGS ] =
 	0x00,	//Day_alarm
 	0x00,	//Weekday_alarm
 	0x83,	//CLKOUT_control
-#if( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC > 255)
-	0x83,	//Timer_control
-	( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC/60 ),	//Timer
-#else
 	0x82,	//Timer_control
-	( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC ) //Timer
-#endif
+	RTC_EXT_DEFAULT_WAKEUP_TIME_SEC
 };
 
 
@@ -258,17 +254,37 @@ void RTC_ext_init( void )
 {
 	u8_t start_reg = Control_status_1;
 	u8_t data;
-	u8_t data_1[16];
+	u8_t data_burst[16];
 
 	HAL_I2C_write_multiple_register( RTC_EXT_I2C_ADDRESS, &start_reg, RTC_EXT_default_register_values, sizeof( RTC_EXT_default_register_values ) );
 
-	HAL_I2C_read_register( RTC_EXT_I2C_ADDRESS, &start_reg, &data );
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+	start_reg = Timer_control;
+	HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &start_reg, &data );
 
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+	if( NVM_info_s.NVM_generic_data_blk_s.sleep_time > 255 )
+	{
+		data = 0x83;
+		start_reg = Timer_control;
+		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &start_reg, &data );
 
+		data = NVM_info_s.NVM_generic_data_blk_s.sleep_time/60;
 
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+		start_reg = Timer;
+		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &start_reg, &data );
+	}
+	else
+	{
+		start_reg = Timer;
+		data = NVM_info_s.NVM_generic_data_blk_s.sleep_time;
+		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &start_reg, &data );
+		data = 0u;
+
+		start_reg = Timer;
+		HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &start_reg, &data );
+	}
+
+	start_reg = Control_status_1;
+	//HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_burst, sizeof( data_burst ) );
 }
 
 
@@ -311,6 +327,8 @@ void RTC_set_wakeup_time( u32_t seconds )
 
 		/* set the correct hz bit*/
 		data |= RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		data |= RTC_EXT_ALARM_1HZ_BIT;
+		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &data );
 
 		reg = Timer;
 
@@ -325,8 +343,9 @@ void RTC_set_wakeup_time( u32_t seconds )
 		HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &reg, &data );
 
 		/* set the correct hz bit*/
-		data &= !RTC_EXT_ALARM_1_OVER60HZ_BIT;
-		data |= RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		data &= ~RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		data |= RTC_EXT_ALARM_1HZ_BIT;
+		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &data );
 
 		reg = Timer;
 

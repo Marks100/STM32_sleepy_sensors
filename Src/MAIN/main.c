@@ -39,6 +39,7 @@ int main(void)
 	HAL_BRD_init();
 	HAL_I2C_init();
 	HAL_SPI_init();
+	NVM_init();
 
 	/* Initialise the RTC */
 	RTC_ext_init();
@@ -89,7 +90,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			PWR_EnterSTANDBYMode();
+			//PWR_EnterSTANDBYMode();
 		}
 		else
 		{
