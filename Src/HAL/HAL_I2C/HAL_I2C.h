@@ -22,7 +22,7 @@
 #define RTC_EXT_ALARM_INT_ACTIVE_BIT (1<<3)
 
 #define RTC_EXT_ALARM_1HZ_BIT (1<<1)
-#define RTC_EXT_ALARM_1_OVER60HZ_BIT (3<<0)
+#define RTC_EXT_ALARM_1_OVER60HZ_BIT (1<<0)
 
 typedef enum
 {

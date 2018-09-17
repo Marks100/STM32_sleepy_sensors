@@ -352,7 +352,6 @@ void RTC_set_wakeup_time( u32_t seconds )
 		/* Now set the time register */
 		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &divider );
 	}
-
 }
 
 
