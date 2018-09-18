@@ -7,6 +7,7 @@
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
+false_true_et debug_mode;
 
 
 /*!
@@ -37,39 +38,49 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-#if( DEBUG==1)
-
-	/* Configure the GPIO_LED pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	/* Configure the DEBUG selector pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* If we are in debug mode then we can configure the wakeup pin to have an ISR */
+	delay_us(5000);
 
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0 );
+	debug_mode = HAL_BRD_read_debug_pin();
 
-	EXTI_InitTypeDef EXTI_InitStruct;
+	if( debug_mode == ENABLE )
+	{
+		/* Configure the wakeup ( or in debug mode interrupt ) pin */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	EXTI_InitStruct.EXTI_Line = EXTI_Line0 ;
-	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
-	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
-	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
-	EXTI_Init(&EXTI_InitStruct);
+		/* If we are in debug mode then we can configure the wakeup pin to have an ISR */
+		GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0 );
 
-	NVIC_InitTypeDef NVIC_InitStruct;
+		EXTI_InitTypeDef EXTI_InitStruct;
 
-	/* Add IRQ vector to NVIC */
-	NVIC_InitStruct.NVIC_IRQChannel = EXTI0_IRQn;
-	/* Set priority */
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
-	/* Set sub priority */
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
-	/* Enable interrupt */
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	/* Add to NVIC */
-	NVIC_Init(&NVIC_InitStruct);
-#endif
+		EXTI_InitStruct.EXTI_Line = EXTI_Line0 ;
+		EXTI_InitStruct.EXTI_LineCmd = ENABLE;
+		EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
+		EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
+		EXTI_Init(&EXTI_InitStruct);
+
+		NVIC_InitTypeDef NVIC_InitStruct;
+
+		/* Add IRQ vector to NVIC */
+		NVIC_InitStruct.NVIC_IRQChannel = EXTI0_IRQn;
+		/* Set priority */
+		NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
+		/* Set sub priority */
+		NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
+		/* Enable interrupt */
+		NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+		/* Add to NVIC */
+		NVIC_Init(&NVIC_InitStruct);
+	}
+
 
 	HAL_BRD_rtc_triggered_s = TRUE;
 }
@@ -297,6 +308,32 @@ void HAL_BRD_set_LED( off_on_et state )
 	}
 	HAL_BRD_Set_Pin_state( GPIOC, GPIO_Pin_13, val);
 }
+
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Reads the state of the debug pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+disable_enable_et HAL_BRD_read_debug_pin( void )
+{
+	low_high_et state;
+	disable_enable_et mode;
+
+	state = HAL_BRD_Read_Pin_state(GPIOA, GPIO_Pin_4 );
+
+	mode = (( state == HIGH ) ? ENABLE : DISABLE );
+
+	return( mode );
+}
+
 
 
 

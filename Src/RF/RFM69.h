@@ -331,7 +331,6 @@ typedef struct
 void          RFM69_wakeup_and_send( void ); //( init )
 pass_fail_et  RFM69_read_registers( RFM69_instruction_et instruction, RFM69_registers_et address, u8_t read_data[], u8_t num_bytes );
 pass_fail_et  RFM69_write_registers( RFM69_instruction_et instruction, RFM69_registers_et address, u8_t write_data[], u8_t num_bytes );
-pass_fail_et  RFM69_read_all_registers( void );
 pass_fail_et  RFM69_set_configuration( RFM69_static_configuration_et config, u16_t len );
 void          RFM69_set_reset_pin_state( low_high_et state );
 void 		  RFM69_set_enable_pin_state( low_high_et state );
@@ -360,7 +359,7 @@ pass_fail_et RFM69_read_reserved_registers( void );
 u8_t RFM69_read_temp( void );
 u8_t RFM69_read_current_LNA_gain( void );
 u32_t RFM69_read_rf_carrier_freq( void );
-false_true_et RFM69_read_FIFO_register( void );
+false_true_et RFM69_read_FIFO_register( u8_t* data_p );
 
 
 #endif /* RFM69_H multiple inclusion guard */

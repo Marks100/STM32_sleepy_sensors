@@ -32,13 +32,14 @@
 
 #include "C_defs.h"
 #include "STDC.h"
+#include "NVM.h"
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"
 
 
 
 
-
+extern NVM_info_st NVM_info_s;
 
 /***************************************************************************************************
 **                              Data declarations and definitions                                 **
@@ -61,13 +62,8 @@ const u8_t RTC_EXT_default_register_values[ RTC_EXT_MAX_NUM_REGS ] =
 	0x00,	//Day_alarm
 	0x00,	//Weekday_alarm
 	0x83,	//CLKOUT_control
-#if( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC > 255)
-	0x83,	//Timer_control
-	( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC/60 ),	//Timer
-#else
 	0x82,	//Timer_control
-	( RTC_EXT_DEFAULT_WAKEUP_TIME_SEC ) //Timer
-#endif
+	RTC_EXT_DEFAULT_WAKEUP_TIME_SEC
 };
 
 
@@ -140,7 +136,7 @@ void HAL_I2C_de_init( void )
 
 
 
-void HAL_I2C_write_single_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
+void HAL_I2C_write_single_register( u8_t dev_add, u8_t reg_add, u8_t* data )
 {
 	I2C_GenerateSTART(I2C1,ENABLE);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
@@ -148,7 +144,7 @@ void HAL_I2C_write_single_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
 	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Transmitter);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-	I2C_SendData(I2C1, *reg_add);
+	I2C_SendData(I2C1, reg_add);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
 	I2C_SendData(I2C1, *data);
@@ -161,7 +157,7 @@ void HAL_I2C_write_single_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
 
 
 
-void HAL_I2C_write_multiple_register( u8_t dev_add, u8_t* reg_start_add, u8_t* data, u8_t num_bytes )
+void HAL_I2C_write_multiple_register( u8_t dev_add, u8_t reg_start_add, u8_t* data, u8_t num_bytes )
 {
 	u8_t i = 0u;
 
@@ -171,7 +167,7 @@ void HAL_I2C_write_multiple_register( u8_t dev_add, u8_t* reg_start_add, u8_t* d
 	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Transmitter);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-	I2C_SendData(I2C1, *reg_start_add );
+	I2C_SendData(I2C1, reg_start_add );
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
 	for( i = 0; i < num_bytes; i++ )
@@ -187,7 +183,7 @@ void HAL_I2C_write_multiple_register( u8_t dev_add, u8_t* reg_start_add, u8_t* d
 
 
 
-void HAL_I2C_read_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
+void HAL_I2C_read_register( u8_t dev_add, u8_t reg_add, u8_t* data )
 {
 	I2C_AcknowledgeConfig(I2C1,ENABLE);
 
@@ -197,7 +193,7 @@ void HAL_I2C_read_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
 	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Transmitter);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-	I2C_SendData(I2C1, *reg_add);
+	I2C_SendData(I2C1, reg_add);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
 	I2C_GenerateSTART(I2C1,ENABLE);
@@ -217,7 +213,7 @@ void HAL_I2C_read_register( u8_t dev_add, u8_t* reg_add, u8_t* data )
 }
 
 
-void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t* reg_start_add, u8_t* data, u8_t num_bytes )
+void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t reg_start_add, u8_t* data, u8_t num_bytes )
 {
 	u8_t i = 0u;
 
@@ -229,7 +225,7 @@ void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t* reg_start_add, u8_t* d
 	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Transmitter);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-	I2C_SendData(I2C1, *reg_start_add);
+	I2C_SendData(I2C1, reg_start_add);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
 	I2C_GenerateSTART(I2C1,ENABLE);
@@ -238,7 +234,7 @@ void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t* reg_start_add, u8_t* d
 	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Receiver);
 	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
 
-	for( i = 0; i < ( num_bytes + (*reg_start_add) ); i++ )
+	for( i = 0; i < num_bytes ; i++ )
 	{
 		while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
 		data[i] = I2C_ReceiveData(I2C1);
@@ -256,44 +252,41 @@ void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t* reg_start_add, u8_t* d
 
 void RTC_ext_init( void )
 {
-	u8_t start_reg = Control_status_1;
 	u8_t data;
-	u8_t data_1[16];
+	u8_t wakeup_time;
 
-	HAL_I2C_write_multiple_register( RTC_EXT_I2C_ADDRESS, &start_reg, RTC_EXT_default_register_values, sizeof( RTC_EXT_default_register_values ) );
+	u8_t data_burst[16];
 
-	HAL_I2C_read_register( RTC_EXT_I2C_ADDRESS, &start_reg, &data );
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+	/* Write down the default config */
+	HAL_I2C_write_multiple_register( RTC_EXT_I2C_ADDRESS, Control_status_1, RTC_EXT_default_register_values, sizeof( RTC_EXT_default_register_values ) );
 
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+	/* Now adjust it with the currently stored NVM value */
+	RTC_set_wakeup_time( NVM_info_s.NVM_generic_data_blk_s.sleep_time );
 
-
-	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, &start_reg, data_1, RTC_EXT_MAX_NUM_REGS );
+	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, Control_status_1, data_burst, sizeof( data_burst ) );
 }
 
 
 
 void RTC_ext_clear_int( void )
 {
-	u8_t reg = Control_status_2;
 	u8_t data;
 
 	/* Read the register first to get the old value */
-	HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &reg, &data );
+	HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, Control_status_2, &data );
 
 	/* Clear the inerrupt active bit */
 	data &= !RTC_EXT_TIMER_INT_ACTIVE_BIT;
 
 	/* Write the data back down again :) */
-	HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &data );
+	HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, Control_status_2, &data );
 }
+
 
 
 void RTC_set_wakeup_time( u32_t seconds )
 {
-	u8_t reg = Timer_control;
 	u8_t data;
-
 	u8_t divider;
 
 	/* Boundary check the wakeup time */
@@ -302,38 +295,30 @@ void RTC_set_wakeup_time( u32_t seconds )
 		seconds = RTC_EXT_MAX_WAKEUP_TIME_SEC;
 	}
 
+	/* Read the register first to get the old value */
+	HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, Timer_control, &data );
+
 	if( seconds > U8_T_MAX )
 	{
 		divider = seconds/60;
 
-		/* Read the register first to get the old value */
-		HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &reg, &data );
-
 		/* set the correct hz bit*/
 		data |= RTC_EXT_ALARM_1_OVER60HZ_BIT;
-
-		reg = Timer;
-
-		/* Now set the time register */
-		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &divider );
+		data |= RTC_EXT_ALARM_1HZ_BIT;
 	}
 	else
 	{
 		divider = seconds;
 
-		/* Read the register first to get the old value */
-		HAL_I2C_read_register(RTC_EXT_I2C_ADDRESS, &reg, &data );
-
 		/* set the correct hz bit*/
-		data &= !RTC_EXT_ALARM_1_OVER60HZ_BIT;
-		data |= RTC_EXT_ALARM_1_OVER60HZ_BIT;
-
-		reg = Timer;
-
-		/* Now set the time register */
-		HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, &reg, &divider );
+		data &= ~RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		data |= RTC_EXT_ALARM_1HZ_BIT;
 	}
 
+	HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, Timer_control, &data );
+
+	/* Now set the time register */
+	HAL_I2C_write_single_register( RTC_EXT_I2C_ADDRESS, Timer, &divider );
 }
 
 

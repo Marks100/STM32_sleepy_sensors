@@ -8,6 +8,7 @@
 #endif
 
 #include "C_defs.h"
+#include "PROJ_config.h"
 #include "COMPILER_defs.h"
 #include "COMPILER_config.h"
 #include "HAL_BRD.h"
@@ -20,9 +21,7 @@
 
 
 u16_t delay_timer = 0u;
-u8_t task_timer_s = 0u;
 u32_t ctr = 0u;
-
 
 int main(void)
 {
@@ -40,6 +39,7 @@ int main(void)
 	HAL_BRD_init();
 	HAL_I2C_init();
 	HAL_SPI_init();
+	NVM_init();
 
 	/* Initialise the RTC */
 	RTC_ext_init();
@@ -47,65 +47,20 @@ int main(void)
 	/* Turn the LED OFF */
 	HAL_BRD_set_LED( OFF );
 
-#if( DEBUG==1)
+	if( debug_mode == ENABLE )
+	{
+		/* In debug mode lets init the debug usart as this consumes lots of power */
+		SERIAL_init();
 
-	/* In debug mode lets init the debug usart as this consumes lots of power */
-	SERIAL_init();
-
-	/* test the delay of us_delay */
-	HAL_BRD_set_LED( ON );
-	delay_us(10);
-	HAL_BRD_set_LED( OFF );
-	delay_us(100);
-	HAL_BRD_set_LED( ON );
-	delay_us(1000);
-	HAL_BRD_set_LED( OFF );
-
-#else
-
-	// ENABLE Wake Up Pin
-	PWR_WakeUpPinCmd(ENABLE);
-
-#endif
+		/* power up the RF chip */
+		RFM69_set_enable_pin_state( HIGH );
+		RFM69_set_reset_pin_state( LOW );
+	}
 
 	while (1)
 	{
-
-#if(DEBUG==0)
-
-		u32_t i = 0u;
-
-		/* LED blink */
-		for(i=0; i<2; i++)
+		if( debug_mode != ENABLE )
 		{
-			/* Toggle LED which connected to PC13*/
-			HAL_BRD_Toggle_led();
-			/* delay */
-			delay_us(10000);
-		}
-
-		RFM69_wakeup_and_send();
-
-		/* Turn the LED OFF */
-		HAL_BRD_set_LED( OFF );
-
-		/* Disable the I2C peripheral to save power */
-		HAL_I2C_de_init();
-		RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1,  DISABLE);
-		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, DISABLE);
-		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, DISABLE);
-
-		/* Enters STANDBY mode */
-		PWR_EnterSTANDBYMode();
-
-#else
-
-		/* Handle the serial messages */
-		SERIAL_msg_handler();
-
-		if( HAL_BRD_get_rtc_trigger_status() == TRUE )
-		{
-
 			u32_t i = 0u;
 
 			/* LED blink */
@@ -114,16 +69,54 @@ int main(void)
 				/* Toggle LED which connected to PC13*/
 				HAL_BRD_Toggle_led();
 				/* delay */
-				delay_us(10000);
+				delay_us(30000);
 			}
 
 			RFM69_wakeup_and_send();
 
-			/* Set the trigger back to false */
-			HAL_BRD_set_rtc_trigger_status( FALSE );
-		}
+			/* Turn the LED OFF */
+			HAL_BRD_set_LED( OFF );
 
-#endif
+			/* Disable the I2C peripheral and clock to save power */
+			HAL_I2C_de_init();
+
+			/* Disable the ISPI peripheral and clock to save power */
+			HAL_SPI_de_init();
+
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, DISABLE);
+			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, DISABLE);
+
+			/* Enable the wakeup pin */
+			PWR_WakeUpPinCmd(ENABLE);
+
+			/* Enters STANDBY mode */
+			PWR_EnterSTANDBYMode();
+		}
+		else
+		{
+			/* Handle the serial messages */
+			SERIAL_msg_handler();
+
+			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
+			{
+
+				u32_t i = 0u;
+
+				/* LED blink */
+				for(i=0; i<2; i++)
+				{
+					/* Toggle LED which connected to PC13*/
+					HAL_BRD_Toggle_led();
+					/* delay */
+					delay_us(30000);
+				}
+
+				RFM69_wakeup_and_send();
+
+				/* Set the trigger back to false */
+				HAL_BRD_set_rtc_trigger_status( FALSE );
+			}
+		}
 
 		if( ctr >= U32_T_MAX)
 		{
@@ -143,14 +136,6 @@ int main(void)
 void SysTick_Handler( void )
 {
 	delay_timer--;
-
-	task_timer_s += 1u;
-
-	if( task_timer_s >= 20u )
-	{
-		/* reset the task timer */
-		task_timer_s = 0u;
-	}
 }
 
 
@@ -186,7 +171,7 @@ void delay_us(u16_t us)
 			"1: \n\t"\
 			"SUB R0, #1\n\t"\
 			"CMP R0, #0\n\t"\
-			"BNE 1b \n\t" : : [loops] "r" (9*us) : "memory"\
+			"BNE 1b \n\t" : : [loops] "r" (10*us) : "memory"\
 		      );
 }
 
