@@ -69,7 +69,7 @@ int main(void)
 				/* Toggle LED which connected to PC13*/
 				HAL_BRD_Toggle_led();
 				/* delay */
-				delay_us(10000);
+				delay_us(30000);
 			}
 
 			RFM69_wakeup_and_send();
@@ -90,7 +90,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			//PWR_EnterSTANDBYMode();
+			PWR_EnterSTANDBYMode();
 		}
 		else
 		{
@@ -108,7 +108,7 @@ int main(void)
 					/* Toggle LED which connected to PC13*/
 					HAL_BRD_Toggle_led();
 					/* delay */
-					delay_us(10000);
+					delay_us(30000);
 				}
 
 				RFM69_wakeup_and_send();
@@ -171,7 +171,7 @@ void delay_us(u16_t us)
 			"1: \n\t"\
 			"SUB R0, #1\n\t"\
 			"CMP R0, #0\n\t"\
-			"BNE 1b \n\t" : : [loops] "r" (9*us) : "memory"\
+			"BNE 1b \n\t" : : [loops] "r" (10*us) : "memory"\
 		      );
 }
 

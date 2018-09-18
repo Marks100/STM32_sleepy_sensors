@@ -59,9 +59,6 @@ volatile FLASH_Status FLASHStatus = FLASH_COMPLETE;
 ***************************************************************************************************/
 void NVM_init(void)
 {
-	//RCC_AHBPeriphClockCmd( RCC_AHBPeriph_SRAM, ENABLE);
-	//RCC_APB2PeriphClockCmd( RCC_APB2Periph_AFIO, ENABLE);
-
     /* copy across the stored NVM data to a ram block*/
      STDC_memcpy( &NVM_info_s, (u8_t*)NVM_FLASH_PTR_START_ADDR, sizeof( NVM_info_s ) );
 
