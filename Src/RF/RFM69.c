@@ -70,12 +70,18 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
 ***************************************************************************************************/
 void RFM69_wakeup_and_send( void )
 {
+	u8_t read_data[50];
+
 	/* power up the RF chip */
 	RFM69_set_enable_pin_state( HIGH );
+
+	RFM69_set_reset_pin_state( HIGH );
+    delay_us(200);
     RFM69_set_reset_pin_state( LOW );
 
+
     /* Give the RF chip time to stabilise */
-    delay_us(1000);
+    delay_us(6000);
 
 	/* Go through the elements and reset them to 0xFF */
 	STDC_memset( &RFM69_data_packet_s, 0xFF, sizeof( RFM69_data_packet_st ) );
@@ -90,6 +96,8 @@ void RFM69_wakeup_and_send( void )
 	{
 		/* Fire down a config of registers */
 		RFM69_set_configuration( RFM69_433Mhz_OOK, RFM69_433Mhz_CONFIGURATION_SIZE );
+
+		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
 		/* Put the chip into standby mode ( should be be default */
 		RFM69_set_operating_mode( RFM69_STANDBY_MODE );
@@ -107,8 +115,11 @@ void RFM69_wakeup_and_send( void )
 		STDC_basic_assert();
 	}
 
+
 	/* Fill the buffer */
 	RFM69_Send_frame( send_data, sizeof( send_data ) );
+
+	RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
 	/* Put the chip into TX mode */
 	RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );

@@ -27,6 +27,7 @@ void HAL_BRD_init( void )
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
 	/* Configure the GPIOs */
@@ -43,6 +44,18 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	/* Setup the RF( RFM69 ) NCS Pin ( PB1 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* Setup the RF ( RFM69 ) RESET Pin ( PB11 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	delay_us(5000);
 
@@ -80,6 +93,9 @@ void HAL_BRD_init( void )
 		/* Add to NVIC */
 		NVIC_Init(&NVIC_InitStruct);
 	}
+
+	HAL_BRD_RFM69_spi_slave_select( HIGH );
+	HAL_BRD_RFM69_set_reset_Pin_state( LOW );
 
 
 	HAL_BRD_rtc_triggered_s = TRUE;
@@ -241,11 +257,11 @@ void HAL_BRD_RFM69_set_reset_Pin_state( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, HIGH );
 	}
 	else
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, LOW );
 	}
 }
 
@@ -266,11 +282,11 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, HIGH );
 	}
 	else
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, LOW );
 	}
 }
 
