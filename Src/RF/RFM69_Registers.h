@@ -45,7 +45,6 @@
 /* Default register set 915Mhz */
 const RFM69_register_data_st RFM69_default_register_set[] =
 {
-    { REGFIFO          ,0x00 },			
     { REGOPMODE        ,0x04 },         
     { REGDATAMODUL     ,0x00 },         
     { REGBITRATEMSB    ,0x1A },         
@@ -137,7 +136,6 @@ const RFM69_register_data_st RFM69_default_register_set[] =
 /* 433Mhz OOK register set */
 const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
 {
-    { REGFIFO          ,0x00 },
     { REGOPMODE        ,0x04 },
     { REGDATAMODUL     ,0x08 },         //Packet Mode | OOK
     { REGBITRATEMSB    ,0x1A },         //4.8Kbps Bitrate

@@ -492,6 +492,40 @@ void SERIAL_msg_handler( void )
 																										  NVM_info_s.NVM_generic_data_blk_s.sleep_time );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
+		else if ( strstr(strlwr(SERIAL_rx_buf_s), "test" ) != 0)
+		{
+			u8_t i;
+
+			if( RFM69_read_version_num() != RFM69_VERSION )
+			{
+			   STDC_basic_assert();
+
+			   sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 version number failed....fuck!! :( \r\n" );
+			   SERIAL_Send_data( SERIAL_tx_buf_s );
+			}
+			else
+			{
+				sprintf( SERIAL_tx_buf_s, "\r\nVersion number check passed\r\nWriting down the RFM69 Register config....\r\n" );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+				STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+				/* Fire down a config of registers */
+				RFM69_set_configuration( RFM69_433Mhz_OOK, 90 );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 Register config....\r\n" );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+				STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+				u8_t read_data[90];
+				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+
+				for( i = 1u; i < 91; i++ )
+				{
+					sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is %02X", i, read_data[i-1] );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+				}
+			}
+		}
 		else
 		{
 			SERIAL_Send_data( SERIAL_invalid_cmd_message_s );

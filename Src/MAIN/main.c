@@ -99,7 +99,6 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
-
 				u32_t i = 0u;
 
 				/* LED blink */
@@ -111,7 +110,7 @@ int main(void)
 					delay_us(30000);
 				}
 
-				RFM69_wakeup_and_send();
+				//RFM69_wakeup_and_send();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );

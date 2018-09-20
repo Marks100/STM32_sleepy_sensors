@@ -79,7 +79,6 @@ void RFM69_wakeup_and_send( void )
     delay_us(200);
     RFM69_set_reset_pin_state( LOW );
 
-
     /* Give the RF chip time to stabilise */
     delay_us(6000);
 
