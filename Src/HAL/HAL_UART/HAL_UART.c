@@ -374,71 +374,81 @@ void SERIAL_msg_handler( void )
 				*sub_string = strstr(SERIAL_rx_buf_s, "tx") + 3;
 				
 				RFM69_wakeup_and_send();
-
 			}
-			else if( ( strstr(sub_string, "reg") != 0 ) )
+			else if( ( strstr(sub_string, "read") != 0 ) )
 			{
-				u8_t rfm69_regs[ REGTEMP2 - 1];
+				u8_t read_data[79];
+				u8_t i;
 
-				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, rfm69_regs, sizeof( rfm69_regs ) );
+				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
-				STDC_memset(rfm69_regs, 0x55, sizeof(rfm69_regs) );
+				for( i = 0u; i < 79; i++ )
+				{
+					sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", i+1, read_data[i] );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+				}
 
-				sprintf( SERIAL_tx_buf_s, "RF Regs starting at REGOPMODE: \r\n");
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r", \
-						rfm69_regs[0], rfm69_regs[1], rfm69_regs[2], rfm69_regs[3], rfm69_regs[4], rfm69_regs[5],
-						rfm69_regs[6], rfm69_regs[7], rfm69_regs[8], rfm69_regs[9], rfm69_regs[10] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_regs[11], rfm69_regs[12], rfm69_regs[13], rfm69_regs[14], rfm69_regs[15], rfm69_regs[16],
-						rfm69_regs[17], rfm69_regs[18], rfm69_regs[19], rfm69_regs[20], rfm69_regs[21] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_regs[22], rfm69_regs[23], rfm69_regs[24], rfm69_regs[25], rfm69_regs[26], rfm69_regs[27],
-						rfm69_regs[28], rfm69_regs[29], rfm69_regs[30], rfm69_regs[31], rfm69_regs[32] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_regs[33], rfm69_regs[34], rfm69_regs[35], rfm69_regs[36], rfm69_regs[37], rfm69_regs[38],
-						rfm69_regs[39], rfm69_regs[40], rfm69_regs[41], rfm69_regs[42], rfm69_regs[43] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_regs[44], rfm69_regs[45], rfm69_regs[46], rfm69_regs[47], rfm69_regs[48], rfm69_regs[49],
-						rfm69_regs[0], rfm69_regs[51], rfm69_regs[52], rfm69_regs[53], rfm69_regs[54] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r\n",
-						rfm69_regs[55], rfm69_regs[56], rfm69_regs[57], rfm69_regs[58], rfm69_regs[59], rfm69_regs[60],
-						rfm69_regs[61], rfm69_regs[2], rfm69_regs[63], rfm69_regs[64], rfm69_regs[65] );
+				sprintf( SERIAL_tx_buf_s, "\r\n" );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
 			}
 			else if( ( strstr(sub_string, "fifo") != 0 ) )
 			{
 				u8_t rfm69_fifo_regs[ RFM69_MAX_DATA_LEN ];
+				u8_t i;
 
 				RFM69_read_FIFO_register( rfm69_fifo_regs );
 
-				STDC_memset(rfm69_fifo_regs, 0x55, sizeof(rfm69_fifo_regs) );
+				for( i = 0u; i < RFM69_MAX_DATA_LEN; i++ )
+				{
+					sprintf( SERIAL_tx_buf_s, "\r\nFifo Reg %02d is %02X", i, rfm69_fifo_regs[i] );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+				}
 
-				sprintf( SERIAL_tx_buf_s, "RF FIFO:\r\n0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_fifo_regs[0], rfm69_fifo_regs[1], rfm69_fifo_regs[2], rfm69_fifo_regs[3], rfm69_fifo_regs[4],
-						rfm69_fifo_regs[5], rfm69_fifo_regs[6], rfm69_fifo_regs[7], rfm69_fifo_regs[8], rfm69_fifo_regs[9] );
+				sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
 
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r",
-						rfm69_fifo_regs[10], rfm69_fifo_regs[11], rfm69_fifo_regs[12], rfm69_fifo_regs[13], rfm69_fifo_regs[14],
-						rfm69_fifo_regs[15], rfm69_fifo_regs[16], rfm69_fifo_regs[17], rfm69_fifo_regs[18], rfm69_fifo_regs[19] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
+			}
+			else if( ( strstr(sub_string, "test") != 0 ) )
+			{
+				u8_t i;
 
-				sprintf( SERIAL_tx_buf_s, "0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x 0x%2x\r\n",
-						rfm69_fifo_regs[20], rfm69_fifo_regs[21], rfm69_fifo_regs[22], rfm69_fifo_regs[23], rfm69_fifo_regs[24],
-						rfm69_fifo_regs[25], rfm69_fifo_regs[26], rfm69_fifo_regs[27], rfm69_fifo_regs[28], rfm69_fifo_regs[29] );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
+				if( RFM69_read_version_num() != RFM69_VERSION )
+				{
+				   STDC_basic_assert();
+
+				   sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 version number failed....fuck!! :( \r\n" );
+				   SERIAL_Send_data( SERIAL_tx_buf_s );
+				}
+				else
+				{
+					sprintf( SERIAL_tx_buf_s, "\r\nVersion number check passed\r\nWriting down the RFM69 Register config....\r\n" );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+					/* Fire down a config of registers */
+					RFM69_set_configuration( RFM69_433Mhz_OOK );
+
+					sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 Register config....\r\n" );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+					u8_t read_data[79];
+					RFM69_register_data_st write_data[79];
+
+					RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+					RFM69_get_configuration( RFM69_433Mhz_OOK, &write_data );
+
+					for( i = 0u; i < 79; i++ )
+					{
+						sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is write:%02X read:%02X", write_data[i].RFM69_register, write_data[i].register_data, read_data[i] );
+						SERIAL_Send_data( SERIAL_tx_buf_s );
+					}
+
+					sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+
+
+				}
 			}
 			else
 			{
@@ -494,37 +504,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if ( strstr(strlwr(SERIAL_rx_buf_s), "test" ) != 0)
 		{
-			u8_t i;
 
-			if( RFM69_read_version_num() != RFM69_VERSION )
-			{
-			   STDC_basic_assert();
-
-			   sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 version number failed....fuck!! :( \r\n" );
-			   SERIAL_Send_data( SERIAL_tx_buf_s );
-			}
-			else
-			{
-				sprintf( SERIAL_tx_buf_s, "\r\nVersion number check passed\r\nWriting down the RFM69 Register config....\r\n" );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-				STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
-
-				/* Fire down a config of registers */
-				RFM69_set_configuration( RFM69_433Mhz_OOK, 90 );
-
-				sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 Register config....\r\n" );
-				SERIAL_Send_data( SERIAL_tx_buf_s );
-				STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
-
-				u8_t read_data[90];
-				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
-
-				for( i = 1u; i < 91; i++ )
-				{
-					sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is %02X", i, read_data[i-1] );
-					SERIAL_Send_data( SERIAL_tx_buf_s );
-				}
-			}
 		}
 		else
 		{

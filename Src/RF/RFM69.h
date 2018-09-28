@@ -41,8 +41,9 @@
 #define ENCRYPT_KEY_SIZE        16u
 #define FREQ_STEP               61u
 #define RFM69_MAX_DATA_LEN      66u
-#define RFM69_MAX_PAYLOAD_LEN   64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
+#define RFM69_MAX_PAYLOAD_LEN   61u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
 
+#define NODE_OWN_ADDRESS	    0x01
 
 #define BIT_MASK_1_BIT 1
 #define BIT_MASK_2_BIT 3
@@ -50,34 +51,36 @@
 #define BIT_MASK_4_BIT 15
 
 /* BIT Pneumonics ( shift patterns ) */
-#define SLEEP                0
-#define STDBY                1
-#define FS                   2
-#define TX                   3
-#define RX                   4
-#define LISTEN_ABORT         5
-#define LISTENON             6
-#define SEQUENCER_OFF        7
-#define PACKET_FORMAT        7
-#define CLK_OUT_OFF          7
-#define TEMP_MEASURE_START   3
-#define TEMP_MEASURE_RUNNING 2
-#define MODULATION_TYPE      3
-#define DATA_PROCESS_MODE    5
-#define LISTEN_IDLE_RES      6
-#define LISTEN_RX_RES        4
-#define PA0_ON               7
-#define PA1_ON               6
-#define PA2_ON               5
-#define RSSI_START           0
-#define AES_ON               0
-#define DIO0                 6
-#define DIO1                 4
-#define DIO2                 2
-#define DIO3                 0
-#define DIO4                 6
-#define DIO5                 4
+#define SLEEP                0x00
+#define STDBY                0x04
+#define FS                   0x08
+#define TX                   0x0C
+#define RX                   0x10
+#define LISTEN_ABORT         0x20
+#define LISTENON             0x40
+#define SEQUENCER_OFF        0x80
+#define PACKET_FORMAT        0x80
+#define CLK_OUT_OFF          0x07
+#define TEMP_MEASURE_START   0x08
+#define TEMP_MEASURE_RUNNING 0x04
+#define MODULATION_TYPE      0x18
+#define DATA_PROCESS_MODE    0x60
+#define LISTEN_IDLE_RES      0xC0
+#define LISTEN_RX_RES        0x30
+#define PA0_ON               0x80
+#define PA1_ON               0x40
+#define PA2_ON               0x20
+#define RSSI_START           0x01
+#define AES_ON               0x01
+#define DIO0                 0xC0
+#define DIO1                 0x30
+#define DIO2                 0x0C
+#define DIO3                 0x03
+#define DIO4                 0xC0
+#define DIO5                 0x30
 
+
+#define COURSE_TEMP_COEF    -90 // puts the temperature reading in the ballpark, user can fine tune the returned value
 
 
 /***************************************************************************************************
@@ -249,6 +252,7 @@ typedef enum
     READ_FROM_CHIP              = 0x03,     //! Reads 1 byte of data from a specific register
     READ_FIFO_FROM_CHIP         = 0x04,     //! Reads data from the FIFO buffer
     READ_FROM_CHIP_BURST_MODE   = 0x05,     //! Reads data from a number of consecutive registers
+    WRITE_TO_CHIP_BURST_MODE_CONF   = 0x06,     //! writes data from a config structure
     RFM69_INSTRUCTION_MAX                   //! RFM69_INSTRUCTION_MAX
 } RFM69_instruction_et;
 
@@ -330,7 +334,8 @@ typedef struct
 void          RFM69_wakeup_and_send( void ); //( init )
 pass_fail_et  RFM69_read_registers( RFM69_instruction_et instruction, RFM69_registers_et address, u8_t read_data[], u8_t num_bytes );
 pass_fail_et  RFM69_write_registers( RFM69_instruction_et instruction, RFM69_registers_et address, u8_t write_data[], u8_t num_bytes );
-pass_fail_et  RFM69_set_configuration( RFM69_static_configuration_et config, u16_t len );
+pass_fail_et  RFM69_set_configuration( RFM69_static_configuration_et config );
+void 		  RFM69_get_configuration( RFM69_static_configuration_et config, RFM69_register_data_st* data_p );
 void          RFM69_set_reset_pin_state( low_high_et state );
 void 		  RFM69_set_enable_pin_state( low_high_et state );
 
@@ -346,11 +351,15 @@ false_true_et RFM69_set_bit_rate( RFM69_predefined_bitrates_et bit_rate );
 false_true_et RFM69_set_listen_time_resolution( RFM69_listen_state_et state, RFM69_listen_time_et listen_time_resolution );
 false_true_et RFM69_set_listen_time( RFM69_listen_state_et state, u16_t time );
 false_true_et RFM69_set_tx_power_level( u8_t level );
+false_true_et RFM69_set_own_node_address( u8_t address );
+false_true_et RFM69_set_own_network_id( u8_t network_id );
 false_true_et RFM69_trigger_RSSi_measurement( void );
 false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state );
 false_true_et RFM69_set_DIO_mapping( u8_t pin, RFM69_DIO_map_mode_et mode );
 false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len );
-false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len );
+false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address );
+void RFM69_update_packet_sent( false_true_et state );
+
 
 /* Reads */
 u8_t RFM69_read_version_num( void );

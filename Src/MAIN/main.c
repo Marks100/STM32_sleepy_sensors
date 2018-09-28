@@ -90,7 +90,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			PWR_EnterSTANDBYMode();
+			//PWR_EnterSTANDBYMode();
 		}
 		else
 		{
@@ -110,7 +110,7 @@ int main(void)
 					delay_us(30000);
 				}
 
-				//RFM69_wakeup_and_send();
+				RFM69_wakeup_and_send();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );
