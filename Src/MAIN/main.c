@@ -44,9 +44,6 @@ int main(void)
 	/* Initialise the RTC */
 	RTC_ext_init();
 
-	/* Turn the LED OFF */
-	HAL_BRD_set_LED( OFF );
-
 	if( debug_mode == ENABLE )
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
@@ -63,19 +60,7 @@ int main(void)
 		{
 			u32_t i = 0u;
 
-			/* LED blink */
-			for(i=0; i<2; i++)
-			{
-				/* Toggle LED which connected to PC13*/
-				HAL_BRD_Toggle_led();
-				/* delay */
-				delay_us(30000);
-			}
-
 			RFM69_wakeup_and_send();
-
-			/* Turn the LED OFF */
-			HAL_BRD_set_LED( OFF );
 
 			/* Disable the I2C peripheral and clock to save power */
 			HAL_I2C_de_init();
@@ -90,7 +75,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			//PWR_EnterSTANDBYMode();
+			PWR_EnterSTANDBYMode();
 		}
 		else
 		{

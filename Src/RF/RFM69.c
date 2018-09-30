@@ -88,6 +88,8 @@ void RFM69_wakeup_and_send( void )
     /* Give the RF chip time to stabilise */
     delay_us(6000);
 
+    RFM69_set_operating_mode( RFM69_SLEEP_MODE );
+
 	/* Go through the elements and reset them to 0xFF */
 	STDC_memset( &RFM69_data_packet_s, 0xFF, sizeof( RFM69_data_packet_st ) );
 
@@ -124,6 +126,8 @@ void RFM69_wakeup_and_send( void )
 	RFM69_Send_frame( send_data, sizeof( send_data ), 1 );
 
 	RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+
+	RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 }
 
 
@@ -1194,12 +1198,8 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 
     RFM69_write_to_FIFO( tx_buffer, len + 2 );
 
-    //RFM69_read_FIFO_register( test_buffer );
-
     /* Set to TX mode */
     RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );
-
-    //RFM69_read_FIFO_register( test_buffer );
 
     /* The packet is now being sent */
     while( RFM69_packet_sent_s == FALSE );

@@ -147,7 +147,7 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGLISTEN2       ,0xF5 },
     { REGLISTEN3       ,0x20 },
 	{ REGVERSION       ,0x24 },
-	{ REGPALEVEL       ,0x9F },			//Medium output power on PA0
+	{ REGPALEVEL       ,0x85 },			//Medium output power on PA0
     { REGPARAMP        ,0x09 },
     { REGOCP           ,0x1A },         //OCP
 	{ RESERVED14       ,0x40 }, 

@@ -33,17 +33,20 @@ void HAL_BRD_init( void )
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Configure the GPIO_LED pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-	/* Configure the DEBUG selector pin */
+	/* Configure the DEBUG selector pin, its important that this comes first */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	/* small delay to allow the button tp settle */
+	delay_us(500);
+
+	debug_mode = HAL_BRD_read_debug_pin();
+
+	#if( AUTO_DEBUG_MODE == 1 )
+		debug_mode = ENABLE;
+	#endif
 
 	/* Setup the RF( RFM69 ) NCS Pin ( PB1 ) */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
@@ -57,16 +60,17 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	delay_us(500);
-
-	debug_mode = HAL_BRD_read_debug_pin();
-
-#if( AUTO_DEBUG_MODE == 1 )
-	debug_mode = ENABLE;
-#endif
-
 	if( debug_mode == ENABLE )
 	{
+		/* Configure the GPIO_LED pin */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+		/* Turn the led off straight away to save power */
+		HAL_BRD_set_LED( OFF );
+
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -129,7 +133,6 @@ void HAL_BRD_init( void )
 
 	HAL_BRD_RFM69_spi_slave_select( HIGH );
 	HAL_BRD_RFM69_set_reset_Pin_state( LOW );
-
 
 	HAL_BRD_rtc_triggered_s = TRUE;
 }
