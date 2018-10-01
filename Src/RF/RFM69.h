@@ -37,13 +37,13 @@
 ***************************************************************************************************/
 #define RFM69_VERSION           ( 0x24 )
 #define RFM69_WRITE_ACCESS      ( 0x80 )
-#define MAX_TX_POWER_LEVEL      31u
-#define ENCRYPT_KEY_SIZE        16u
-#define FREQ_STEP               61u
-#define RFM69_MAX_DATA_LEN      66u
-#define RFM69_MAX_PAYLOAD_LEN   61u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
+#define RFM69_MAX_TX_POWER_LEVEL 31u
+#define ENCRYPT_KEY_SIZE         16u
+#define FREQ_STEP                61u
+#define RFM69_MAX_DATA_LEN       66u
+#define RFM69_MAX_PAYLOAD_LEN    61u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
 
-#define NODE_OWN_ADDRESS	    0x01
+#define NODE_OWN_ADDRESS	     0x01
 
 #define BIT_MASK_1_BIT 1
 #define BIT_MASK_2_BIT 3
@@ -256,16 +256,6 @@ typedef enum
     RFM69_INSTRUCTION_MAX                   //! RFM69_INSTRUCTION_MAX
 } RFM69_instruction_et;
 
-
-typedef enum
-{
-    RFM69_MIN_POWER = 0,
-    RFM69_MED0_POWER,
-    RFM69_MED1_POWER,
-    RFM69_MAX_POWER
-} RFM69_PA_level_et;
-
-
 typedef enum
 {
     RFM_69_64us = 1u,
@@ -341,7 +331,7 @@ void 		  RFM69_set_enable_pin_state( low_high_et state );
 
 /* Writes */
 false_true_et RFM69_set_clock_out( disable_enable_et state );
-false_true_et RFM69_set_PA_level( RFM69_PA_level_et level );
+u8_t 		  RFM69_set_PA_level( u8_t level );
 false_true_et RFM69_set_operating_mode( RFM69_operating_modes_et operating_mode );
 false_true_et RFM69_set_packet_mode( RFM69_packet_modes_et operating_mode );
 false_true_et RFM69_set_payload_length( u8_t num_bytes );
@@ -350,7 +340,6 @@ false_true_et RFM69_set_data_mode( RFM69_data_mode_et mode );
 false_true_et RFM69_set_bit_rate( RFM69_predefined_bitrates_et bit_rate );
 false_true_et RFM69_set_listen_time_resolution( RFM69_listen_state_et state, RFM69_listen_time_et listen_time_resolution );
 false_true_et RFM69_set_listen_time( RFM69_listen_state_et state, u16_t time );
-false_true_et RFM69_set_tx_power_level( u8_t level );
 false_true_et RFM69_set_own_node_address( u8_t address );
 false_true_et RFM69_set_own_network_id( u8_t network_id );
 false_true_et RFM69_trigger_RSSi_measurement( void );

@@ -28,15 +28,16 @@
 #include "HAL_BRD.h"
 #include "HAL_SPI.h"
 #include "main.h"
+#include "nvm.h"
 #include "RFM69.h"
 #include "RFM69_Registers.h"
-
-#include "main.h"
 
 
 #define STDC_MODULE_ID   STDC_MOD_RF_DECODE
 
-//STATIC u8_t  RF_status_register;
+
+
+extern NVM_info_st NVM_info_s;
 
 STATIC RFM69_data_packet_st RFM69_data_packet_s;
 
@@ -48,6 +49,7 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
 };
 
 false_true_et RFM69_packet_sent_s = FALSE;
+u8_t RFM69_tx_power_level_s;
 
 
 
@@ -61,6 +63,14 @@ false_true_et RFM69_packet_sent_s = FALSE;
 /***************************************************************************************************
 **                              Public Functions                                                  **
 ***************************************************************************************************/
+
+void RFM69_init( void )
+{
+	RFM69_tx_power_level_s = NVM_info_s.NVM_generic_data_blk_s.tx_power_level;
+}
+
+
+
 /*!
 ****************************************************************************************************
 *
@@ -103,6 +113,8 @@ void RFM69_wakeup_and_send( void )
 	{
 		/* Fire down a config of registers */
 		RFM69_set_configuration( RFM69_433Mhz_OOK );
+
+		RFM69_set_PA_level( RFM69_tx_power_level_s );
 
 		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
@@ -632,48 +644,38 @@ false_true_et RFM69_set_clock_out( disable_enable_et state )
 *
 *   \author         MS
 *
-*   \return         result - pass or fail
+*   \return         u8_t power level
 *
 *******************************************************************************
 */
-false_true_et RFM69_set_PA_level( RFM69_PA_level_et level )
+u8_t RFM69_set_PA_level( u8_t level )
 {
- 	u8_t register_val;
+ 	u8_t register_val = 0;
 
- 	/* Read back the current register status, modify it and then rewrite it back down */
-	RFM69_read_registers( READ_FROM_CHIP, REGPALEVEL, &register_val, 1 );
-
-#ifdef RFM69W
+#if defined RFM69W
     register_val |= 0x80;
+#elif defined RFM69HW
+    register_val |= 0x60;
+#elif defined RFM69HW_SUPER
+    register_val |= 0xE0;
 #endif
 
-    /* Clear the current power level setting */
-    register_val = ( register_val & 0x00 );
+    if( level > RFM69_MAX_TX_POWER_LEVEL )
+    {
+    	level = RFM69_MAX_TX_POWER_LEVEL;
+    }
 
-	switch ( level )
-	{
-        case RFM69_MIN_POWER:
-            break;
+    /* "OR" in the requested level between 0 and 31 */
+    register_val |= level;
 
-        case RFM69_MED0_POWER:
-            register_val |= 0x0F;
-            break;
-
-        case RFM69_MED1_POWER:
-            register_val |= 0x10;
-            break;
-
-        case RFM69_MAX_POWER:
-            register_val |= 0x1f;
-            break;
-
-        default:
-            break;
-	}
+	RFM69_tx_power_level_s = level;
 
     RFM69_write_registers( WRITE_TO_CHIP, REGPALEVEL, &register_val, 1 );
 
-    return( PASS );
+    /* Read back the current register status */
+	RFM69_read_registers( READ_FROM_CHIP, REGPALEVEL, &register_val, 1 );
+
+    return( level );
 }
 
 
@@ -995,37 +997,6 @@ false_true_et RFM69_set_listen_time( RFM69_listen_state_et state, u16_t time )
 
     return ( status );
 }
-
-
-
-
-
-false_true_et RFM69_set_tx_power_level( u8_t level )
-{
-    /* When using the NON HIGH power version of the module the power can be set from -18db to +17db ;),
-    and only PA0 needs to be used for this...
-    Add support later for the HP versions....  */
-
-    u8_t register_val;
-    false_true_et status = FALSE;
-
-    if( level > MAX_TX_POWER_LEVEL )
-    {
-        level = MAX_TX_POWER_LEVEL;
-    }
-
-    register_val = level;
-
-    /* There is an offset of -18db applied here */
-    register_val |= ( PA0_ON );
-
-    RFM69_write_registers( WRITE_TO_CHIP, REGPALEVEL, &register_val, 1 );
-    status = TRUE;
-
-    return ( status );
-}
-
-
 
 
 

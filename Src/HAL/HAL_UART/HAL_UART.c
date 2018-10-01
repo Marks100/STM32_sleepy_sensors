@@ -406,7 +406,34 @@ void SERIAL_msg_handler( void )
 
 				sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
+			}
+			else if( ( strstr(sub_string, "power") != 0 ) )
+			{
+				sub_string = strstr(SERIAL_rx_buf_s, "rf") + 9;
 
+				val = atoi(sub_string);
+
+				if( val > RFM69_MAX_TX_POWER_LEVEL )
+				{
+					sprintf( SERIAL_tx_buf_s, "\r\nRF TX power selection %d is not valid\r\nAuto adjusting the RF TX power selection...\r\n", val );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+
+					/* Default them to config */
+					val = RFM69_set_PA_level;
+				}
+
+				sprintf( SERIAL_tx_buf_s, "\r\nRF TX power %d selected\r\n", val );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				RFM69_set_PA_level( val );
+
+				NVM_info_s.NVM_generic_data_blk_s.tx_power_level = val;
+				NVM_request_flush();
+
+				sprintf( SERIAL_tx_buf_s, "\r\nActual RF TX power read back : 0x%02X \r\n", val );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				RFM69_wakeup_and_send();
 			}
 			else if( ( strstr(sub_string, "test") != 0 ) )
 			{
@@ -446,8 +473,6 @@ void SERIAL_msg_handler( void )
 
 					sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
-
-
 				}
 			}
 			else

@@ -44,6 +44,9 @@ int main(void)
 	/* Initialise the RTC */
 	RTC_ext_init();
 
+	/* Initialise the RFM69 variables */
+	RFM69_init();
+
 	if( debug_mode == ENABLE )
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
