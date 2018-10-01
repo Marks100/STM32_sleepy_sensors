@@ -118,8 +118,8 @@ void RFM69_wakeup_and_send( void )
 
 		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
-		/* Put the chip into standby mode ( should be be default )*/
-		RFM69_set_operating_mode( RFM69_STANDBY_MODE );
+		/* Put the chip into sleep mode */
+		RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 
 		/* this sets DIO1 to be "Packet Sent" indicator */
 		RFM69_set_DIO_mapping( 0, RFM69_DIO_MODE_0 );
