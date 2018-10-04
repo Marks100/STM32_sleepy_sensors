@@ -27,29 +27,50 @@ void HAL_BRD_init( void )
 	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Configure the GPIO_LED pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-	/* Configure the DEBUG selector pin */
+	/* Configure the DEBUG selector pin, its important that this comes first */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	delay_us(5000);
+	/* small delay to allow the button tp settle */
+	delay_us(500);
 
 	debug_mode = HAL_BRD_read_debug_pin();
 
+	#if( AUTO_DEBUG_MODE == 1 )
+		debug_mode = ENABLE;
+	#endif
+
+	/* Setup the RF( RFM69 ) NCS Pin ( PB1 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* Setup the RF ( RFM69 ) RESET Pin ( PB11 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
 	if( debug_mode == ENABLE )
 	{
+		/* Configure the GPIO_LED pin */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+		GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+		/* Turn the led off straight away to save power */
+		HAL_BRD_set_LED( OFF );
+
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -81,6 +102,37 @@ void HAL_BRD_init( void )
 		NVIC_Init(&NVIC_InitStruct);
 	}
 
+	/* Enable the "RFM69 packet sent" interrupt on pin A1 */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource1 );
+
+	EXTI_InitTypeDef EXTI_InitStruct;
+
+	EXTI_InitStruct.EXTI_Line = EXTI_Line1 ;
+	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
+	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
+	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
+	EXTI_Init(&EXTI_InitStruct);
+
+	NVIC_InitTypeDef NVIC_InitStruct;
+
+	/* Add IRQ vector to NVIC */
+	NVIC_InitStruct.NVIC_IRQChannel = EXTI1_IRQn;
+	/* Set priority */
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
+	/* Set sub priority */
+	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
+	/* Enable interrupt */
+	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
+	/* Add to NVIC */
+	NVIC_Init(&NVIC_InitStruct);
+
+	HAL_BRD_RFM69_spi_slave_select( HIGH );
+	HAL_BRD_RFM69_set_reset_Pin_state( LOW );
 
 	HAL_BRD_rtc_triggered_s = TRUE;
 }
@@ -241,11 +293,11 @@ void HAL_BRD_RFM69_set_reset_Pin_state( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, HIGH );
 	}
 	else
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, LOW );
 	}
 }
 
@@ -266,11 +318,11 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, HIGH );
 	}
 	else
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, LOW );
 	}
 }
 
@@ -394,6 +446,21 @@ void EXTI0_IRQHandler(void)
 		HAL_BRD_rtc_triggered_s = TRUE;
 	}
 }
+
+
+void EXTI1_IRQHandler(void)
+{
+	/* Make sure that interrupt flag is set */
+	if ( EXTI_GetFlagStatus(EXTI_Line1) != RESET )
+	{
+		/* Now we keep track of the interrupt edge */
+		/* Clear interrupt flag */
+		EXTI_ClearITPendingBit(EXTI_Line1);
+
+		RFM69_update_packet_sent( TRUE );
+	}
+}
+
 
 
 

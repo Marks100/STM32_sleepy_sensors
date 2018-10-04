@@ -89,7 +89,6 @@
     <File name="Src/NVM/NVM.c" path="../Src/NVM/NVM.c" type="1"/>
     <File name="Src/PROJ_CONFIG/PROJ_config.h" path="../Src/PROJ_CONFIG/PROJ_config.h" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/C_defs.h" path="../Src/COMMON_MODULES/xINC/C_defs.h" type="1"/>
-    <File name="Src/VERSIONS/VERSIONS.c" path="../Src/VERSIONS/VERSIONS.c" type="1"/>
     <File name="stm_lib/inc/stm32f10x_pwr.h" path="stm_lib/inc/stm32f10x_pwr.h" type="1"/>
     <File name="Src/HAL/HAL_I2C/HAL_I2C.c" path="../Src/HAL/HAL_I2C/HAL_I2C.c" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/TPMS_std.h" path="../Src/COMMON_MODULES/xINC/TPMS_std.h" type="1"/>
@@ -107,18 +106,17 @@
     <File name="Src/HAL/HAL_I2C/HAL_I2C.h" path="../Src/HAL/HAL_I2C/HAL_I2C.h" type="1"/>
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.tmpl" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.tmpl" type="1"/>
     <File name="Src/RF/RFM69.h" path="../Src/RF/RFM69.h" type="1"/>
-    <File name="Src/COMMON_MODULES/xINC/SELMATH/SELMATH.o" path="../Src/COMMON_MODULES/xINC/SELMATH/SELMATH.o" type="1"/>
     <File name="Src/HAL/HAL_BRD/HAL_BRD.o" path="../Src/HAL/HAL_BRD/HAL_BRD.o" type="1"/>
+    <File name="Src/COMMON_MODULES/xINC/SELMATH/SELMATH.o" path="../Src/COMMON_MODULES/xINC/SELMATH/SELMATH.o" type="1"/>
     <File name="stdio/printf.c" path="stdio/printf.c" type="1"/>
     <File name="stm_lib/src/stm32f10x_bkp.c" path="stm_lib/src/stm32f10x_bkp.c" type="1"/>
     <File name="cmsis_boot/startup/startup_stm32f10x_md.c" path="cmsis_boot/startup/startup_stm32f10x_md.c" type="1"/>
-    <File name="Src/VERSIONS/VERSIONS.h" path="../Src/VERSIONS/VERSIONS.h" type="1"/>
     <File name="stm_lib/src/stm32f10x_gpio.c" path="stm_lib/src/stm32f10x_gpio.c" type="1"/>
     <File name="stm_lib/inc/stm32f10x_usart.h" path="stm_lib/inc/stm32f10x_usart.h" type="1"/>
     <File name="cmsis_boot/system_stm32f10x.c" path="cmsis_boot/system_stm32f10x.c" type="1"/>
-    <File name="stm_lib/inc/misc.h" path="stm_lib/inc/misc.h" type="1"/>
     <File name="stdio" path="" type="2"/>
     <File name="Src/MAIN/main.c" path="../Src/MAIN/main.c" type="1"/>
+    <File name="stm_lib/inc/misc.h" path="stm_lib/inc/misc.h" type="1"/>
     <File name="cmsis/core_cmInstr.h" path="cmsis/core_cmInstr.h" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/SELMATH" path="" type="2"/>
     <File name="Src/RF/RFM69_Registers.h" path="../Src/RF/RFM69_Registers.h" type="1"/>
@@ -130,8 +128,8 @@
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.o" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.o" type="1"/>
     <File name="Src/HAL" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/STDC/STDC.c" path="../Src/COMMON_MODULES/xINC/STDC/STDC.c" type="1"/>
-    <File name="Src/RF/RFM69.c" path="../Src/RF/RFM69.c" type="1"/>
     <File name="stm_lib/src" path="" type="2"/>
+    <File name="Src/RF/RFM69.c" path="../Src/RF/RFM69.c" type="1"/>
     <File name="cmsis" path="" type="2"/>
     <File name="stm_lib" path="" type="2"/>
     <File name="Src/NVM/NVM.h" path="../Src/NVM/NVM.h" type="1"/>
@@ -145,8 +143,8 @@
     <File name="stm_lib/src/stm32f10x_i2c.c" path="stm_lib/src/stm32f10x_i2c.c" type="1"/>
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.h" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM_svn_rev.h" type="1"/>
     <File name="Src/HAL/HAL_ADC" path="" type="2"/>
-    <File name="cmsis_boot" path="" type="2"/>
     <File name="Src/HAL/HAL_UART" path="" type="2"/>
+    <File name="cmsis_boot" path="" type="2"/>
     <File name="Src/HAL/HAL_BRD/HAL_BRD.c" path="../Src/HAL/HAL_BRD/HAL_BRD.c" type="1"/>
     <File name="Src/PROJ_CONFIG/STDC_A_config.h" path="../Src/PROJ_CONFIG/STDC_A_config.h" type="1"/>
     <File name="Src/HAL/HAL_SPI/HAL_SPI.c" path="../Src/HAL/HAL_SPI/HAL_SPI.c" type="1"/>
@@ -156,25 +154,28 @@
     <File name="Src/HAL/HAL_SPI" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/STDC/STDC.h" path="../Src/COMMON_MODULES/xINC/STDC/STDC.h" type="1"/>
     <File name="stm_lib/src/stm32f10x_spi.c" path="stm_lib/src/stm32f10x_spi.c" type="1"/>
-    <File name="Src/COMMON_MODULES/xINC/SELMATH/SELMATH.c" path="../Src/COMMON_MODULES/xINC/SELMATH/SELMATH.c" type="1"/>
+    <File name="Src/RF/VERSIONS/VERSIONS.h" path="../Src/VERSIONS/VERSIONS.h" type="1"/>
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.h" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.h" type="1"/>
     <File name="Src/PROJ_CONFIG/STDC_config.h" path="../Src/PROJ_CONFIG/STDC_config.h" type="1"/>
+    <File name="Src/COMMON_MODULES/xINC/SELMATH/SELMATH.c" path="../Src/COMMON_MODULES/xINC/SELMATH/SELMATH.c" type="1"/>
+    <File name="Src/RF/VERSIONS" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/STDC/STDC.o" path="../Src/COMMON_MODULES/xINC/STDC/STDC.o" type="1"/>
     <File name="Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.c" path="../Src/COMMON_MODULES/xLIBS/CHKSUM/CHKSUM.c" type="1"/>
     <File name="Src/NVM/NVM.o" path="../Src/NVM/NVM.o" type="1"/>
-    <File name="Src/VERSIONS" path="" type="2"/>
     <File name="stm_lib/src/stm32f10x_usart.c" path="stm_lib/src/stm32f10x_usart.c" type="1"/>
+    <File name="Src/RF/VERSIONS/VERSIONS.c" path="../Src/VERSIONS/VERSIONS.c" type="1"/>
     <File name="stm_lib/src/stm32f10x_pwr.c" path="stm_lib/src/stm32f10x_pwr.c" type="1"/>
     <File name="stm_lib/inc/stm32f10x_gpio.h" path="stm_lib/inc/stm32f10x_gpio.h" type="1"/>
     <File name="Src/MAIN" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/SELMATH/SELMATH.h" path="../Src/COMMON_MODULES/xINC/SELMATH/SELMATH.h" type="1"/>
     <File name="cmsis/core_cm3.h" path="cmsis/core_cm3.h" type="1"/>
-    <File name="Src/HAL/HAL_ADC/HAL_ADC.h" path="../Src/HAL/HAL_ADC/HAL_ADC.h" type="1"/>
     <File name="stm_lib/src/stm32f10x_exti.c" path="stm_lib/src/stm32f10x_exti.c" type="1"/>
+    <File name="Src/HAL/HAL_ADC/HAL_ADC.h" path="../Src/HAL/HAL_ADC/HAL_ADC.h" type="1"/>
     <File name="Src/PROJ_CONFIG" path="" type="2"/>
     <File name="Src/COMMON_MODULES/xINC/COMPILER_defs.h" path="../Src/COMMON_MODULES/xINC/COMPILER_defs.h" type="1"/>
     <File name="Src/HAL/HAL_UART/HAL_UART.c" path="../Src/HAL/HAL_UART/HAL_UART.c" type="1"/>
+    <File name="Src/RF/VERSIONS/VERSIONS.o" path="../Src/VERSIONS/VERSIONS.o" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/STDC/STDC_svn_rev.tmpl" path="../Src/COMMON_MODULES/xINC/STDC/STDC_svn_rev.tmpl" type="1"/>
     <File name="Src/PROJ_CONFIG/SEL_RTOS_config.h" path="../Src/PROJ_CONFIG/SEL_RTOS_config.h" type="1"/>
     <File name="Src/COMMON_MODULES/xINC/COMPILER_check.h" path="../Src/COMMON_MODULES/xINC/COMPILER_check.h" type="1"/>
@@ -193,6 +194,5 @@
     <File name="Src" path="" type="2"/>
     <File name="stm_lib/inc" path="" type="2"/>
     <File name="stm_lib/inc/stm32f10x_crc.h" path="stm_lib/inc/stm32f10x_crc.h" type="1"/>
-    <File name="Src/VERSIONS/VERSIONS.o" path="../Src/VERSIONS/VERSIONS.o" type="1"/>
   </Files>
 </Project>

@@ -45,7 +45,6 @@
 /* Default register set 915Mhz */
 const RFM69_register_data_st RFM69_default_register_set[] =
 {
-    { REGFIFO          ,0x00 },			
     { REGOPMODE        ,0x04 },         
     { REGDATAMODUL     ,0x00 },         
     { REGBITRATEMSB    ,0x1A },         
@@ -125,11 +124,6 @@ const RFM69_register_data_st RFM69_default_register_set[] =
     { REGAESKEY16      ,0x00 },
     { REGTEMP1         ,0x01 },
 	{ REGTEMP2         ,0x00 },
-    { REGTESTLNA       ,0x1B },
-    { REGTESTPA1       ,0x55 },
-    { REGTESTPA2       ,0x70 },
-    { REGTESTDAGC      ,0x30 },
-    { REGTESTAFC       ,0x00 }
 };
 
 
@@ -137,24 +131,23 @@ const RFM69_register_data_st RFM69_default_register_set[] =
 /* 433Mhz OOK register set */
 const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
 {
-    { REGFIFO          ,0x00 },
-    { REGOPMODE        ,0x04 },
+    { REGOPMODE        ,0x04 },			//Operating mode 				1
     { REGDATAMODUL     ,0x08 },         //Packet Mode | OOK
     { REGBITRATEMSB    ,0x1A },         //4.8Kbps Bitrate
     { REGBITRATELSB    ,0x0B },         //4.8Kbps Bitrate
     { REGFDEVMSB       ,0x00 },
     { REGFDEVLSB       ,0x52 },
     { REGFRFMSB        ,0x6C },         //433Mhz
-    { REGFRFMID        ,0x4F },         //433Mhz
-    { REGFRFLSB        ,0xF9 },         //433Mhz
+    { REGFRFMID        ,0x40 },         //433Mhz
+    { REGFRFLSB        ,0x00 },         //433Mhz
     { REGOSC1          ,0x41 },
     { REGAFCCTRL       ,0x00 },
-    { REGLISTEN1       ,0x92 },
+    { RESERVED0C	   ,0x00 },
+    { REGLISTEN1       ,0xA0 },
     { REGLISTEN2       ,0xF5 },
     { REGLISTEN3       ,0x20 },
 	{ REGVERSION       ,0x24 },
-	{ REGPALEVEL       ,0x9F },	
-    { REGPALEVEL       ,0x87 },         //Medium output power on PA0
+	{ REGPALEVEL       ,0x85 },			//Medium output power on PA0
     { REGPARAMP        ,0x09 },
     { REGOCP           ,0x1A },         //OCP
 	{ RESERVED14       ,0x40 }, 
@@ -162,7 +155,7 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
 	{ RESERVED16       ,0x7B }, 
 	{ RESERVED17       ,0x9B }, 
     { REGLNA           ,0x88 },
-    { REGRXBW          ,0x55 },
+    { REGRXBW          ,0x42 },
     { REGAFCBW         ,0x8B },
     { REGOOKPEAK       ,0x40 },
     { REGOOKAVG        ,0x80 },
@@ -178,14 +171,14 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGDIOMAPPING2   ,0x07 },
     { REGIRQFLAGS1     ,0x80 },
     { REGIRQFLAGS2     ,0x00 },
-    { REGRSSITHRESH    ,0xE4 },
+    { REGRSSITHRESH    ,0xDC },
     { REGRXTIMEOUT1    ,0x00 },
     { REGRXTIMEOUT2    ,0x00 },
     { REGPREAMBLEMSB   ,0x00 },
     { REGPREAMBLELSB   ,0x03 },
-    { REGSYNCCONFIG    ,0x98 },
-    { REGSYNCVALU1     ,0x01 },
-    { REGSYNCVALU2     ,0x01 },
+    { REGSYNCCONFIG    ,0x90 },
+    { REGSYNCVALU1     ,0xAA },			//Keep this as the default sync value meaning 0xAA must be present on all nodes and receiver
+    { REGSYNCVALU2     ,0xAA },			// Will be replaced by network ID ( default to 0xAA )
     { REGSYNCVALU3     ,0x01 },
     { REGSYNCVALU4     ,0x01 },
     { REGSYNCVALU5     ,0x01 },
@@ -193,12 +186,12 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGSYNCVALU7     ,0x01 },
     { REGSYNCVALU8     ,0x01 },
     { REGPACKETCONFIG1 ,0x90 },         //variable length packets | CRC OFF | NO Address filtering
-    { REGPAYLOADLENGTH ,0x40 },
-    { REGNODEADRS      ,0x00 },         //Len is variable so set this to 0... i guess?
+    { REGPAYLOADLENGTH ,0x42 },
+    { REGNODEADRS      ,0x00 },
     { REGBROADCASTADRS ,0x00 },
     { REGAUTOMODES     ,0x00 },
     { REGFIFOTHRESH    ,0x8F },
-    { REGPACKETCONFIG2 ,0x02 },         //AES OFF
+    { REGPACKETCONFIG2 ,0x03 },         //AES ON
     { REGAESKEY1       ,0x00 },
     { REGAESKEY2       ,0x00 },
     { REGAESKEY3       ,0x00 },
@@ -217,11 +210,6 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGAESKEY16      ,0x00 },
     { REGTEMP1         ,0x01 },
 	{ REGTEMP2         ,0x00 },
-    { REGTESTLNA       ,0x1B },
-    { REGTESTPA1       ,0x55 },
-    { REGTESTPA2       ,0x70 },
-    { REGTESTDAGC      ,0x30 },
-    { REGTESTAFC       ,0x00 }
 };
 
 

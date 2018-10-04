@@ -21,19 +21,23 @@
 #include <string.h>
 #endif // GCC_TEST
 
+#include "PROJ_config.h"
 #include "C_defs.h"
 #include "STDC.h"
 #include "COMPILER_defs.h"
 #include "HAL_BRD.h"
 #include "HAL_SPI.h"
 #include "main.h"
+#include "nvm.h"
 #include "RFM69.h"
 #include "RFM69_Registers.h"
 
 
 #define STDC_MODULE_ID   STDC_MOD_RF_DECODE
 
-//STATIC u8_t  RF_status_register;
+
+
+extern NVM_info_st NVM_info_s;
 
 STATIC RFM69_data_packet_st RFM69_data_packet_s;
 
@@ -41,8 +45,11 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
 {
     1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,
     28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,
-    52,53,54,55,56,57,58,59,60,61,62,63,64
+    52,53,54,55,56,57,58,59,60,61
 };
+
+false_true_et RFM69_packet_sent_s = FALSE;
+u8_t RFM69_tx_power_level_s;
 
 
 
@@ -56,6 +63,14 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
 /***************************************************************************************************
 **                              Public Functions                                                  **
 ***************************************************************************************************/
+
+void RFM69_init( void )
+{
+	RFM69_tx_power_level_s = NVM_info_s.NVM_generic_data_blk_s.tx_power_level;
+}
+
+
+
 /*!
 ****************************************************************************************************
 *
@@ -70,12 +85,20 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
 ***************************************************************************************************/
 void RFM69_wakeup_and_send( void )
 {
+	u8_t read_data[50];
+	RFM69_packet_sent_s = FALSE;
+
 	/* power up the RF chip */
 	RFM69_set_enable_pin_state( HIGH );
+
+	RFM69_set_reset_pin_state( HIGH );
+    delay_us(200);
     RFM69_set_reset_pin_state( LOW );
 
     /* Give the RF chip time to stabilise */
-    delay_us(1000);
+    delay_us(6000);
+
+    RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 
 	/* Go through the elements and reset them to 0xFF */
 	STDC_memset( &RFM69_data_packet_s, 0xFF, sizeof( RFM69_data_packet_st ) );
@@ -89,17 +112,23 @@ void RFM69_wakeup_and_send( void )
 	if( RFM69_read_reserved_registers() == PASS )
 	{
 		/* Fire down a config of registers */
-		RFM69_set_configuration( RFM69_433Mhz_OOK, RFM69_433Mhz_CONFIGURATION_SIZE );
+		RFM69_set_configuration( RFM69_433Mhz_OOK );
 
-		/* Put the chip into standby mode ( should be be default */
-		RFM69_set_operating_mode( RFM69_STANDBY_MODE );
+		RFM69_set_PA_level( RFM69_tx_power_level_s );
+
+		RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.node_id );
+
+		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+
+		/* Put the chip into sleep mode */
+		RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 
 		/* this sets DIO1 to be "Packet Sent" indicator */
 		RFM69_set_DIO_mapping( 0, RFM69_DIO_MODE_0 );
-		RFM69_set_DIO_mapping( 1, RFM69_DIO_MODE_1 );
+		RFM69_set_DIO_mapping( 1, RFM69_DIO_MODE_0 );
 		RFM69_set_DIO_mapping( 2, RFM69_DIO_MODE_0 );
 		RFM69_set_DIO_mapping( 3, RFM69_DIO_MODE_1 );
-		RFM69_set_DIO_mapping( 4, RFM69_DIO_MODE_0 );
+		RFM69_set_DIO_mapping( 4, RFM69_DIO_MODE_1 );
 		RFM69_set_DIO_mapping( 5, RFM69_DIO_MODE_3 );
 	}
 	else
@@ -108,16 +137,11 @@ void RFM69_wakeup_and_send( void )
 	}
 
 	/* Fill the buffer */
-	RFM69_Send_frame( send_data, sizeof( send_data ) );
+	RFM69_Send_frame( send_data, sizeof( send_data ), 1 );
 
-	/* Put the chip into TX mode */
-	RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );
+	RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
-	/* Put the chip into Standby mode for the next time round as this is the mode
-	that allows us to fill the FIFO, this also clears the old FIFO */
-	//RFM69_set_operating_mode( RFM69_STANDBY_MODE );
-
-	//RFM69_read_FIFO_register();
+	RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 }
 
 
@@ -139,7 +163,7 @@ void RFM69_wakeup_and_send( void )
 *   \note
 *
 ***************************************************************************************************/
-pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config, u16_t len )
+pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
 {
     pass_fail_et returnType = PASS;
 
@@ -152,7 +176,10 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config, u16_
     {
         /* Config is OK */
 
+#if(MULTI_SPI_WRITE_CONFIG==0)
+
         u8_t i;
+        u8_t len = RFM69_433Mhz_CONFIGURATION_SIZE;
 
         for( i = 0u; i < len; i++ )
         {
@@ -165,11 +192,49 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config, u16_
                 returnType = FAIL;
             }
         }
+
+#else
+        if( RFM69_write_registers( WRITE_TO_CHIP_BURST_MODE_CONF, RFM69_config_c[config].buffer_p[0].RFM69_register, &RFM69_config_c[config].buffer_p[0].register_data, RFM69_433Mhz_CONFIGURATION_SIZE  ) == FAIL )
+		{
+			/* Configuration failed :( */
+			STDC_basic_assert();
+
+			returnType = FAIL;
+		}
+
+#endif
     }
 
     return ( returnType );
 }
 
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Initialise all the RF registers
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+void RFM69_get_configuration( RFM69_static_configuration_et config, RFM69_register_data_st* data_p )
+{
+    u8_t i,j = 0;
+
+    for(  i = 0; i < RFM69_433Mhz_CONFIGURATION_SIZE; i++ )
+    {
+    	data_p[i].RFM69_register = RFM69_config_c[config].buffer_p[i].RFM69_register;
+    	data_p[i].register_data  = RFM69_config_c[config].buffer_p[i].register_data;
+
+    	data_p->RFM69_register;
+    }
+}
 
 
 
@@ -266,7 +331,7 @@ pass_fail_et RFM69_write_registers( RFM69_instruction_et instruction, RFM69_regi
     u8_t modified_address;
 
     /* validate input parameters */
-    if( ( instruction != WRITE_TO_CHIP ) && ( instruction != WRITE_TO_CHIP_BURST_MODE ) )
+    if( ( instruction != WRITE_TO_CHIP ) && ( instruction != WRITE_TO_CHIP_BURST_MODE ) && ( instruction != WRITE_TO_CHIP_BURST_MODE_CONF ) )
     {
         result = FAIL;
         STDC_assert( 1 );
@@ -296,14 +361,20 @@ pass_fail_et RFM69_write_registers( RFM69_instruction_et instruction, RFM69_regi
             num_bytes = 1;
         }
 
+        u16_t j = 0;
+
         /* Write all data to chip */
         for( i = 0; i < num_bytes; i++ )
         {
-            HAL_SPI_write_and_read_data( write_data[ i ] );
-            //if( instruction == WRITE_TO_CHIP_BURST_MODE )
-			//{
-            	//i++;
-			//}
+        	if(  instruction == WRITE_TO_CHIP_BURST_MODE_CONF )
+        	{
+        		HAL_SPI_write_and_read_data( write_data[ j ] );
+				j += 2;
+        	}
+        	else
+        	{
+        		HAL_SPI_write_and_read_data( write_data[ i ] );
+        	}
         }
 
         /* release NCS / Slave Select line high */
@@ -378,7 +449,7 @@ u32_t RFM69_read_rf_carrier_freq( void )
  	/* Multiply by the freq step factor to get the carrier freq */
  	carrier_freq = ( carrier_freq * FREQ_STEP );
 
-    return( register_val );
+    return( carrier_freq );
 }
 
 
@@ -395,7 +466,8 @@ u32_t RFM69_read_rf_carrier_freq( void )
 */
 u8_t RFM69_read_temp( void )
 {
- 	u8_t register_val;
+ 	u8_t register_val = 0u;
+ 	u16_t temp = 0u;
 
  	/* Read back the current register status */
 	RFM69_read_registers( READ_FROM_CHIP, REGOPMODE, &register_val, 1 );
@@ -403,23 +475,28 @@ u8_t RFM69_read_temp( void )
 	if( register_val != RFM69_STANDBY_MODE )
     {
         /* NEED to be in standby mode before this can be done */
-        STDC_basic_assert();
-    }
-    else
-    {
-        register_val = 0u;
-
-        /* start the temperature measurement */
-        register_val |= ( 1 << TEMP_MEASURE_START );
-
-        /* delay at least 100us before reading the register */
-        //delay_ms(1);
-
-        /* Read the temperature measurement */
-        RFM69_read_registers( READ_FROM_CHIP, REGTEMP2, &register_val, 1 );
+		RFM69_set_operating_mode( RFM69_STANDBY_MODE );
     }
 
-    return( register_val );
+	register_val = 0u;
+
+	/* start the temperature measurement */
+	register_val |= ( TEMP_MEASURE_START );
+	RFM69_read_registers( WRITE_TO_CHIP, REGTEMP1, &register_val, 1 );
+
+	register_val = 0;
+
+	while ( ( register_val & ( TEMP_MEASURE_RUNNING ) ) == (  TEMP_MEASURE_RUNNING ) )
+	{
+		RFM69_read_registers( READ_FROM_CHIP, REGTEMP1, &register_val, 1 );
+	}
+
+	/* Read the temperature measurement */
+	RFM69_read_registers( READ_FROM_CHIP, REGTEMP2, &temp, 1 );
+	temp += COURSE_TEMP_COEF;
+	temp ^= 0xFF;
+
+    return( (u8_t)temp );
 }
 
 
@@ -455,7 +532,7 @@ u8_t RFM69_read_RSSI( void )
         register_val = 0u;
 
         /* start the temperature measurement */
-        register_val |= ( 1 << TEMP_MEASURE_START );
+        register_val |= ( TEMP_MEASURE_START );
 
         /* delay at least 100us before reading the register */
         delay_ms(1);
@@ -475,7 +552,7 @@ u8_t RFM69_read_RSSi_measurement( void )
     false_true_et status = FALSE;
 
     /* Trigger the RSSI measurement */
-    register_val |= ( 1 << RSSI_START );
+    register_val |= ( RSSI_START );
 
     RFM69_read_registers( READ_FROM_CHIP, REGRSSIVALUE, &register_val, 1 );
     status = TRUE;
@@ -569,48 +646,38 @@ false_true_et RFM69_set_clock_out( disable_enable_et state )
 *
 *   \author         MS
 *
-*   \return         result - pass or fail
+*   \return         u8_t power level
 *
 *******************************************************************************
 */
-false_true_et RFM69_set_PA_level( RFM69_PA_level_et level )
+u8_t RFM69_set_PA_level( u8_t level )
 {
- 	u8_t register_val;
+ 	u8_t register_val = 0;
 
- 	/* Read back the current register status, modify it and then rewrite it back down */
-	RFM69_read_registers( READ_FROM_CHIP, REGPALEVEL, &register_val, 1 );
-
-#ifdef RFM69W
+#if defined RFM69W
     register_val |= 0x80;
+#elif defined RFM69HW
+    register_val |= 0x60;
+#elif defined RFM69HW_SUPER
+    register_val |= 0xE0;
 #endif
 
-    /* Clear the current power level setting */
-    register_val = ( register_val & 0x00 );
+    if( level > RFM69_MAX_TX_POWER_LEVEL )
+    {
+    	level = RFM69_MAX_TX_POWER_LEVEL;
+    }
 
-	switch ( level )
-	{
-        case RFM69_MIN_POWER:
-            break;
+    /* "OR" in the requested level between 0 and 31 */
+    register_val |= level;
 
-        case RFM69_MED0_POWER:
-            register_val |= 0x0F;
-            break;
-
-        case RFM69_MED1_POWER:
-            register_val |= 0x10;
-            break;
-
-        case RFM69_MAX_POWER:
-            register_val |= 0x1f;
-            break;
-
-        default:
-            break;
-	}
+	RFM69_tx_power_level_s = level;
 
     RFM69_write_registers( WRITE_TO_CHIP, REGPALEVEL, &register_val, 1 );
 
-    return( PASS );
+    /* Read back the current register status */
+	RFM69_read_registers( READ_FROM_CHIP, REGPALEVEL, &register_val, 1 );
+
+    return( level );
 }
 
 
@@ -631,46 +698,46 @@ false_true_et RFM69_set_operating_mode( RFM69_operating_modes_et operating_mode 
 {
  	u8_t register_val;
  	false_true_et listen_mode_enabled;
+ 	RFM69_packet_sent_s = FALSE;
 
  	/* Read back the current register status, modify it and then rewrite it back down */
 	RFM69_read_registers( READ_FROM_CHIP, REGOPMODE, &register_val, 1 );
 
-	listen_mode_enabled = ( false_true_et )( ( register_val & ( 1 << LISTENON ) ) >> LISTENON );
+	listen_mode_enabled = ( false_true_et )( ( register_val & ( LISTENON ) ) >> 6 );
 
 	/* Clear the current power level setting */
-	register_val &~( SLEEP | STDBY | FS | TX | RX );
+	register_val &= ~( SLEEP | STDBY | FS | TX | RX );
 
 	switch ( operating_mode )
 	{
         case RFM69_SLEEP_MODE:
-            register_val &= ~( BIT_MASK_1_BIT << LISTENON );
 
             /* Turn off CLK out to save power */
             RFM69_set_clock_out( OFF );
             break;
 
         case RFM69_STANDBY_MODE:
-            register_val |= ( BIT_MASK_1_BIT << STDBY );
+            register_val |= ( STDBY );
             break;
 
         case RFM69_FS_MODE:
-            register_val |= ( BIT_MASK_1_BIT << FS );
-            register_val &= ~( BIT_MASK_1_BIT << LISTENON );
+            register_val |= ( FS );
+            register_val &= ~( LISTENON );
             break;
 
         case RFM69_TRANSMIT_MODE:
-            register_val |= ( BIT_MASK_1_BIT << TX );
-            register_val &= ~( BIT_MASK_1_BIT << LISTENON );
+            register_val |= (  TX );
+            register_val &= ~( LISTENON );
             break;
 
         case RFM69_RECEIVE_MODE:
-            register_val |= ( BIT_MASK_1_BIT << RX );
-            register_val &= ~( BIT_MASK_1_BIT << LISTENON );
+            register_val |= (  RX );
+            register_val &= ~( LISTENON );
             break;
 
         case RFM69_LISTEN_MODE:
-            register_val |= ( BIT_MASK_1_BIT << STDBY );
-            register_val |= ( BIT_MASK_1_BIT << LISTENON );
+            register_val |= ( STDBY );
+            register_val |= ( LISTENON );
             break;
 
         default:
@@ -679,12 +746,20 @@ false_true_et RFM69_set_operating_mode( RFM69_operating_modes_et operating_mode 
 
 	if( ( listen_mode_enabled == TRUE ) && ( operating_mode != RFM69_LISTEN_MODE ) )
     {
-        register_val |= ( BIT_MASK_1_BIT << LISTEN_ABORT );
+        register_val |= ( LISTEN_ABORT );
         RFM69_write_registers( WRITE_TO_CHIP, REGOPMODE, &register_val, 1 );
-        register_val &= ~( BIT_MASK_1_BIT << LISTEN_ABORT );
+        register_val &= ~(LISTEN_ABORT );
     }
 
     RFM69_write_registers( WRITE_TO_CHIP, REGOPMODE, &register_val, 1 );
+
+    /* This checks to make sure that we have waited long enough for the radio to be ready after
+       changing modes */
+    register_val = 0u;
+    while( ( register_val & 0x80 ) != 0x80 )
+    {
+		RFM69_read_registers( READ_FROM_CHIP, REGIRQFLAGS1, &register_val, 1 );
+    }
 
     return( PASS );
 }
@@ -709,8 +784,8 @@ false_true_et RFM69_set_packet_mode( RFM69_packet_modes_et operating_mode )
 	RFM69_read_registers( READ_FROM_CHIP, REGPACKETCONFIG1, &register_val, 1 );
 
 	/* Clear the current setting */
-	register_val &~( BIT_MASK_1_BIT << PACKET_FORMAT );
-	register_val |= ( operating_mode << PACKET_FORMAT );
+	register_val &~( PACKET_FORMAT );
+	register_val |= ( operating_mode << 7 );
 
     RFM69_write_registers( WRITE_TO_CHIP, REGPACKETCONFIG1, &register_val, 1 );
 
@@ -730,7 +805,7 @@ false_true_et RFM69_set_packet_mode( RFM69_packet_modes_et operating_mode )
 *
 *******************************************************************************
 */
-false_true_et RFM69_set_payload_length( u8_t num_bytes )
+false_true_et RFM69_set_rx_payload_length( u8_t num_bytes )
 {
     u8_t register_val;
 
@@ -769,8 +844,8 @@ false_true_et RFM69_set_modulation_type( RFM69_modulation_type_et type )
         /* Read back the current register status, modify it and then rewrite it back down */
         RFM69_read_registers( READ_FROM_CHIP, REGDATAMODUL, &register_val, 1 );
 
-        register_val &~( BIT_MASK_2_BIT << MODULATION_TYPE );
-        register_val |= ( type << MODULATION_TYPE );
+        register_val &~( MODULATION_TYPE );
+        register_val |= ( type << 3 );
 
         RFM69_write_registers( WRITE_TO_CHIP, REGDATAMODUL, &register_val, 1 );
 
@@ -796,8 +871,8 @@ false_true_et RFM69_set_data_mode( RFM69_data_mode_et mode )
         /* Read back the current register status, modify it and then rewrite it back down */
         RFM69_read_registers( READ_FROM_CHIP, REGDATAMODUL, &register_val, 1 );
 
-        register_val &~( BIT_MASK_2_BIT << DATA_PROCESS_MODE );
-        register_val |= ( mode << DATA_PROCESS_MODE );
+        register_val &~( DATA_PROCESS_MODE );
+        register_val |= ( mode << 5 );
 
         RFM69_write_registers( WRITE_TO_CHIP, REGDATAMODUL, &register_val, 1 );
 
@@ -819,7 +894,7 @@ false_true_et RFM69_set_bit_rate( RFM69_predefined_bitrates_et bit_rate )
 
      /* Read back the current register status ( modulation Scheme )*/
     RFM69_read_registers( READ_FROM_CHIP, REGDATAMODUL, &modulation_type, 1 );
-    modulation_type = ( ( modulation_type & ( BIT_MASK_2_BIT << MODULATION_TYPE ) ) >> MODULATION_TYPE );
+    modulation_type = ( ( modulation_type & ( MODULATION_TYPE ) ) >> 3 );
 
     /* OOK only supports up to 19.2Kbps */
     if( modulation_type == RFM69_OOK  )
@@ -874,16 +949,16 @@ false_true_et RFM69_set_listen_time_resolution( RFM69_listen_state_et state, RFM
         //! Check that the state is correct
         if( state == RFM69_LISTEN_RX )
         {
-             register_val &~( BIT_MASK_2_BIT << LISTEN_RX_RES );
-             register_val |= ( listen_time_resolution << LISTEN_RX_RES );
+             register_val &~( LISTEN_RX_RES );
+             register_val |= ( listen_time_resolution << 5 );
              RFM69_write_registers( WRITE_TO_CHIP, REGLISTEN1, &register_val, 1 );
 
              status = TRUE;
         }
         else if ( state == RFM69_LISTEN_IDLE )
         {
-             register_val & ~( BIT_MASK_2_BIT << LISTEN_IDLE_RES );
-             register_val |= ( listen_time_resolution << LISTEN_IDLE_RES );
+             register_val & ~( LISTEN_IDLE_RES );
+             register_val |= ( listen_time_resolution << 5 );
              RFM69_write_registers( WRITE_TO_CHIP, REGLISTEN1, &register_val, 1 );
 
              status = TRUE;
@@ -927,37 +1002,6 @@ false_true_et RFM69_set_listen_time( RFM69_listen_state_et state, u16_t time )
 
 
 
-
-
-false_true_et RFM69_set_tx_power_level( u8_t level )
-{
-    /* When using the NON HIGH power version of the module the power can be set from -18db to +17db ;),
-    and only PA0 needs to be used for this...
-    Add support later for the HP versions....  */
-
-    u8_t register_val;
-    false_true_et status = FALSE;
-
-    if( level > MAX_TX_POWER_LEVEL )
-    {
-        level = MAX_TX_POWER_LEVEL;
-    }
-
-    register_val = level;
-
-    /* There is an offset of -18db applied here */
-    register_val |= ( 1 << PA0_ON );
-
-    RFM69_write_registers( WRITE_TO_CHIP, REGPALEVEL, &register_val, 1 );
-    status = TRUE;
-
-    return ( status );
-}
-
-
-
-
-
 false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state )
 {
     u8_t register_val;
@@ -970,13 +1014,33 @@ false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state )
     RFM69_read_registers( READ_FROM_CHIP, REGPACKETCONFIG2, &register_val, 1 );
 
     /* Mask off the correct bits and turn encryption on or off */
-    register_val &~( BIT_MASK_1_BIT << AES_ON ) ;
-    register_val |= ( state << AES_ON ) ;
+    register_val &~( AES_ON ) ;
+    register_val |= ( state ) ;
     RFM69_write_registers( WRITE_TO_CHIP, REGPACKETCONFIG2, &register_val, 1 );
 
     status = TRUE;
 
     return ( status );
+}
+
+
+false_true_et RFM69_set_own_node_address( u8_t address )
+{
+	u8_t register_val;
+}
+
+
+false_true_et RFM69_set_own_network_id( u8_t network_id )
+{
+	u8_t register_val;
+	false_true_et status = TRUE;
+
+	register_val = network_id;
+
+	/* Write down the encryption key */
+	RFM69_write_registers( WRITE_TO_CHIP, REGSYNCVALU2, &register_val, 1  );
+
+	return ( status );
 }
 
 
@@ -996,20 +1060,20 @@ false_true_et RFM69_set_DIO_mapping( u8_t pin, RFM69_DIO_map_mode_et mode )
         switch( pin )
         {
             case 0:
-                register_val &= ~( BIT_MASK_2_BIT << DIO0 );
-                register_val |=  ( mode << DIO0 );
+                register_val &= ~( DIO0 );
+                register_val |= ( mode << 6 );
                 break;
             case 1:
-                register_val &= ~( BIT_MASK_2_BIT << DIO1 );
-                register_val |=  ( mode << DIO1 );
+                register_val &= ~( DIO1 );
+                register_val |= ( mode << 4 );
                 break;
             case 2:
-                register_val &= ~( BIT_MASK_2_BIT << DIO2 );
-                register_val |=  ( mode << DIO2 );
+                register_val &= ~( DIO2 );
+                register_val |= ( mode << 2 );
                 break;
             case 3:
-                register_val &= ~( BIT_MASK_2_BIT << DIO3 );
-                register_val |=  ( mode << DIO3 );
+                register_val &= ~( DIO3 );
+                register_val |= ( mode );
                 break;
 
                 default:
@@ -1026,12 +1090,12 @@ false_true_et RFM69_set_DIO_mapping( u8_t pin, RFM69_DIO_map_mode_et mode )
         switch( pin )
         {
             case 4:
-                register_val &= ~( BIT_MASK_2_BIT << DIO4 );
-                register_val |=  ( mode << DIO4 );
+                register_val &= ~( DIO4 );
+                register_val |= ( mode << 6 );
                 break;
             case 5:
-                register_val &= ~( BIT_MASK_2_BIT << DIO5 );
-                register_val |=  ( mode << DIO5 );
+                register_val &= ~( DIO5 );
+                register_val |=  ( mode << 4 );
                 break;
 
             default:
@@ -1053,7 +1117,7 @@ false_true_et RFM69_trigger_RSSi_measurement( void )
     false_true_et status = FALSE;
 
     /* Trigger the RSSI measurement */
-    register_val |= ( 1 << RSSI_START );
+    register_val |= ( RSSI_START );
 
     RFM69_write_registers( WRITE_TO_CHIP, REGRSSICONFIG, &register_val, 1 );
     status = TRUE;
@@ -1074,24 +1138,48 @@ false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len )
 
 
 
-false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len )
+false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
+    u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
+    u8_t test_buffer[RFM69_MAX_DATA_LEN];
 
-    u8_t tx_buffer[66];
+    /* Set to standby */
+    RFM69_set_operating_mode( RFM69_STANDBY_MODE );
+
+    if( len > RFM69_MAX_PAYLOAD_LEN )
+    {
+    	len = RFM69_MAX_PAYLOAD_LEN;
+    }
 
     tx_buffer[0] = len;
 
-    STDC_memcpy( &tx_buffer[2], buffer, len );
+    STDC_memcpy( &tx_buffer[1], buffer, len );
 
-    /* I think the first thing we need to do is to set the length register?? */
-    //RFM69_set_payload_length(len);
+    RFM69_write_to_FIFO( tx_buffer, len );
 
-    RFM69_write_to_FIFO( tx_buffer, 66 );
+    //RFM69_read_FIFO_register( test_buffer );
+
+    /* Set to TX mode */
+    RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );
+
+    /* The packet is now being sent */
+    while( RFM69_packet_sent_s == FALSE )
+    {
+    	//TODO : timeout
+    }
+
+    /* Set to standby again */
+    RFM69_set_operating_mode( RFM69_STANDBY_MODE );
 
     return ( status );
 }
 
+
+void RFM69_update_packet_sent( false_true_et state )
+{
+	RFM69_packet_sent_s = state;
+}
 
 
 

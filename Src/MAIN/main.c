@@ -44,8 +44,8 @@ int main(void)
 	/* Initialise the RTC */
 	RTC_ext_init();
 
-	/* Turn the LED OFF */
-	HAL_BRD_set_LED( OFF );
+	/* Initialise the RFM69 variables */
+	RFM69_init();
 
 	if( debug_mode == ENABLE )
 	{
@@ -63,19 +63,7 @@ int main(void)
 		{
 			u32_t i = 0u;
 
-			/* LED blink */
-			for(i=0; i<2; i++)
-			{
-				/* Toggle LED which connected to PC13*/
-				HAL_BRD_Toggle_led();
-				/* delay */
-				delay_us(30000);
-			}
-
 			RFM69_wakeup_and_send();
-
-			/* Turn the LED OFF */
-			HAL_BRD_set_LED( OFF );
 
 			/* Disable the I2C peripheral and clock to save power */
 			HAL_I2C_de_init();
@@ -99,7 +87,6 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
-
 				u32_t i = 0u;
 
 				/* LED blink */

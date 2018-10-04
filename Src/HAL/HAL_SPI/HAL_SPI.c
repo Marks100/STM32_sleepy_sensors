@@ -73,6 +73,18 @@ void HAL_SPI_init( void )
 	/* Enable SPI clock */
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_SPI1, ENABLE );
 
+	/* Enable the GPIOA clock */
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
+
+	/* Configure the GPIOs */
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* Setup the SPI pins (PA5, PA6, PA7 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	SPI_InitTypeDef   SPI_InitStructure;
 
 	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
@@ -81,7 +93,7 @@ void HAL_SPI_init( void )
 	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
 	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
 	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_64;
+	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_128;
 	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
 	SPI_InitStructure.SPI_CRCPolynomial = 0xAAAA;
 
@@ -152,7 +164,6 @@ u8_t HAL_SPI_write_and_read_data( u8_t tx_data )
 
 	/* Read the buffer on the SPI receive register */
 	return_value = SPI_I2S_ReceiveData( SPI1 );
-
 
     return ( return_value );
 }
