@@ -116,6 +116,8 @@ void RFM69_wakeup_and_send( void )
 
 		RFM69_set_PA_level( RFM69_tx_power_level_s );
 
+		RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.node_id );
+
 		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
 		/* Put the chip into sleep mode */
@@ -447,7 +449,7 @@ u32_t RFM69_read_rf_carrier_freq( void )
  	/* Multiply by the freq step factor to get the carrier freq */
  	carrier_freq = ( carrier_freq * FREQ_STEP );
 
-    return( register_val );
+    return( carrier_freq );
 }
 
 
@@ -803,7 +805,7 @@ false_true_et RFM69_set_packet_mode( RFM69_packet_modes_et operating_mode )
 *
 *******************************************************************************
 */
-false_true_et RFM69_set_payload_length( u8_t num_bytes )
+false_true_et RFM69_set_rx_payload_length( u8_t num_bytes )
 {
     u8_t register_val;
 
@@ -1025,14 +1027,6 @@ false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state )
 false_true_et RFM69_set_own_node_address( u8_t address )
 {
 	u8_t register_val;
-	false_true_et status = TRUE;
-
-	register_val = address;
-
-	/* Write down the encryption key */
-	RFM69_write_registers( WRITE_TO_CHIP, REGNODEADRS, &register_val, 1  );
-
-	return ( status );
 }
 
 
@@ -1147,7 +1141,7 @@ false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len )
 false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
-    u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN + 2];
+    u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
     u8_t test_buffer[RFM69_MAX_DATA_LEN];
 
     /* Set to standby */
@@ -1158,22 +1152,22 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
     	len = RFM69_MAX_PAYLOAD_LEN;
     }
 
-    tx_buffer[0] = len + 2;
-    tx_buffer[1] = rx_node_address;
-    tx_buffer[2] = NODE_OWN_ADDRESS;
+    tx_buffer[0] = len;
 
-    STDC_memcpy( &tx_buffer[3], buffer, len );
+    STDC_memcpy( &tx_buffer[1], buffer, len );
 
-    /* I think the first thing we need to do is to set the length register?? */
-    //RFM69_set_payload_length(len);
+    RFM69_write_to_FIFO( tx_buffer, len );
 
-    RFM69_write_to_FIFO( tx_buffer, len + 2 );
+    //RFM69_read_FIFO_register( test_buffer );
 
     /* Set to TX mode */
     RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );
 
     /* The packet is now being sent */
-    while( RFM69_packet_sent_s == FALSE );
+    while( RFM69_packet_sent_s == FALSE )
+    {
+    	//TODO : timeout
+    }
 
     /* Set to standby again */
     RFM69_set_operating_mode( RFM69_STANDBY_MODE );

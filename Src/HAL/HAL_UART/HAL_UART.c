@@ -435,6 +435,16 @@ void SERIAL_msg_handler( void )
 
 				RFM69_wakeup_and_send();
 			}
+			else if (( strstr(sub_string, "id") != 0 ) )
+			{
+				sub_string = strstr(SERIAL_rx_buf_s, "rf") + 7;
+
+				val = atoi(sub_string);
+				NVM_info_s.NVM_generic_data_blk_s.node_id = val;
+				NVM_request_flush();
+
+				RFM69_set_own_node_address( val );
+			}
 			else if( ( strstr(sub_string, "test") != 0 ) )
 			{
 				u8_t i;
@@ -454,6 +464,12 @@ void SERIAL_msg_handler( void )
 
 					/* Fire down a config of registers */
 					RFM69_set_configuration( RFM69_433Mhz_OOK );
+
+					u32_t freq;
+					freq = RFM69_read_rf_carrier_freq();
+					sprintf( SERIAL_tx_buf_s, "\r\nRF carrier frequency is %dHz\r\n", freq );
+					SERIAL_Send_data( SERIAL_tx_buf_s );
+					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
 
 					sprintf( SERIAL_tx_buf_s, "\r\nReading back the RFM69 Register config....\r\n" );
 					SERIAL_Send_data( SERIAL_tx_buf_s );

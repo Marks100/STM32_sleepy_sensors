@@ -52,6 +52,7 @@ typedef struct
 {
     u32_t sleep_time;
     u8_t tx_power_level;
+    u8_t node_id;
 } NVM_generic_data_blk_st;
 
 

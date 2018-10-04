@@ -176,9 +176,9 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGRXTIMEOUT2    ,0x00 },
     { REGPREAMBLEMSB   ,0x00 },
     { REGPREAMBLELSB   ,0x03 },
-    { REGSYNCCONFIG    ,0x98 },
-    { REGSYNCVALU1     ,0xAA },
-    { REGSYNCVALU2     ,0x00 },			// Will be replaced by network ID
+    { REGSYNCCONFIG    ,0x90 },
+    { REGSYNCVALU1     ,0xAA },			//Keep this as the default sync value meaning 0xAA must be present on all nodes and receiver
+    { REGSYNCVALU2     ,0xAA },			// Will be replaced by network ID ( default to 0xAA )
     { REGSYNCVALU3     ,0x01 },
     { REGSYNCVALU4     ,0x01 },
     { REGSYNCVALU5     ,0x01 },
@@ -187,7 +187,7 @@ const RFM69_register_data_st RFM69_433Mhz_OOK_set[] =
     { REGSYNCVALU8     ,0x01 },
     { REGPACKETCONFIG1 ,0x90 },         //variable length packets | CRC OFF | NO Address filtering
     { REGPAYLOADLENGTH ,0x42 },
-    { REGNODEADRS      ,0x00 },         //Len is variable so set this to 0... i guess?
+    { REGNODEADRS      ,0x00 },
     { REGBROADCASTADRS ,0x00 },
     { REGAUTOMODES     ,0x00 },
     { REGFIFOTHRESH    ,0x8F },

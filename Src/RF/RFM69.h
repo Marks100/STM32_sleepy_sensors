@@ -39,9 +39,9 @@
 #define RFM69_WRITE_ACCESS      ( 0x80 )
 #define RFM69_MAX_TX_POWER_LEVEL 31u
 #define ENCRYPT_KEY_SIZE         16u
-#define FREQ_STEP                61u
+#define FREQ_STEP                61.03515625f
 #define RFM69_MAX_DATA_LEN       66u
-#define RFM69_MAX_PAYLOAD_LEN    61u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
+#define RFM69_MAX_PAYLOAD_LEN    64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 64byte FIFO ) + 1 len byte */
 
 #define NODE_OWN_ADDRESS	     0x01
 
@@ -334,7 +334,7 @@ false_true_et RFM69_set_clock_out( disable_enable_et state );
 u8_t 		  RFM69_set_PA_level( u8_t level );
 false_true_et RFM69_set_operating_mode( RFM69_operating_modes_et operating_mode );
 false_true_et RFM69_set_packet_mode( RFM69_packet_modes_et operating_mode );
-false_true_et RFM69_set_payload_length( u8_t num_bytes );
+false_true_et RFM69_set_rx_payload_length( u8_t num_bytes );
 false_true_et RFM69_set_modulation_type( RFM69_modulation_type_et type );
 false_true_et RFM69_set_data_mode( RFM69_data_mode_et mode );
 false_true_et RFM69_set_bit_rate( RFM69_predefined_bitrates_et bit_rate );
