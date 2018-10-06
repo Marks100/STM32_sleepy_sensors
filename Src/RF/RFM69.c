@@ -112,7 +112,7 @@ void RFM69_wakeup_and_send( void )
 	if( RFM69_read_reserved_registers() == PASS )
 	{
 		/* Fire down a config of registers */
-		RFM69_set_configuration( RFM69_433Mhz_OOK );
+		RFM69_set_configuration( RFM69_DEFAULT_CONFIG );
 
 		RFM69_set_PA_level( RFM69_tx_power_level_s );
 
@@ -1027,6 +1027,12 @@ false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state )
 false_true_et RFM69_set_own_node_address( u8_t address )
 {
 	u8_t register_val;
+	false_true_et status = TRUE;
+	
+	/* Write down the node address */
+	RFM69_write_registers( WRITE_TO_CHIP, REGNODEADRS, &register_val, 1  );
+
+	return ( status );
 }
 
 
