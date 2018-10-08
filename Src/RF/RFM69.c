@@ -112,7 +112,7 @@ void RFM69_wakeup_and_send( void )
 	if( RFM69_read_reserved_registers() == PASS )
 	{
 		/* Fire down a config of registers */
-		RFM69_set_configuration( RFM69_DEFAULT_CONFIG );
+		RFM69_set_configuration( RFM69_433_FSK_122KBPS_CONFIG );
 
 		RFM69_set_PA_level( RFM69_tx_power_level_s );
 
@@ -175,11 +175,12 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
     else
     {
         /* Config is OK */
+    	u8_t len;
+    	len = RFM69_config_c[ config ].length;
 
 #if(MULTI_SPI_WRITE_CONFIG==0)
 
         u8_t i;
-        u8_t len = RFM69_433Mhz_CONFIGURATION_SIZE;
 
         for( i = 0u; i < len; i++ )
         {
@@ -194,7 +195,7 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
         }
 
 #else
-        if( RFM69_write_registers( WRITE_TO_CHIP_BURST_MODE_CONF, RFM69_config_c[config].buffer_p[0].RFM69_register, &RFM69_config_c[config].buffer_p[0].register_data, RFM69_433Mhz_CONFIGURATION_SIZE  ) == FAIL )
+        if( RFM69_write_registers( WRITE_TO_CHIP_BURST_MODE_CONF, RFM69_config_c[config].buffer_p[0].RFM69_register, &RFM69_config_c[config].buffer_p[0].register_data, len  ) == FAIL )
 		{
 			/* Configuration failed :( */
 			STDC_basic_assert();
@@ -227,7 +228,7 @@ void RFM69_get_configuration( RFM69_static_configuration_et config, RFM69_regist
 {
     u8_t i,j = 0;
 
-    for(  i = 0; i < RFM69_433Mhz_CONFIGURATION_SIZE; i++ )
+    for(  i = 0; i < RFM69_config_c[ config ].length; i++ )
     {
     	data_p[i].RFM69_register = RFM69_config_c[config].buffer_p[i].RFM69_register;
     	data_p[i].register_data  = RFM69_config_c[config].buffer_p[i].register_data;

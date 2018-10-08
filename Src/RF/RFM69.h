@@ -41,7 +41,7 @@
 #define ENCRYPT_KEY_SIZE         16u
 #define FREQ_STEP                61.03515625f
 #define RFM69_MAX_DATA_LEN       66u
-#define RFM69_MAX_PAYLOAD_LEN    64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 66byte FIFO ) 2 CRC bytes */
+#define RFM69_MAX_PAYLOAD_LEN    64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 66byte FIFO )- 2 CRC bytes */
 
 #define NODE_OWN_ADDRESS	     0x01
 
@@ -1149,9 +1149,7 @@ typedef enum
 
 typedef enum
 {
-    RFM69_DEFAULT_CONFIG,      //! Amplitude Shift Key 915MHz
-    RFM69_433Mhz_OOK,          //! OOk 433Mhz
-	RFM69_TEST,
+    RFM69_433_FSK_122KBPS_CONFIG,      //! Amplitude Shift Key 915MHz
     RFM69_CFG_MAX
 } RFM69_static_configuration_et;
 
