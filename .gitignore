@@ -9,3 +9,4 @@ Workspace/STM32_sleepy_sensors/STM32_sleepy_sensors.elf.xcodeproj/project.pbxpro
 Workspace/logs/codb-stat-client.2018-09-05.log
 Workspace/logs/codb-time-client-2018-09-05.log
 Workspace/logs/codb.2018-09-05.log
+Release_package/
