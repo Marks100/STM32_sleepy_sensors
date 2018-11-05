@@ -4,6 +4,7 @@
 #include "stm32f10x.h"
 #include "misc.h"
 
+#include "autoversion.h"
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
@@ -426,6 +427,17 @@ false_true_et HAL_BRD_get_rtc_trigger_status( void )
 
 
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
 void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 {
 	HAL_BRD_rtc_triggered_s = state;
@@ -433,7 +445,52 @@ void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 
 
 
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_get_SW_version_num( u8_t* version_num_p )
+{
+	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
+	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
+	version_num_p[2] = SLEEP_SENSORS_VERSION_VERIFICATION;
+}
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_get_HW_version_num( u8_t* version_num_p )
+{
+	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
+	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         ISR
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
 void EXTI0_IRQHandler(void)
 {
 	/* Make sure that interrupt flag is set */

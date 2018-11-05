@@ -35,6 +35,7 @@
 
 #include "C_defs.h"
 #include "STDC.h"
+#include "HAL_BRD.h"
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"
 #include "NVM.h"
@@ -232,11 +233,16 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strncmp(strlwr(SERIAL_rx_buf_s), "ver\r", 4) == 0)
 		{
-			char version_num[5];
+			char version_num[3];
 
-			//get_SW_version_number( version_num );
+			HAL_BRD_get_SW_version_num( version_num );
 
-			sprintf( SERIAL_tx_buf_s, "\r\nSW version is %d.%d.%d\r\n\r\n", version_num[0], version_num[1], version_num[2] );
+			sprintf( SERIAL_tx_buf_s, "\r\nSW version is %d.%d.%d\r\n", version_num[0], version_num[1], version_num[2] );
+			SERIAL_Send_data( SERIAL_tx_buf_s );
+
+			HAL_BRD_get_HW_version_num( version_num );
+
+			sprintf( SERIAL_tx_buf_s, "HW version is %d.%d\r\n\r\n", version_num[0], version_num[1] );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "stream" ) != 0)
