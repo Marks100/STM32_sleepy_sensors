@@ -160,9 +160,9 @@ GCC_ARM: build_clean $(AUTOVERS_HEADER) $(OBJS)
 	@echo "$(PROJECT_NAME).map and $(PROJECT_NAME).elf files generated at: $(GCC_ARM_OUT_DIR)"
 	@$(OBJCOPY) -O binary $(GCC_ARM_OUT_DIR)/$(PROJECT_NAME).elf $(GCC_ARM_OUT_DIR)/$(PROJECT_NAME).bin
 	@$(OBJCOPY) -O ihex $(GCC_ARM_OUT_DIR)/$(PROJECT_NAME).elf $(GCC_ARM_OUT_DIR)/$(PROJECT_NAME).hex
-	@echo "Copying object files...."
+	@echo "Copying object files to $(GCC_ARM_OUT_DIR) ...."
 	@find . -type f -name "*.o" -print0 | xargs -0 -I{} cp "{}" -fr $(GCC_ARM_OUT_DIR)/object_files/
-	@echo "Build Completed..."
+	@echo "Build Succesfully Completed..."
 
 
 # Creates Ceedling environment if it does not exist
@@ -171,19 +171,17 @@ test/vendor:
 
 # Wild card test will allow any test to run once the name is provided
 %.test: test/vendor
-	echo $@
+	echo $^
 	@$(eval TEST_FILE := $(subst .test,.c,$@))
-	@echo $(TEST_FILE)
-	cd test && rake test:$(TEST_FILE)
+	@echo Testing $(TEST_FILE)...
+	#cd test && rake test:$(TEST_FILE)
 
 
 %.o: %.c
 	@echo "Compiling $<"
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@ >> $(GCC_ARM_OUT_DIR)/compile_log.txt
 
-STM32_MAP_FILE:
-	@echo "NO map file currently available, generating build output to grab it "
-	#@$(MAKE) -s all
+
 
 
 .PHONY: test_all
@@ -247,6 +245,11 @@ list:
 $(AUTOVERS_HEADER):
 	sVersion --autoversion
 
+$(GCC_ARM_OUT_DIR)/$(STM32_MAP_FILE):
+	@echo "$(STM32_MAP_FILE) does not exist, generating now"
+	@$(MAKE) -s GCC_ARM
+
+
 .PHONY: total_clean
 total_clean:
 	@echo cleaning up project..... Please wait.
@@ -258,6 +261,8 @@ total_clean:
 	@-rm -f $(AUTOVERS_HEADER)
 	@echo Clean Complete..
 
+
+
 .PHONY: build_clean
 build_clean:
 	@echo cleaning up old build objects..... Please wait.
@@ -266,6 +271,7 @@ build_clean:
 	@if [ -d "$(GCC_ARM_OUT_DIR)" ]; then cd $(GCC_ARM_OUT_DIR) && rm -fR *; fi
 	@-rm -f $(AUTOVERS_HEADER)
 	@echo Clean Complete..
+
 
 
 
@@ -283,8 +289,7 @@ RAM_CALC_LIMIT := $(shell echo $$(($(RAM_SIZE) * $(RAM_PERC_LIMIT) / 100 )))
 
 
 .PHONY: memory_stats
-memory_stats:
-	@test -s $(GCC_ARM_OUT_DIR)/$(STM32_MAP_FILE) || $(MAKE) -s GCC_ARM
+memory_stats: $(GCC_ARM_OUT_DIR)/$(STM32_MAP_FILE)
 	@printf "\nAnalysing elf file for memory stats....\nOutput from GNU \"size\" tool..\n"
 
 	@printf "Memory analysis attained using the GNU 'size' tool which analyses the '.elf'\nfile and produces the below result..\n\n" > $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
@@ -347,9 +352,3 @@ package:
 	@-7za a "$(RELEASE_PACKAGE_NAME)/$(RELEASE_PACKAGE_NAME)_V$(MAJOR_SW).$(MINOR_SW).$(VERIFICATION_SW)_BETA.zip" $(RELEASE_PACKAGE_NAME)/* > /dev/null
 	@find $(RELEASE_PACKAGE_NAME) ! -name '$(RELEASE_PACKAGE_NAME)*' -print0 | xargs -0 rm -fr
 	@echo "Release package created V$(MAJOR_SW).$(MINOR_SW).$(VERIFICATION_SW)_BETA"
-
-
-.PHONY: test
-test:
-	#find $(RELEASE_PACKAGE_NAME) -not -iname "*release_package*" -not -name *.o* -exec cp -r '{}' $(RELEASE_PACKAGE_NAME)/$(RELEASE_PACKAGE_NAME)_V$(MAJOR_SW).$(MINOR_SW).$(VERIFICATION_SW)_BETA \;
-	#find $(RELEASE_PACKAGE_NAME) -not -iname "*release_package*" -not -name *.o* -exec cp -r '{}' $(RELEASE_PACKAGE_NAME)/$(RELEASE_PACKAGE_NAME)_V$(MAJOR_SW).$(MINOR_SW).$(VERIFICATION_SW)_BETA \;
