@@ -327,7 +327,6 @@ memory_stats: $(GCC_ARM_OUT_DIR)/$(STM32_MAP_FILE)
 
 
 
-.PHONY: chksum
 chksum:
 	@find Src -type f -print0 | xargs -0 sha1sum > output.txt
 

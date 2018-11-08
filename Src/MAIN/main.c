@@ -89,16 +89,12 @@ int main(void)
 			{
 				u32_t i = 0u;
 
-				/* LED blink */
-				for(i=0; i<2; i++)
-				{
-					/* Toggle LED which connected to PC13*/
-					HAL_BRD_Toggle_led();
-					/* delay */
-					delay_us(30000);
-				}
+				/* Toggle LED which connected to PC13*/
+				HAL_BRD_Toggle_led();
 
 				RFM69_wakeup_and_send();
+
+				HAL_BRD_Toggle_led();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );

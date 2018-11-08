@@ -357,20 +357,20 @@ void SERIAL_msg_handler( void )
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "rf" ) != 0)
 		{
 			u8_t val;
-			
+
 			char *sub_string = strstr(SERIAL_rx_buf_s, "rf") + 3;
-			
+
 			if( ( strstr(sub_string, "conf") != 0 ) )
 			{
 				sub_string = strstr(SERIAL_rx_buf_s, "rf") + 8;
-				
+
 				val = atoi(sub_string);
-				
+
 				if( val > MAX_NUM_RF_CONFIGS )
 				{
 					/* Default them to config */
 					val = 0u;
-					
+
 					sprintf( SERIAL_tx_buf_s, "Selection not valid.. config can be between 0..%d\r\n", MAX_NUM_RF_CONFIGS );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
 				}
@@ -383,7 +383,7 @@ void SERIAL_msg_handler( void )
 			else if( ( strstr(sub_string, "tx") != 0 ) )
 			{
 				*sub_string = strstr(SERIAL_rx_buf_s, "tx") + 3;
-				
+
 				RFM69_wakeup_and_send();
 			}
 			else if( ( strstr(sub_string, "read") != 0 ) )
@@ -552,9 +552,12 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "nvm" ) != 0)
 		{
-			sprintf( SERIAL_tx_buf_s, "chksum:\t0x%02X\r\nVers:\t%d\r\nwrites:\t%d\r\nSleep time:\t%d\r\n", NVM_info_s.checksum, NVM_info_s.version,
+			sprintf( SERIAL_tx_buf_s, "\r\nchksum:\t\t0x%02X\r\nVers:\t\t%d\r\nwrites:\t\t%d\r\nSleep time:\t%d\r\nRF Power level: %d\r\n\r\n",
+																										  NVM_info_s.checksum,
+																										  NVM_info_s.version,
 																										  NVM_info_s.write_count,
-																										  NVM_info_s.NVM_generic_data_blk_s.sleep_time );
+																										  NVM_info_s.NVM_generic_data_blk_s.sleep_time,
+																										  NVM_info_s.NVM_generic_data_blk_s.tx_power_level );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else if ( strstr(strlwr(SERIAL_rx_buf_s), "test" ) != 0)
@@ -634,7 +637,14 @@ void USART2_IRQHandler(void)
 		SERIAL_rx_buf_s[SERIAL_rx_buf_idx_s] = SERIAL_rx_buf_char_s;
 		SERIAL_rx_buf_idx_s++;
 
-		if (SERIAL_rx_buf_char_s != '\r')
+		if(SERIAL_rx_buf_char_s == '\b' )
+		{
+			if (SERIAL_rx_buf_idx_s > 0u )
+			{
+				SERIAL_rx_buf_idx_s -= 2;
+			}
+		}
+		else if (SERIAL_rx_buf_char_s != '\r')
 		{
 			if (SERIAL_rx_buf_idx_s >= RX_BUF_SIZE)
 			{
@@ -642,6 +652,7 @@ void USART2_IRQHandler(void)
 				SERIAL_clear_RXBuffer();
 			}
 		}
+
 		else
 		{
 			SERIAL_cr_received_s = TRUE;

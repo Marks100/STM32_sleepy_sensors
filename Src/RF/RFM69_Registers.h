@@ -42,13 +42,13 @@
 /***************************************************************************************************
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
-/* Default register set 915Mhz */
+/* Default register set 433Mhz */
 const RFM69_register_data_st RFM69_default_register_set[] =
 {
     { REGOPMODE        ,0x04 },         
     { REGDATAMODUL     ,0x00 },         
-    { REGBITRATEMSB    ,RF_BITRATEMSB_1200 },         
-    { REGBITRATELSB    ,RF_BITRATELSB_1200 },
+    { REGBITRATEMSB    ,RF_BITRATEMSB_19200 },
+    { REGBITRATELSB    ,RF_BITRATELSB_19200 },
     { REGFDEVMSB       ,0x01 },
     { REGFDEVLSB       ,0x48 },
     { REGFRFMSB        ,RF_FRFMSB_433 },
