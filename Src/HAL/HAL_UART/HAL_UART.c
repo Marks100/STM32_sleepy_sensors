@@ -70,7 +70,7 @@ STATIC const u8_t SERIAL_help_promt_s[] =
 		"db:     < 0..3 > < 0 or 1 > ( eg db 1 1 turns DB 1 ON )\r\n"
 		"sleep:  <1..15000> sets the sleep time in secs\r\n"
 		"stream: <0 1> Turns streaming mode on and off\r\n"
-		"nvm:	 prints the current NVM data\r\n";
+		"nvm:	 prints the current NVM data\r\n\r\n";
 
 STATIC const u8_t SERIAL_welcome_message_s[] =
 		"\r\nHello.\r\nDebug Console is ready, Type 'help' for a list of commands\r\n"
@@ -477,7 +477,7 @@ void SERIAL_msg_handler( void )
 					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
 
 					/* Fire down a config of registers */
-					RFM69_set_configuration( RFM69_433Mhz_OOK );
+					RFM69_set_configuration( RFM69_433_DEFAULT_CONFIG );
 
 					u32_t freq;
 					freq = RFM69_read_rf_carrier_freq();
@@ -493,7 +493,7 @@ void SERIAL_msg_handler( void )
 					RFM69_register_data_st write_data[79];
 
 					RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
-					RFM69_get_configuration( RFM69_433Mhz_OOK, &write_data );
+					RFM69_get_configuration( RFM69_433_DEFAULT_CONFIG, &write_data );
 
 					for( i = 0u; i < 79; i++ )
 					{
@@ -530,7 +530,7 @@ void SERIAL_msg_handler( void )
 				random_number = rand()%100;
 			}
 
-			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n", random_number );
+			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n\r\n", random_number );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "time" ) != 0)
@@ -562,7 +562,8 @@ void SERIAL_msg_handler( void )
 		}
 		else if ( strstr(strlwr(SERIAL_rx_buf_s), "test" ) != 0)
 		{
-
+			sprintf( SERIAL_tx_buf_s, "\r\nNo self test configured yet\r\n\r\n" );
+			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else
 		{

@@ -72,6 +72,16 @@ void HAL_BRD_init( void )
 		/* Turn the led off straight away to save power */
 		HAL_BRD_set_LED( OFF );
 
+		/* configure the debug mode led ( this lets us know we are in debug mode and will only be turned
+		on in debug mode */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		/* Turn the led off straight away to save power */
+		HAL_BRD_set_debug_mode_LED( ON );
+
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -212,7 +222,6 @@ void HAL_BRD_Set_Pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 ***************************************************************************************************/
 void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
 {
-
     /* Firstly read the PIN state */
     if( ( port->ODR & pin ) == pin )
     {
@@ -360,6 +369,39 @@ void HAL_BRD_set_LED( off_on_et state )
 		val = LOW;
 	}
 	HAL_BRD_Set_Pin_state( GPIOC, GPIO_Pin_13, val);
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Toggles the debug led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_Toggle_debug_mode_led( void )
+{
+    HAL_BRD_Toggle_Pin_state( GPIOA, GPIO_Pin_8 );
+}
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the state of the debug mode the led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_debug_mode_LED( off_on_et state )
+{
+	HAL_BRD_Set_Pin_state( GPIOA, GPIO_Pin_8, state);
 }
 
 
