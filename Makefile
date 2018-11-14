@@ -290,39 +290,22 @@ RAM_CALC_LIMIT := $(shell echo $$(($(RAM_SIZE) * $(RAM_PERC_LIMIT) / 100 )))
 
 .PHONY: memory_stats
 memory_stats: $(GCC_ARM_OUT_DIR)/$(STM32_MAP_FILE)
-	@printf "\nAnalysing elf file for memory stats....\nOutput from GNU \"size\" tool..\n"
-
-	@printf "Memory analysis attained using the GNU 'size' tool which analyses the '.elf'\nfile and produces the below result..\n\n" > $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
-	@size -B $(GCC_ARM_OUT_DIR)/$(STM32_ELF_FILE) >> $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
-
-	@awk '/text/{ printf "%-6s\t %-6s\t %-6s\t %-6s\t %-6s\t %-5s" , $$1, $$2, $$3, $$4, $$5, $$6; } /$(STM32_ELF_FILE)/{ printf "\n%-6s\t %-6s\t %-6s\t %-6s\t %-6s\t %-6s" , $$1, $$2, $$3, $$4, $$5, $$6; } ' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
-
-	@awk 'BEGIN{ printf "\n\n\n=======================================================\n\
-	====================== RAM STATS ======================\n\
-	=======================================================\n"; } \
-	/$(STM32_ELF_FILE)/ { RamUsed = ($$2) + ($$3); } \
-	END{ printf "Available Ram in Bytes:    %-6d\nRam used in Bytes:\t\t%-6d\n%%Ram used:\t\t\t%-3.0f%\n", $(RAM_SIZE), RamUsed, ( RamUsed/$(RAM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
-
-	@awk 'BEGIN{ printf "\n=======================================================\n\
-	==================== FLASH STATS ======================\n\
-	=======================================================\n\n"; } \
-	/$(STM32_ELF_FILE)/ { FlashUsed = ($$1) ;} \
-	END{ printf "Available Flash in Bytes: \t%-6d\nFlash used in Bytes:\t\t%-6d\n%%Flash used:\t\t\t%-3.0f%\n\
-	-------------------------------------------------------\n", $(ROM_SIZE), FlashUsed, ( FlashUsed/$(ROM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
-
+	@echo "Analysing elf file for memory stats...."
+	@echo "Output from GNU \"size\" tool.." | tee $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
+	@size -B $(GCC_ARM_OUT_DIR)/$(STM32_ELF_FILE) | tee -a $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
 
 	@awk 'BEGIN{ printf "\n=======================================================\n\
 	====================== RAM STATS ======================\n\
 	=======================================================\n\n"; } \
 	/$(STM32_ELF_FILE)/ { RamUsed = ($$2) + ($$3); } \
-	END{ printf "Available Ram in Bytes:\t%-6d\nRam used in Bytes:\t\t%-6d\n%%Ram used:\t\t\t\t%-3.0f%\n", $(RAM_SIZE), RamUsed, ( RamUsed/$(RAM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE) >> $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
+	END{ printf "Available Ram in Bytes: %-6d\nRam used in Bytes:      %-6d\n%%Ram used:              %-3.0f%\n", $(RAM_SIZE), RamUsed, ( RamUsed/$(RAM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE) | tee -a $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
 
 	@awk 'BEGIN{ printf "\n=======================================================\n\
 	==================== FLASH STATS ======================\n\
 	=======================================================\n\n"; } \
 	/$(STM32_ELF_FILE)/ { FlashUsed = ($$1) ;} \
-	END{ printf "Available Flash in Bytes: \t%-6d\nFlash used in Bytes:\t\t%-6d\n%%Flash used:\t\t\t\t%-3.0f%\n\
-	-------------------------------------------------------\n\n", $(ROM_SIZE), FlashUsed, ( FlashUsed/$(ROM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE) >> $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
+	END{ printf "Available Flash in Bytes: %-6d\nFlash used in Bytes:      %-6d\n%%Flash used:              %-3.0f%\n\
+	-------------------------------------------------------\n\n", $(ROM_SIZE), FlashUsed, ( FlashUsed/$(ROM_SIZE) * 100 ); }' $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE) | tee -a $(GCC_ARM_OUT_DIR)/$(STM32_MEM_OUTPUT_FILE)
 	@echo "Output file \"$(STM32_MEM_OUTPUT_FILE)\" created @ $(PROJECT_NAME)/$(GCC_ARM_OUT_DIR)/"
 
 
