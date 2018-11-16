@@ -14,6 +14,7 @@
 #include "HAL_BRD.h"
 #include "HAL_ADC.h"
 #include "HAL_SPI.h"
+#include "NVM.h"
 #include "HAL_I2C.h"
 #include "HAL_UART.h"
 #include "RFM69.h"
@@ -61,8 +62,6 @@ int main(void)
 	{
 		if( debug_mode != ENABLE )
 		{
-			u32_t i = 0u;
-
 			RFM69_wakeup_and_send();
 
 			/* Disable the I2C peripheral and clock to save power */
@@ -87,18 +86,12 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
-				u32_t i = 0u;
-
-				/* LED blink */
-				for(i=0; i<2; i++)
-				{
-					/* Toggle LED which connected to PC13*/
-					HAL_BRD_Toggle_led();
-					/* delay */
-					delay_us(30000);
-				}
+				/* Toggle LED which connected to PC13*/
+				HAL_BRD_Toggle_led();
 
 				RFM69_wakeup_and_send();
+
+				HAL_BRD_Toggle_led();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );

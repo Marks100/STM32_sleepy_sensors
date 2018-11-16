@@ -4,6 +4,7 @@
 #include "stm32f10x.h"
 #include "misc.h"
 
+#include "autoversion.h"
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
@@ -70,6 +71,16 @@ void HAL_BRD_init( void )
 
 		/* Turn the led off straight away to save power */
 		HAL_BRD_set_LED( OFF );
+
+		/* configure the debug mode led ( this lets us know we are in debug mode and will only be turned
+		on in debug mode */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		/* Turn the led off straight away to save power */
+		HAL_BRD_set_debug_mode_LED( ON );
 
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -211,7 +222,6 @@ void HAL_BRD_Set_Pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 ***************************************************************************************************/
 void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
 {
-
     /* Firstly read the PIN state */
     if( ( port->ODR & pin ) == pin )
     {
@@ -363,6 +373,39 @@ void HAL_BRD_set_LED( off_on_et state )
 
 
 
+/*!
+****************************************************************************************************
+*
+*   \brief         Toggles the debug led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_Toggle_debug_mode_led( void )
+{
+    HAL_BRD_Toggle_Pin_state( GPIOA, GPIO_Pin_8 );
+}
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the state of the debug mode the led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_debug_mode_LED( off_on_et state )
+{
+	HAL_BRD_Set_Pin_state( GPIOA, GPIO_Pin_8, state);
+}
+
+
+
 
 /*!
 ****************************************************************************************************
@@ -426,6 +469,17 @@ false_true_et HAL_BRD_get_rtc_trigger_status( void )
 
 
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
 void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 {
 	HAL_BRD_rtc_triggered_s = state;
@@ -433,7 +487,52 @@ void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 
 
 
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_get_SW_version_num( u8_t* version_num_p )
+{
+	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
+	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
+	version_num_p[2] = SLEEP_SENSORS_VERSION_VERIFICATION;
+}
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the trigger state of the RTC
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_get_HW_version_num( u8_t* version_num_p )
+{
+	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
+	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         ISR
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
 void EXTI0_IRQHandler(void)
 {
 	/* Make sure that interrupt flag is set */

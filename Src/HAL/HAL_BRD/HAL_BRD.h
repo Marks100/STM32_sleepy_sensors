@@ -52,6 +52,8 @@ void HAL_BRD_Set_batt_monitor_state( disable_enable_et state );
 void HAL_BRD_Set_rf_enable_pin( disable_enable_et state );
 void HAL_BRD_Toggle_led( void );
 void HAL_BRD_set_LED( off_on_et state );
+void HAL_BRD_set_debug_mode_LED( off_on_et state );
+void HAL_BRD_Toggle_debug_mode_led( void );
 void HAL_BRD_RFM69_set_enable_Pin_state( low_high_et state );
 void HAL_BRD_RFM69_set_reset_Pin_state( low_high_et state );
 void HAL_BRD_RFM69_spi_slave_select( low_high_et state );
@@ -59,6 +61,11 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state );
 false_true_et HAL_BRD_get_rtc_trigger_status( void );
 void HAL_BRD_set_rtc_trigger_status( false_true_et state );
 disable_enable_et HAL_BRD_read_debug_pin( void );
+void HAL_BRD_get_SW_version_num( u8_t* version_num_p );
+void HAL_BRD_get_HW_version_num( u8_t* version_num_p );
+
+void delay_ms(u16_t);
+void delay_us(u16_t us);
 
 
 

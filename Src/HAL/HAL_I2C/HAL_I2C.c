@@ -80,7 +80,7 @@ const u8_t RTC_EXT_default_register_values[ RTC_EXT_MAX_NUM_REGS ] =
 *
 *   \return        none
 *
-*   \note          
+*   \note
 *
 ***************************************************************************************************/
 void HAL_I2C_init( void )
@@ -88,7 +88,7 @@ void HAL_I2C_init( void )
 	/* Enable I2C and GPIOA clock, should be enabled anyway but just in case */
 	RCC_APB1PeriphClockCmd( RCC_APB1Periph_I2C1, ENABLE );
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOB, ENABLE );
-	
+
 	I2C_SoftwareResetCmd(I2C1, ENABLE);
 	I2C_SoftwareResetCmd(I2C1, DISABLE);
 
@@ -100,7 +100,7 @@ void HAL_I2C_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
-	
+
 	I2C_InitTypeDef  I2C_InitStructure;
 
 	/* I2C configuration */
@@ -125,10 +125,10 @@ void HAL_I2C_de_init( void )
 {
 	/* De-init the I2C module */
 	I2C_DeInit(I2C1);
-	
+
 	/* I2C Peripheral Disable */
 	I2C_Cmd(I2C1, DISABLE);
-	
+
 	/* Disable I2C clock*/
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, DISABLE);
 }
@@ -252,9 +252,6 @@ void HAL_I2C_read_multiple_registers( u8_t dev_add, u8_t reg_start_add, u8_t* da
 
 void RTC_ext_init( void )
 {
-	u8_t data;
-	u8_t wakeup_time;
-
 	u8_t data_burst[16];
 
 	/* Write down the default config */

@@ -48,7 +48,13 @@ STATIC u8_t send_data[RFM69_MAX_PAYLOAD_LEN] =
     52,53,54,55,56,57,58,59,60,61
 };
 
-false_true_et RFM69_packet_sent_s = FALSE;
+STATIC u8_t send_data_small[10] =
+{
+    1,2,3,4,5,6,7,8,9,10
+};
+
+false_true_et RFM69_init_s;
+false_true_et RFM69_packet_sent_s ;
 u8_t RFM69_tx_power_level_s;
 
 
@@ -67,6 +73,9 @@ u8_t RFM69_tx_power_level_s;
 void RFM69_init( void )
 {
 	RFM69_tx_power_level_s = NVM_info_s.NVM_generic_data_blk_s.tx_power_level;
+
+	RFM69_init_s = FALSE;
+	RFM69_packet_sent_s = FALSE;
 }
 
 
@@ -91,55 +100,60 @@ void RFM69_wakeup_and_send( void )
 	/* power up the RF chip */
 	RFM69_set_enable_pin_state( HIGH );
 
-	RFM69_set_reset_pin_state( HIGH );
-    delay_us(200);
-    RFM69_set_reset_pin_state( LOW );
+	/* If the RF chip isnt initialised then init it */
+	if( RFM69_init_s == FALSE )
+    {
+        RFM69_init_s = TRUE;
 
-    /* Give the RF chip time to stabilise */
-    delay_us(6000);
+        RFM69_set_reset_pin_state( HIGH );
+        delay_us(200);
+        RFM69_set_reset_pin_state( LOW );
 
-    RFM69_set_operating_mode( RFM69_SLEEP_MODE );
+        /* Give the RF chip time to stabilise */
+        delay_us(6000);
 
-	/* Go through the elements and reset them to 0xFF */
-	STDC_memset( &RFM69_data_packet_s, 0xFF, sizeof( RFM69_data_packet_st ) );
+        RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 
-	/* Firstly check that the version number is correct */
-	if( RFM69_read_version_num() != RFM69_VERSION )
-	{
-	   STDC_basic_assert();
-	}
+        /* Go through the elements and reset them to 0xFF */
+        STDC_memset( &RFM69_data_packet_s, 0xFF, sizeof( RFM69_data_packet_st ) );
 
-	if( RFM69_read_reserved_registers() == PASS )
-	{
-		/* Fire down a config of registers */
-		RFM69_set_configuration( RFM69_433Mhz_OOK );
+        /* Firstly check that the version number is correct */
+        if( RFM69_read_version_num() != RFM69_VERSION )
+        {
+            STDC_basic_assert();
+        }
 
-		RFM69_set_PA_level( RFM69_tx_power_level_s );
+        if( RFM69_read_reserved_registers() == PASS )
+        {
+            /* Fire down a register config */
+            RFM69_set_configuration( RFM69_433_DEFAULT_CONFIG );
 
-		RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.node_id );
+            RFM69_set_PA_level( RFM69_tx_power_level_s );
 
-		RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+            RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.node_id );
 
-		/* Put the chip into sleep mode */
-		RFM69_set_operating_mode( RFM69_SLEEP_MODE );
+            RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
-		/* this sets DIO1 to be "Packet Sent" indicator */
-		RFM69_set_DIO_mapping( 0, RFM69_DIO_MODE_0 );
-		RFM69_set_DIO_mapping( 1, RFM69_DIO_MODE_0 );
-		RFM69_set_DIO_mapping( 2, RFM69_DIO_MODE_0 );
-		RFM69_set_DIO_mapping( 3, RFM69_DIO_MODE_1 );
-		RFM69_set_DIO_mapping( 4, RFM69_DIO_MODE_1 );
-		RFM69_set_DIO_mapping( 5, RFM69_DIO_MODE_3 );
-	}
-	else
-	{
-		STDC_basic_assert();
-	}
+            /* Put the chip into sleep mode */
+            RFM69_set_operating_mode( RFM69_SLEEP_MODE );
+
+            /* this sets DIO1 to be "Packet Sent" indicator */
+            RFM69_set_DIO_mapping( 0, RFM69_DIO_MODE_0 );
+            RFM69_set_DIO_mapping( 1, RFM69_DIO_MODE_0 );
+            RFM69_set_DIO_mapping( 2, RFM69_DIO_MODE_0 );
+            RFM69_set_DIO_mapping( 3, RFM69_DIO_MODE_1 );
+            RFM69_set_DIO_mapping( 4, RFM69_DIO_MODE_1 );
+            RFM69_set_DIO_mapping( 5, RFM69_DIO_MODE_3 );
+        }
+        else
+        {
+            STDC_basic_assert();
+        }
+    }
 
 	/* Fill the buffer */
-	RFM69_Send_frame( send_data, sizeof( send_data ), 1 );
-
-	RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+	//RFM69_Send_frame( send_data, sizeof( send_data ), 1 );
+	RFM69_Send_frame( send_data_small, sizeof( send_data_small ), 1 );
 
 	RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 }
@@ -175,11 +189,12 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
     else
     {
         /* Config is OK */
+    	u8_t len;
+    	len = RFM69_config_c[ config ].length;
 
 #if(MULTI_SPI_WRITE_CONFIG==0)
 
         u8_t i;
-        u8_t len = RFM69_433Mhz_CONFIGURATION_SIZE;
 
         for( i = 0u; i < len; i++ )
         {
@@ -194,7 +209,7 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
         }
 
 #else
-        if( RFM69_write_registers( WRITE_TO_CHIP_BURST_MODE_CONF, RFM69_config_c[config].buffer_p[0].RFM69_register, &RFM69_config_c[config].buffer_p[0].register_data, RFM69_433Mhz_CONFIGURATION_SIZE  ) == FAIL )
+        if( RFM69_write_registers( WRITE_TO_CHIP_BURST_MODE_CONF, RFM69_config_c[config].buffer_p[0].RFM69_register, &RFM69_config_c[config].buffer_p[0].register_data, len  ) == FAIL )
 		{
 			/* Configuration failed :( */
 			STDC_basic_assert();
@@ -225,14 +240,14 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
 ***************************************************************************************************/
 void RFM69_get_configuration( RFM69_static_configuration_et config, RFM69_register_data_st* data_p )
 {
-    u8_t i,j = 0;
+    u8_t i = 0;
 
-    for(  i = 0; i < RFM69_433Mhz_CONFIGURATION_SIZE; i++ )
+    for(  i = 0; i < RFM69_config_c[ config ].length; i++ )
     {
     	data_p[i].RFM69_register = RFM69_config_c[config].buffer_p[i].RFM69_register;
     	data_p[i].register_data  = RFM69_config_c[config].buffer_p[i].register_data;
 
-    	data_p->RFM69_register;
+    	//data_p->RFM69_register;
     }
 }
 
@@ -627,7 +642,7 @@ false_true_et RFM69_set_clock_out( disable_enable_et state )
     register_val &= ~BIT_MASK_3_BIT;
 
     /* This disables the CLK_OUT */
- 	if( state == DISABLE )
+ 	if( state == DISABLE_ )
     {
         register_val |= CLK_OUT_OFF;
     }
@@ -1027,6 +1042,12 @@ false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state )
 false_true_et RFM69_set_own_node_address( u8_t address )
 {
 	u8_t register_val;
+	false_true_et status = TRUE;
+
+	/* Write down the node address */
+	RFM69_write_registers( WRITE_TO_CHIP, REGNODEADRS, &register_val, 1  );
+
+	return ( status );
 }
 
 
@@ -1142,7 +1163,6 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
     u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
-    u8_t test_buffer[RFM69_MAX_DATA_LEN];
 
     /* Set to standby */
     RFM69_set_operating_mode( RFM69_STANDBY_MODE );
