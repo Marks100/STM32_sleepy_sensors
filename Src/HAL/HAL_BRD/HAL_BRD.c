@@ -5,10 +5,12 @@
 #include "misc.h"
 
 #include "autoversion.h"
+#include "main.h"
+#include "RFM69.h"
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
-false_true_et debug_mode;
+disable_enable_et debug_mode;
 
 
 /*!
@@ -46,7 +48,7 @@ void HAL_BRD_init( void )
 	debug_mode = HAL_BRD_read_debug_pin();
 
 	#if( AUTO_DEBUG_MODE == 1 )
-		debug_mode = ENABLE;
+		debug_mode = ENABLE_;
 	#endif
 
 	/* Setup the RF( RFM69 ) NCS Pin ( PB1 ) */
@@ -61,7 +63,7 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	if( debug_mode == ENABLE )
+	if( debug_mode == ENABLE_ )
 	{
 		/* Configure the GPIO_LED pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
@@ -248,7 +250,7 @@ void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
 ***************************************************************************************************/
 void HAL_BRD_Set_batt_monitor_state( disable_enable_et state )
 {
-	if( state == ENABLE )
+	if( state == ENABLE_ )
 	{
 		//HAL_BRD_Set_Pin_state();
 	}
