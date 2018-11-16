@@ -329,7 +329,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "sleep" ) != 0)
 		{
-			u32_t val;
+			u16_t val;
 
 			char *result = strstr(SERIAL_rx_buf_s, "sleep") + 6;
 
@@ -343,7 +343,7 @@ void SERIAL_msg_handler( void )
 			}
 			else
 			{
-				sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d secs\r\n\r\n", val );
+				sprintf( SERIAL_tx_buf_s, "Sleep time has been set to %d secs\r\n\r\n", (int)val );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
 
 				RTC_set_wakeup_time( val );
@@ -481,7 +481,7 @@ void SERIAL_msg_handler( void )
 
 					u32_t freq;
 					freq = RFM69_read_rf_carrier_freq();
-					sprintf( SERIAL_tx_buf_s, "\r\nRF carrier frequency is %dHz\r\n", freq );
+					sprintf( SERIAL_tx_buf_s, "\r\nRF carrier frequency is %dHz\r\n", (int)freq );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
 					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
 
@@ -493,7 +493,7 @@ void SERIAL_msg_handler( void )
 					RFM69_register_data_st write_data[79];
 
 					RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
-					RFM69_get_configuration( RFM69_433_DEFAULT_CONFIG, &write_data );
+					RFM69_get_configuration( RFM69_433_DEFAULT_CONFIG, write_data );
 
 					for( i = 0u; i < 79; i++ )
 					{
@@ -517,7 +517,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strncmp(strlwr(SERIAL_rx_buf_s), "rand\r", 5) == 0)
 		{
-			u32_t random_number;
+			u16_t random_number;
 
 			/* Set the seed */
 			srand( get_counter() );
@@ -530,7 +530,7 @@ void SERIAL_msg_handler( void )
 				random_number = rand()%100;
 			}
 
-			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n\r\n", random_number );
+			sprintf( SERIAL_tx_buf_s, "Random number:\t%d\r\n\r\n", (int)random_number );
 			SERIAL_Send_data( SERIAL_tx_buf_s );
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "time" ) != 0)

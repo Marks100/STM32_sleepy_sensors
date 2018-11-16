@@ -240,14 +240,14 @@ pass_fail_et RFM69_set_configuration( RFM69_static_configuration_et config )
 ***************************************************************************************************/
 void RFM69_get_configuration( RFM69_static_configuration_et config, RFM69_register_data_st* data_p )
 {
-    u8_t i,j = 0;
+    u8_t i = 0;
 
     for(  i = 0; i < RFM69_config_c[ config ].length; i++ )
     {
     	data_p[i].RFM69_register = RFM69_config_c[config].buffer_p[i].RFM69_register;
     	data_p[i].register_data  = RFM69_config_c[config].buffer_p[i].register_data;
 
-    	data_p->RFM69_register;
+    	//data_p->RFM69_register;
     }
 }
 
@@ -642,7 +642,7 @@ false_true_et RFM69_set_clock_out( disable_enable_et state )
     register_val &= ~BIT_MASK_3_BIT;
 
     /* This disables the CLK_OUT */
- 	if( state == DISABLE )
+ 	if( state == DISABLE_ )
     {
         register_val |= CLK_OUT_OFF;
     }
@@ -1163,7 +1163,6 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
     u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
-    u8_t test_buffer[RFM69_MAX_DATA_LEN];
 
     /* Set to standby */
     RFM69_set_operating_mode( RFM69_STANDBY_MODE );

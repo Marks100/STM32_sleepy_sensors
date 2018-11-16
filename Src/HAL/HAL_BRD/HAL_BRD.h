@@ -64,6 +64,9 @@ disable_enable_et HAL_BRD_read_debug_pin( void );
 void HAL_BRD_get_SW_version_num( u8_t* version_num_p );
 void HAL_BRD_get_HW_version_num( u8_t* version_num_p );
 
+void delay_ms(u16_t);
+void delay_us(u16_t us);
+
 
 
 #endif
