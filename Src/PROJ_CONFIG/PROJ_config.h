@@ -5,7 +5,6 @@
 #define RFM69HW
 #define RFM69_DEFAULT_TX_POWER_LEVEL     0
 #define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  10
-#define MAX_NUM_RF_CONFIGS 				 4
 
 #define AUTO_DEBUG_MODE					 1
 #define MULTI_SPI_WRITE_CONFIG			 1

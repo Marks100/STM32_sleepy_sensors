@@ -126,7 +126,7 @@ void RFM69_wakeup_and_send( void )
         if( RFM69_read_reserved_registers() == PASS )
         {
             /* Fire down a register config */
-            RFM69_set_configuration( RFM69_433_DEFAULT_CONFIG );
+            RFM69_set_configuration( NVM_info_s.NVM_generic_data_blk_s.rf_config );
 
             RFM69_set_PA_level( RFM69_tx_power_level_s );
 
@@ -1163,6 +1163,7 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
     u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
+    u16_t timeout = 0u;
 
     /* Set to standby */
     RFM69_set_operating_mode( RFM69_STANDBY_MODE );
@@ -1184,9 +1185,19 @@ false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
     RFM69_set_operating_mode( RFM69_TRANSMIT_MODE );
 
     /* The packet is now being sent */
-    while( RFM69_packet_sent_s == FALSE )
+    while( ( RFM69_packet_sent_s == FALSE ) && ( timeout < 400u ) )
     {
-    	//TODO : timeout
+    	/* WE NEED TO HAVE A TIMEOUT HERE JUST SO THE WHOLE OPERATION DOESNT STOP BECAUSE
+    	A FRAME DIDNT GET SENT */
+    	delay_us( 100 );
+
+    	/* increment the timeout */
+    	timeout ++;
+    }
+
+    if( timeout == 400u )
+    {
+        STDC_basic_assert();
     }
 
     /* Set to standby again */
@@ -1226,6 +1237,9 @@ void RFM69_reset( void )
 	RFM69_set_reset_pin_state( LOW );
 
 	delay_us(1000);
+
+	/* Reset the init status */
+	RFM69_init_s = FALSE;
 }
 
 

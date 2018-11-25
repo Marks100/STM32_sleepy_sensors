@@ -1292,7 +1292,7 @@ false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state );
 false_true_et RFM69_set_DIO_mapping( u8_t pin, RFM69_DIO_map_mode_et mode );
 false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len );
 false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address );
-void RFM69_update_packet_sent( false_true_et state );
+void          RFM69_update_packet_sent( false_true_et state );
 
 
 /* Reads */

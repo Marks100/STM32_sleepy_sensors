@@ -134,7 +134,7 @@ const RFM69_register_data_st RFM69_default_register_set[] =
 
 
 
-#define DEFAULT_CONFIGURATION_SIZE      ( sizeof( RFM69_default_register_set ) / sizeof( RFM69_register_data_st ) )
+#define DEFAULT_CONFIGURATION_SIZE      ( 79u )
 
 const RFM69_static_configuration_st RFM69_config_c[ 1 ] =
 {

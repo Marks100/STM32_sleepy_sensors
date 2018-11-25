@@ -366,18 +366,20 @@ void SERIAL_msg_handler( void )
 
 				val = atoi(sub_string);
 
-				if( val > MAX_NUM_RF_CONFIGS )
+				if( val >= RFM69_CFG_MAX )
 				{
-					/* Default them to config */
-					val = 0u;
-
-					sprintf( SERIAL_tx_buf_s, "Selection not valid.. config can be between 0..%d\r\n", MAX_NUM_RF_CONFIGS );
+					sprintf( SERIAL_tx_buf_s, "Selection not valid.. config can be between 0..%d\r\n", RFM69_CFG_MAX );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
 				}
 				else
 				{
-					sprintf( SERIAL_tx_buf_s, "Rf config %d selected\r\n", val );
+					NVM_info_s.NVM_generic_data_blk_s.rf_config = (RFM69_static_configuration_et)val;
+
+					sprintf( SERIAL_tx_buf_s, "\r\nRf config %d selected\r\n", val );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
+
+					/* reset the RF chip so it can use the new settings */
+					RFM69_reset();
 				}
 			}
 			else if( ( strstr(sub_string, "tx") != 0 ) )
@@ -388,18 +390,48 @@ void SERIAL_msg_handler( void )
 			}
 			else if( ( strstr(sub_string, "read") != 0 ) )
 			{
-				u8_t read_data[79];
+				u8_t read_data[84];
 				u8_t i;
 
-				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
+				/* read as many registers as we can in one go */
+				RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, ( sizeof( read_data ) - 5 ) );
 
-				for( i = 0u; i < 79; i++ )
+				RFM69_read_registers( READ_FROM_CHIP, REGTESTLNA, &read_data[80], 1 );
+
+				RFM69_read_registers( READ_FROM_CHIP, REGTESTPA1, &read_data[81], 1 );
+
+				RFM69_read_registers( READ_FROM_CHIP, REGTESTPA2, &read_data[82], 1 );
+
+				RFM69_read_registers( READ_FROM_CHIP, REGTESTDAGC, &read_data[83], 1 );
+
+				RFM69_read_registers( READ_FROM_CHIP, REGTESTAFC, &read_data[84], 1 );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReading back all RFM69 registers...\r\n" );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				for( i = 0u; i < ( sizeof( read_data ) - 5 ); i++ )
 				{
 					sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", i+1, read_data[i] );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
 				}
 
-				sprintf( SERIAL_tx_buf_s, "\r\n" );
+				/* Now print all the registers that are not sequential */
+				sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", REGTESTLNA, read_data[80] );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", REGTESTPA1, read_data[81] );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", REGTESTPA2, read_data[82] );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", REGTESTDAGC, read_data[83] );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				sprintf( SERIAL_tx_buf_s, "\r\nReg %02d is 0x%02X", REGTESTAFC, read_data[84] );
+				SERIAL_Send_data( SERIAL_tx_buf_s );
+
+				sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
 				SERIAL_Send_data( SERIAL_tx_buf_s );
 			}
 			else if( ( strstr(sub_string, "fifo") != 0 ) )
@@ -477,7 +509,7 @@ void SERIAL_msg_handler( void )
 					STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
 
 					/* Fire down a config of registers */
-					RFM69_set_configuration( RFM69_433_DEFAULT_CONFIG );
+					RFM69_set_configuration( NVM_info_s.NVM_generic_data_blk_s.rf_config );
 
 					u32_t freq;
 					freq = RFM69_read_rf_carrier_freq();
@@ -552,13 +584,31 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "nvm" ) != 0)
 		{
-			sprintf( SERIAL_tx_buf_s, "\r\nchksum:\t\t0x%02X\r\nVers:\t\t%d\r\nwrites:\t\t%d\r\nSleep time:\t%d\r\nRF Power level: %d\r\n\r\n",
+			sprintf( SERIAL_tx_buf_s, "\r\nCurrent NVM contents.....\r\n" );
+			SERIAL_Send_data( SERIAL_tx_buf_s );
+			STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+			/* Break it up into chunks */
+			sprintf( SERIAL_tx_buf_s, "\r\nchksum:\t\t0x%02X\r\nVers:\t\t%d\r\nwrites:\t\t%d\r\nSleep time:\t%d\r\nRF Power level: %d\r\n",
 																										  NVM_info_s.checksum,
 																										  NVM_info_s.version,
 																										  NVM_info_s.write_count,
 																										  NVM_info_s.NVM_generic_data_blk_s.sleep_time,
 																										  NVM_info_s.NVM_generic_data_blk_s.tx_power_level );
+
 			SERIAL_Send_data( SERIAL_tx_buf_s );
+			STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+			sprintf( SERIAL_tx_buf_s, "RF node id:\t0x%02X\r\nRF conf:\t%d",
+					NVM_info_s.NVM_generic_data_blk_s.node_id,
+					NVM_info_s.NVM_generic_data_blk_s.rf_config );
+
+			SERIAL_Send_data( SERIAL_tx_buf_s );
+			STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
+
+			sprintf( SERIAL_tx_buf_s, "\r\n\r\n" );
+			SERIAL_Send_data( SERIAL_tx_buf_s );
+			STDC_memset( SERIAL_tx_buf_s, 0x20, sizeof( SERIAL_tx_buf_s ) );
 		}
 		else if ( strstr(strlwr(SERIAL_rx_buf_s), "test" ) != 0)
 		{
