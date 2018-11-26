@@ -2,7 +2,7 @@
 #define PROJ_CONFIG_H
 
 #define STM32 							 1
-#define RFM69HW
+#define RFM69W
 #define RFM69_DEFAULT_TX_POWER_LEVEL     0
 #define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  10
 

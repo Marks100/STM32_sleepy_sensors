@@ -374,6 +374,7 @@ void SERIAL_msg_handler( void )
 				else
 				{
 					NVM_info_s.NVM_generic_data_blk_s.rf_config = (RFM69_static_configuration_et)val;
+					NVM_request_flush();
 
 					sprintf( SERIAL_tx_buf_s, "\r\nRf config %d selected\r\n", val );
 					SERIAL_Send_data( SERIAL_tx_buf_s );
