@@ -87,11 +87,11 @@ int main(void)
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
 				/* Toggle LED which connected to PC13*/
-				HAL_BRD_Toggle_led();
+				HAL_BRD_toggle_led();
 
 				RFM69_wakeup_and_send();
 
-				HAL_BRD_Toggle_led();
+				HAL_BRD_toggle_led();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );

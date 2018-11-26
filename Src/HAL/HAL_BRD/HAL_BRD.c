@@ -145,7 +145,7 @@ void HAL_BRD_init( void )
 	NVIC_Init(&NVIC_InitStruct);
 
 	HAL_BRD_RFM69_spi_slave_select( HIGH );
-	HAL_BRD_RFM69_set_reset_Pin_state( LOW );
+	HAL_BRD_RFM69_set_reset_pin_state( LOW );
 
 	HAL_BRD_rtc_triggered_s = TRUE;
 }
@@ -167,7 +167,7 @@ void HAL_BRD_init( void )
 *   \return        low_high_et
 *
 ***************************************************************************************************/
-low_high_et HAL_BRD_Read_Pin_state( GPIO_TypeDef * port, u16_t pin )
+low_high_et HAL_BRD_read_pin_state( GPIO_TypeDef * port, u16_t pin )
 {
 	low_high_et returnType;
 
@@ -198,7 +198,7 @@ low_high_et HAL_BRD_Read_Pin_state( GPIO_TypeDef * port, u16_t pin )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Set_Pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
+void HAL_BRD_set_pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 {
 	if( state == HIGH)
 	{
@@ -222,16 +222,16 @@ void HAL_BRD_Set_Pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
+void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin )
 {
     /* Firstly read the PIN state */
     if( ( port->ODR & pin ) == pin )
     {
-        HAL_BRD_Set_Pin_state( port, pin, LOW );
+        HAL_BRD_set_pin_state( port, pin, LOW );
     }
     else
     {
-        HAL_BRD_Set_Pin_state( port, pin, HIGH );
+        HAL_BRD_set_pin_state( port, pin, HIGH );
     }
 }
 
@@ -248,7 +248,7 @@ void HAL_BRD_Toggle_Pin_state(  GPIO_TypeDef * port, u16_t pin )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Set_batt_monitor_state( disable_enable_et state )
+void HAL_BRD_set_batt_monitor_state( disable_enable_et state )
 {
 	if( state == ENABLE_ )
 	{
@@ -278,7 +278,7 @@ EXTERNAL API's
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_RFM69_set_enable_Pin_state( low_high_et state )
+void HAL_BRD_RFM69_set_enable_pin_state( low_high_et state )
 {
 	if( state == HIGH )
 	{
@@ -301,15 +301,15 @@ void HAL_BRD_RFM69_set_enable_Pin_state( low_high_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_RFM69_set_reset_Pin_state( low_high_et state )
+void HAL_BRD_RFM69_set_reset_pin_state( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, HIGH );
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_10, HIGH );
 	}
 	else
 	{
-		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_10, LOW );
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_10, LOW );
 	}
 }
 
@@ -330,11 +330,11 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
 {
 	if( state == HIGH )
 	{
-		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, HIGH );
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_1, HIGH );
 	}
 	else
 	{
-		HAL_BRD_Set_Pin_state( GPIOB, GPIO_Pin_1, LOW );
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_1, LOW );
 	}
 }
 
@@ -351,9 +351,9 @@ void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Toggle_led( void )
+void HAL_BRD_toggle_led( void )
 {
-    HAL_BRD_Toggle_Pin_state( GPIOC, GPIO_Pin_13 );
+    HAL_BRD_toggle_pin_state( GPIOC, GPIO_Pin_13 );
 }
 
 
@@ -370,7 +370,7 @@ void HAL_BRD_set_LED( off_on_et state )
 	{
 		val = LOW;
 	}
-	HAL_BRD_Set_Pin_state( GPIOC, GPIO_Pin_13, val);
+	HAL_BRD_set_pin_state( GPIOC, GPIO_Pin_13, val);
 }
 
 
@@ -385,7 +385,7 @@ void HAL_BRD_set_LED( off_on_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Toggle_debug_mode_led( void )
+void HAL_BRD_toggle_debug_mode_led( void )
 {
     HAL_BRD_Toggle_Pin_state( GPIOA, GPIO_Pin_8 );
 }
@@ -403,7 +403,7 @@ void HAL_BRD_Toggle_debug_mode_led( void )
 ***************************************************************************************************/
 void HAL_BRD_set_debug_mode_LED( off_on_et state )
 {
-	HAL_BRD_Set_Pin_state( GPIOA, GPIO_Pin_8, state);
+	HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_8, state);
 }
 
 
@@ -424,7 +424,7 @@ disable_enable_et HAL_BRD_read_debug_pin( void )
 	low_high_et state;
 	disable_enable_et mode;
 
-	state = HAL_BRD_Read_Pin_state(GPIOA, GPIO_Pin_4 );
+	state = HAL_BRD_read_pin_state(GPIOA, GPIO_Pin_4 );
 
 	mode = (( state == HIGH ) ? ENABLE : DISABLE );
 
@@ -447,7 +447,7 @@ disable_enable_et HAL_BRD_read_debug_pin( void )
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_Toggle_heartbeat_pin(  void )
+void HAL_BRD_toggle_heartbeat_pin(  void )
 {
     HAL_BRD_Toggle_Pin_state( GPIOB, GPIO_Pin_11 );
 }
