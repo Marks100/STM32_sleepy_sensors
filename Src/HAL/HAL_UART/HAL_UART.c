@@ -86,12 +86,13 @@ STATIC const u8_t SERIAL_invalid_cmd_message_s[] =
 
 
 
-STATIC char SERIAL_cr_received_s = FALSE;
+STATIC false_true_et SERIAL_cr_received_s;
 STATIC char SERIAL_rx_buf_idx_s;
 STATIC char SERIAL_rx_buf_char_s;
 STATIC char SERIAL_rx_buf_s[RX_BUF_SIZE] = {'\0'};
 STATIC char SERIAL_tx_buf_s[TX_BUF_SIZE] = {'\0'};
-STATIC false_true_et SERIAL_stream_mode_s = FALSE;
+STATIC false_true_et SERIAL_stream_mode_s;
+STATIC false_true_et SERIAL_stream_triggered_s;
 
 
 /***************************************************************************************************
@@ -186,6 +187,7 @@ void SERIAL_init( void )
 	SERIAL_rx_buf_char_s = 0u;
 	STDC_memset( SERIAL_rx_buf_s, '\0', sizeof( SERIAL_rx_buf_s ) );
 	STDC_memset( SERIAL_tx_buf_s, '\0', sizeof( SERIAL_rx_buf_s ) );
+	SERIAL_stream_triggered_s = FALSE;
 
 	/* Finally send the welcome message */
 	SERIAL_Send_data( SERIAL_welcome_message_s );
@@ -195,10 +197,10 @@ void SERIAL_init( void )
 
 void SERIAL_msg_handler( void )
 {
-	if (SERIAL_cr_received_s == 1)
+	if (SERIAL_cr_received_s == TRUE)
 	{
 		// Reset CR Flag
-		SERIAL_cr_received_s = 0;
+		SERIAL_cr_received_s = FALSE;
 
 		if( strncmp(strlwr(SERIAL_rx_buf_s), "help\r", 5) == 0)
 		{
@@ -238,7 +240,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strncmp(strlwr(SERIAL_rx_buf_s), "ver\r", 4) == 0)
 		{
-			char version_num[3];
+			char version_num[5];
 
 			HAL_BRD_get_SW_version_num( version_num );
 
@@ -255,12 +257,12 @@ void SERIAL_msg_handler( void )
 			char *result = strstr(SERIAL_rx_buf_s, "stream") + 7;
 			if( ( *result == '0' ) || ( strstr((char*)result, "off") != 0 ) )
 			{
-				SERIAL_stream_mode_s = 0;
+				SERIAL_stream_mode_s = FALSE;
 				SERIAL_Send_data("\r\nStream mode turned off\r\n\r\n");
 			}
 			else if( ( * result == '1' ) || ( strstr(result, "on") != 0 ) )
 			{
-				SERIAL_stream_mode_s = 1;
+				SERIAL_stream_mode_s = TRUE;
 				SERIAL_Send_data("\r\nStream mode turned on\r\n\r\n");
 			}
 			else
@@ -329,7 +331,7 @@ void SERIAL_msg_handler( void )
 		}
 		else if( strstr(strlwr(SERIAL_rx_buf_s), "sleep" ) != 0)
 		{
-			u16_t val;
+			u32_t val;
 
 			char *result = strstr(SERIAL_rx_buf_s, "sleep") + 6;
 
@@ -704,7 +706,6 @@ void USART2_IRQHandler(void)
 				SERIAL_clear_RXBuffer();
 			}
 		}
-
 		else
 		{
 			SERIAL_cr_received_s = TRUE;
