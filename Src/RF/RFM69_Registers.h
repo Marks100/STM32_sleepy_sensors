@@ -45,6 +45,7 @@
 /* Default register set 433Mhz ( 19200bps ) */
 const RFM69_register_data_st RFM69_default_register_set[] =
 {
+    /*! Common Configuration Registers */
     { REGOPMODE        ,0x04 },
     { REGDATAMODUL     ,0x00 },
     { REGBITRATEMSB    ,RF_BITRATEMSB_19200 },
@@ -61,9 +62,11 @@ const RFM69_register_data_st RFM69_default_register_set[] =
     { REGLISTEN2       ,0xF5 },
     { REGLISTEN3       ,0x20 },
 	{ REGVERSION       ,0x24 },
+	/*! Transmitter Registers */
     { REGPALEVEL       ,0x9F },
     { REGPARAMP        ,0x09 },
     { REGOCP           ,0x1A },
+    /*! Receiver Registers */
 	{ RESERVED14       ,0x40 },
 	{ RESERVED15       ,0xB0 },
 	{ RESERVED16       ,0x7B },
@@ -81,6 +84,7 @@ const RFM69_register_data_st RFM69_default_register_set[] =
 	{ REGFEILSB        ,0x00 },
     { REGRSSICONFIG    ,0x02 },
 	{ REGRSSIVALUE     ,0xFF },
+	/*! IRQ and Pin Mapping Registers */
     { REGDIOMAPPING1   ,0x00 },
     { REGDIOMAPPING2   ,0x07 },
     { REGIRQFLAGS1     ,0x80 },
@@ -88,6 +92,7 @@ const RFM69_register_data_st RFM69_default_register_set[] =
     { REGRSSITHRESH    ,0xE4 },
     { REGRXTIMEOUT1    ,0x00 },
     { REGRXTIMEOUT2    ,0x00 },
+    /*!Packet Engine Registers*/
     { REGPREAMBLEMSB   ,0x00 },
     { REGPREAMBLELSB   ,0x03 },
     { REGSYNCCONFIG    ,0x98 },
@@ -122,8 +127,10 @@ const RFM69_register_data_st RFM69_default_register_set[] =
     { REGAESKEY14      ,0x00 },
     { REGAESKEY15      ,0x00 },
     { REGAESKEY16      ,0x00 },
+    /*! Temperature Sensor Registers */
     { REGTEMP1         ,0x01 },
 	{ REGTEMP2         ,0x00 },
+	/*! Test Registers */
 	{ REGTESTLNA       ,0x1B },
 	{ REGTESTPA1       ,0x55 },
 	{ REGTESTPA2       ,0x70 },
@@ -136,6 +143,7 @@ const RFM69_register_data_st RFM69_default_register_set[] =
 /* Default register set 433Mhz ( 19200bps ) */
 const RFM69_register_data_st RFM69_online_register_set[] =
 {
+    /*! Common Configuration Registers */
     { REGOPMODE        ,RF_OPMODE_SEQUENCER_ON | RF_OPMODE_LISTEN_OFF | RF_OPMODE_STANDBY },
     { REGDATAMODUL     ,RF_DATAMODUL_DATAMODE_PACKET | RF_DATAMODUL_MODULATIONTYPE_FSK | RF_DATAMODUL_MODULATIONSHAPING_00 }, //no shaping
     { REGBITRATEMSB    ,RF_BITRATEMSB_55555 },
@@ -152,9 +160,11 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGLISTEN2       ,0xF5 },
     { REGLISTEN3       ,0x20 },
 	{ REGVERSION       ,0x24 },
+	/*! Transmitter Registers */
     { REGPALEVEL       ,0x9F },
     { REGPARAMP        ,0x09 },
     { REGOCP           ,0x1A },
+    /*! Receiver Registers */
 	{ RESERVED14       ,0x40 },
 	{ RESERVED15       ,0xB0 },
 	{ RESERVED16       ,0x7B },
@@ -172,6 +182,7 @@ const RFM69_register_data_st RFM69_online_register_set[] =
 	{ REGFEILSB        ,0x00 },
     { REGRSSICONFIG    ,0x02 },
 	{ REGRSSIVALUE     ,0xFF },
+	/*! IRQ and Pin Mapping Registers */
     { REGDIOMAPPING1   ,0x00 },
     { REGDIOMAPPING2   ,0x07 },
     { REGIRQFLAGS1     ,0x80 },
@@ -179,6 +190,7 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGRSSITHRESH    ,220 }, //must be set to dBm = (-Sensitivity / 2) - default is 0xE4=228 so -114dBm
     { REGRXTIMEOUT1    ,0x00 },
     { REGRXTIMEOUT2    ,0x00 },
+    /*!Packet Engine Registers*/
     { REGPREAMBLEMSB   ,0x00 },
     { REGPREAMBLELSB   ,0x03 },
     { REGSYNCCONFIG    ,RF_SYNC_ON | RF_SYNC_FIFOFILL_AUTO | RF_SYNC_SIZE_1 | RF_SYNC_TOL_0 },
@@ -213,12 +225,14 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGAESKEY14      ,0x00 },
     { REGAESKEY15      ,0x00 },
     { REGAESKEY16      ,0x00 },
+    /*! Temperature Sensor Registers */
     { REGTEMP1         ,0x01 },
 	{ REGTEMP2         ,0x00 },
+	/*! Test Registers */
 	{ REGTESTLNA       ,0x1B },
 	{ REGTESTPA1       ,0x55 },
 	{ REGTESTPA2       ,0x70 },
-	{ REGTESTDAGC      ,RF_DAGC_IMPROVED_LOWBETA0
+	{ REGTESTDAGC      ,RF_DAGC_IMPROVED_LOWBETA0 },
 	{ REGTESTAFC       ,0x00 },
 };
 
