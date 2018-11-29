@@ -67,7 +67,7 @@ int main(void)
 			/* Disable the I2C peripheral and clock to save power */
 			HAL_I2C_de_init();
 
-			/* Disable the ISPI peripheral and clock to save power */
+			/* Disable the SPI peripheral and clock to save power */
 			HAL_SPI_de_init();
 
 			RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, DISABLE);

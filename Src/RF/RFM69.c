@@ -130,7 +130,7 @@ void RFM69_wakeup_and_send( void )
 
             RFM69_set_PA_level( RFM69_tx_power_level_s );
 
-            RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.node_id );
+            RFM69_set_own_node_address( NVM_info_s.NVM_generic_data_blk_s.own_node_id );
 
             RFM69_read_registers( READ_FROM_CHIP_BURST_MODE, REGOPMODE, read_data, sizeof( read_data ) );
 
@@ -152,8 +152,39 @@ void RFM69_wakeup_and_send( void )
     }
 
 	/* Fill the buffer */
-	//RFM69_send_frame( send_data, sizeof( send_data ), 1 );
-	RFM69_send_frame( send_data_small, sizeof( send_data_small ), 1 );
+
+	switch( NVM_info_s.NVM_generic_data_blk_s.rf_packet_type )
+	{
+        case RFM69_PACKET_TYPE_1:
+            {
+                RFM69_send_frame( send_data, sizeof( send_data ), 1 );
+            }
+            break;
+
+        case RFM69_PACKET_TYPE_2:
+            {
+                RFM69_send_frame( send_data_small, sizeof( send_data_small ), 1 );
+            }
+            break;
+
+        case RFM69_PACKET_TYPE_3:
+            {
+
+            }
+            break;
+
+        case RFM69_PACKET_TYPE_4:
+            {
+
+            }
+            break;
+
+        default:
+            break;
+
+	}
+
+
 
 	RFM69_set_operating_mode( RFM69_SLEEP_MODE );
 }
@@ -1173,8 +1204,12 @@ false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len )
 false_true_et RFM69_send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
 {
     false_true_et status = FALSE;
-    u8_t tx_buffer[RFM69_MAX_PAYLOAD_LEN];
+    u8_t tx_buffer[RFM69_MAX_DATA_LEN];
+    u8_t test_buffer[RFM69_MAX_DATA_LEN];
     u16_t timeout = 0u;
+
+    STDC_memset( tx_buffer, 0x00, sizeof( tx_buffer ) );
+    STDC_memset( test_buffer, 0x00, sizeof( tx_buffer ) );
 
     /* Set to standby */
     RFM69_set_operating_mode( RFM69_STANDBY_MODE );
@@ -1184,9 +1219,12 @@ false_true_et RFM69_send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address )
     	len = RFM69_MAX_PAYLOAD_LEN;
     }
 
-    tx_buffer[0] = len;
+    len += 1;
 
-    STDC_memcpy( &tx_buffer[1], buffer, len );
+    tx_buffer[0] = len;
+    tx_buffer[1] = 1;
+
+    STDC_memcpy( &tx_buffer[2], buffer, len );
 
     RFM69_write_to_FIFO( tx_buffer, len );
 

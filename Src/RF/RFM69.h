@@ -44,7 +44,8 @@
 #define RFM69_MAX_PAYLOAD_LEN    64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 66byte FIFO )- 2 CRC bytes */
 
 #define RFM69_TIMEOUT            400u
-#define NODE_OWN_ADDRESS	     0x01
+#define OWN_NODE_ADDRESS	     0x01
+#define END_NODE_ADDRESS	     0x01
 
 #define BIT_MASK_1_BIT 1
 #define BIT_MASK_2_BIT 3
@@ -1235,6 +1236,14 @@ typedef enum
     RFM69_DIO_MODE_2,
     RFM69_DIO_MODE_3,
 } RFM69_DIO_map_mode_et;
+
+typedef enum
+{
+    RFM69_PACKET_TYPE_1 = 0u,
+    RFM69_PACKET_TYPE_2,
+    RFM69_PACKET_TYPE_3,
+    RFM69_PACKET_TYPE_4,
+}RFM69_packet_type_et;
 
 typedef struct
 {

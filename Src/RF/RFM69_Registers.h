@@ -156,7 +156,7 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGOSC1          ,0x41 },
     { REGAFCCTRL       ,0x00 },
 	{ RESERVED0C       ,0x02 },
-    { REGLISTEN1       ,0x92 },
+    { REGLISTEN1       ,0xA2 },
     { REGLISTEN2       ,0xF5 },
     { REGLISTEN3       ,0x20 },
 	{ REGVERSION       ,0x24 },
@@ -194,7 +194,8 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGPREAMBLEMSB   ,0x00 },
     { REGPREAMBLELSB   ,0x03 },
     { REGSYNCCONFIG    ,RF_SYNC_ON | RF_SYNC_FIFOFILL_AUTO | RF_SYNC_SIZE_1 | RF_SYNC_TOL_0 },
-    { REGSYNCVALU1     ,0x2D },      //attempt to make this compatible with sync1 byte of RFM12B lib
+
+    { REGSYNCVALU1     ,0x01 },
     { REGSYNCVALU2     ,0x01 },
     { REGSYNCVALU3     ,0x01 },
     { REGSYNCVALU4     ,0x01 },
@@ -202,10 +203,10 @@ const RFM69_register_data_st RFM69_online_register_set[] =
     { REGSYNCVALU6     ,0x01 },
     { REGSYNCVALU7     ,0x01 },
     { REGSYNCVALU8     ,0x01 },
-    { REGPACKETCONFIG1 ,RF_PACKET1_FORMAT_VARIABLE | RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_ON | RF_PACKET1_ADRSFILTERING_OFF },
-    { REGPAYLOADLENGTH ,66u },
-    { REGNODEADRS      ,0x00 },
-    { REGBROADCASTADRS ,0x00 },
+    { REGPACKETCONFIG1 ,/*RF_PACKET1_FORMAT_VARIABLE |*/ RF_PACKET1_DCFREE_OFF | RF_PACKET1_CRC_ON | RF_PACKET1_CRCAUTOCLEAR_OFF | RF_PACKET1_ADRSFILTERING_OFF },
+    { REGPAYLOADLENGTH ,10u },
+    { REGNODEADRS      ,0x01 },
+    { REGBROADCASTADRS ,0x01 },
     { REGAUTOMODES     ,0x00 },
     { REGFIFOTHRESH    ,RF_FIFOTHRESH_TXSTART_FIFONOTEMPTY | RF_FIFOTHRESH_VALUE }, //TX on FIFO not empty
     { REGPACKETCONFIG2 ,RF_PACKET2_RXRESTARTDELAY_2BITS | RF_PACKET2_AUTORXRESTART_ON | RF_PACKET2_AES_OFF }, //RXRESTARTDELAY must match transmitter PA ramp-down time (bitrate dependent)

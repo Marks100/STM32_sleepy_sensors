@@ -40,7 +40,7 @@ typedef enum
 /**************************************************************************************************/
 typedef enum
 {
-    NVM_VERS_GENERIC_DATA         = 4,
+    NVM_VERS_GENERIC_DATA         = 5,
 } NVM_blk_version_et;
 /***************************************************************************************************
 This is the version number of the NVM block, This needs to be incremented when changing the layout
@@ -52,8 +52,11 @@ typedef struct
 {
     u32_t sleep_time;
     u8_t  tx_power_level;
-    u8_t  node_id;
+    u8_t  own_node_id;
+    u8_t  end_node_id;
     RFM69_static_configuration_et rf_config;
+    RFM69_packet_type_et rf_packet_type;
+
 } NVM_generic_data_blk_st;
 
 
