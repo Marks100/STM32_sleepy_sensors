@@ -586,36 +586,18 @@ u8_t RFM69_read_RSSI( void )
     }
     else
     {
-        register_val = 0u;
-
-        /* start the temperature measurement */
-        register_val |= ( TEMP_MEASURE_START );
+		RFM69_trigger_RSSi_measurement();
 
         /* delay at least 100us before reading the register */
         delay_ms(1);
 
-        /* Read the temperature measurement */
-        RFM69_read_registers( READ_FROM_CHIP, REGTEMP2, &register_val, 1 );
+        /* Read the RSSI measurement */
+        RFM69_read_registers( READ_FROM_CHIP, REGRSSICONFIG, &register_val, 1 );
     }
 
     return( register_val );
 }
 
-
-
-u8_t RFM69_read_RSSi_measurement( void )
-{
-    u8_t register_val = 0u;
-    false_true_et status = FALSE;
-
-    /* Trigger the RSSI measurement */
-    register_val |= ( RSSI_START );
-
-    RFM69_read_registers( READ_FROM_CHIP, REGRSSIVALUE, &register_val, 1 );
-    status = TRUE;
-
-    return ( status );
-}
 
 
 
