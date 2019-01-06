@@ -115,6 +115,18 @@ void HAL_BRD_init( void )
 		NVIC_Init(&NVIC_InitStruct);
 	}
 
+	/* Configure the NRF24 NCS pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	/* Configure the NRF24 CE pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	/* Enable the "RFM69 packet sent" interrupt on pin A1 */
 	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -143,9 +155,6 @@ void HAL_BRD_init( void )
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
 	/* Add to NVIC */
 	NVIC_Init(&NVIC_InitStruct);
-
-	HAL_BRD_RFM69_spi_slave_select( HIGH );
-	HAL_BRD_RFM69_set_reset_pin_state( LOW );
 
 	HAL_BRD_rtc_triggered_s = TRUE;
 }
@@ -268,75 +277,6 @@ EXTERNAL API's
 
 
 
-/*!
-****************************************************************************************************
-*
-*   \brief         SETS the rf enable pin
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_RFM69_set_enable_pin_state( low_high_et state )
-{
-	if( state == HIGH )
-	{
-		//HAL_BRD_Set_Pin_state();
-	}
-	else
-	{
-		//HAL_BRD_Set_Pin_state();
-	}
-}
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         SETS the rf RST pin
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_RFM69_set_reset_pin_state( low_high_et state )
-{
-	if( state == HIGH )
-	{
-		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_10, HIGH );
-	}
-	else
-	{
-		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_10, LOW );
-	}
-}
-
-
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         SETS the SPI chip select pin for the RF module
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_RFM69_spi_slave_select( low_high_et state )
-{
-	if( state == HIGH )
-	{
-		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_1, HIGH );
-	}
-	else
-	{
-		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_1, LOW );
-	}
-}
 
 
 
@@ -489,6 +429,55 @@ void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 
 
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the rf enable pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state )
+{
+	if( state == HIGH )
+	{
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_10, HIGH );
+	}
+	else
+	{
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_10, LOW );
+	}
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         SETS the SPI chip select pin for the RF module
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_NRF24_spi_slave_select( low_high_et state )
+{
+	if( state == HIGH )
+	{
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_9, HIGH );
+	}
+	else
+	{
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_9, LOW );
+	}
+}
+
+
+
 /*!
 ****************************************************************************************************
 *
@@ -557,8 +546,6 @@ void EXTI1_IRQHandler(void)
 		/* Now we keep track of the interrupt edge */
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line1);
-
-		RFM69_update_packet_sent( TRUE );
 	}
 }
 

@@ -4,7 +4,7 @@
 //#include "COMPILER_defs.h"
 //#include "COMPILER_config.h"
 #include "C_defs.h"
-#include "RFM69.h"
+#include "NRF24.h"
 
 /***************************************************************************************************
 **                              Defines                                                          **
@@ -51,11 +51,7 @@ the structure of the block or when adding new bytes in
 typedef struct
 {
     u32_t sleep_time;
-    u8_t  tx_power_level;
-    u8_t  own_node_id;
-    u8_t  end_node_id;
-    RFM69_static_configuration_et rf_config;
-    RFM69_packet_type_et rf_packet_type;
+    NRF24_state_et nrf_startup_tx_rx_mode;
 
 } NVM_generic_data_blk_st;
 

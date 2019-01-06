@@ -5,7 +5,6 @@
 #endif
 
 #include "HAL_TIM.h"
-#include "MODE_MGR.h"
 #include "HAL_BRD.h"
 
 
@@ -198,8 +197,6 @@ void TIM1_UP_IRQHandler( void )
 {
     if( TIM_GetITStatus( TIM1, TIM_IT_Update ) )
 	{
-		MODE_MGR_pwm_callback();
-
         TIM_ClearITPendingBit( TIM1, TIM_IT_Update );
 	}
 }

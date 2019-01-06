@@ -45,11 +45,7 @@
 const NVM_generic_data_blk_st      NVM_DEFAULT_GENERIC_DATA_BLK_s =
 {
 	RTC_EXT_DEFAULT_WAKEUP_TIME_SEC,						//!Sleep time
-	RFM69_DEFAULT_TX_POWER_LEVEL,				      		//!Tx power level
-	OWN_NODE_ADDRESS,	    								//!Own node ID
-	END_NODE_ADDRESS,										//!End node address
-	RFM69_433_DEFAULT_CONFIG,								//!RF config
-	RFM69_PACKET_TYPE_2,									//!RF paket type
+	NRF24_SETUP_RX
 };
 
 
