@@ -1784,6 +1784,69 @@ void NRF24_ce_select( low_high_et state )
 
 
 
+void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
+{
+	u16_t random_number;
+	u8_t i = 0u;
+
+    HAL_BRD_set_NRF_power_pin_state( ON );
+
+    /* The NRF chip needs 1.5 ms to wake up from off */
+	delay_us(2000);
+
+	/* Setup initial register values */
+	NRF24_set_configuration( NRF24_DEFAULT_CONFIG );
+
+	/* Set channel and power levels */
+	NRF24_set_PA_TX_power( RF_MAX_TX_PWR );
+	NRF24_set_rf_data_rate( RF24_250KBPS );
+
+	/* open up the data pipe to communicate with the receiver */
+	NRF24_open_write_data_pipe( 0, NRF24_data_pipe_default_s );
+
+	/* Flush out the tx and rx buffers to get ready for tx */
+	NRF24_complete_flush();
+
+	/* carry out the necessary steps to transition to TX_MODE */
+	NRF24_set_low_level_mode( NRF_TX_MODE );
+
+	/* The NRF chip needs 130us ms to transition to tx mode */
+	delay_us(500);
+
+	for( i = 0u; i < num; i++ )
+	{
+		NRF24_setup_payload( data_p, len );
+
+		/* Send the configured payload */
+		NRF24_send_payload();
+
+		delay_us(2000);
+
+		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
+		{
+			/* Clear the Data sent bit or else we cant send any more data */
+			NRF24_status_register_clr_bit( TX_DS );
+
+		}
+		else if( NRF24_check_status_mask( RF24_MAX_RETR_REACHED, &NRF24_status_register_s ) == HIGH )
+		{
+			/* Clear the max retry bit before sending any further data */
+			NRF24_status_register_clr_bit( MAX_RT );
+		}
+	}
+
+	HAL_BRD_set_NRF_power_pin_state( OFF );
+}
+
+
+
+void NRF24_power_down( void )
+{
+	NRF24_set_low_level_mode( NRF_POWER_DOWN_MODE );
+	NRF24_spi_slave_select( HIGH );
+	NRF24_ce_select( HIGH );
+}
+
 
 
 /***************************************************************************************************

@@ -96,7 +96,7 @@
 #define RF_PWR_HIGH 2
 
 #define NRF_TEST_MODE               1u
-#define NRF_PA_LNA+					1u
+#define NRF_PA_LNA  				1u
 
 #define NRF24_TICK_RATE_MS          20u
 #define NRF24_TX_SCHEDULE_TIME_MS   500u
@@ -372,6 +372,8 @@ void                 NRF24_handle_acks_and_tx_failures( void );
 void                 NRF24_set_state( NRF24_state_et state );
 void                 NRF24_spi_slave_select( low_high_et state );
 void                 NRF24_ce_select( low_high_et state );
+void 				 NRF_simple_send( u8_t* data_p, u8_t len, u8_t num );
+void                 NRF24_power_down( void );
 
 
 

@@ -6,7 +6,6 @@
 
 #include "autoversion.h"
 #include "main.h"
-#include "RFM69.h"
 #include "HAL_BRD.h"
 
 false_true_et HAL_BRD_rtc_triggered_s;
@@ -42,6 +41,12 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	/* Configure the power pin for the NRF24l01 */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	/* small delay to allow the button tp settle */
 	delay_us(500);
 
@@ -51,17 +56,6 @@ void HAL_BRD_init( void )
 		debug_mode = ENABLE_;
 	#endif
 
-	/* Setup the RF( RFM69 ) NCS Pin ( PB1 ) */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	/* Setup the RF ( RFM69 ) RESET Pin ( PB11 ) */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	if( debug_mode == ENABLE_ )
 	{
@@ -250,25 +244,24 @@ void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin )
 /*!
 ****************************************************************************************************
 *
-*   \brief         SETS the battery voltage enable pin
+*   \brief         Toggles Any PIN on any PORT
 *
 *   \author        MS
 *
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_set_batt_monitor_state( disable_enable_et state )
+void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
 {
-	if( state == ENABLE_ )
+	if( state == ON )
 	{
-		//HAL_BRD_Set_Pin_state();
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_3, LOW );
 	}
 	else
 	{
-		//HAL_BRD_Set_Pin_state();
+	    HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_3, HIGH );
 	}
 }
-
 
 /**************************************************************************************************
 EXTERNAL API's
@@ -477,6 +470,21 @@ void HAL_BRD_NRF24_spi_slave_select( low_high_et state )
 }
 
 
+
+
+void HAL_BRD_set_spi_pins_for_lp( void )
+{
+	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
+
+	/* Configure the GPIOs */
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	/* Setup the SPI pins (PA5, PA6, PA7 ) */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+}
 
 /*!
 ****************************************************************************************************

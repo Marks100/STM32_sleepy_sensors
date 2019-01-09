@@ -43,14 +43,20 @@
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
 
-/* Default register set 433Mhz ( 19200bps ) */
+/* Default register set 2.4Ghz
+ * Channel 108
+ * Max power
+ * Dynamic payloads on pipe 0
+ * Auto Ack enabled on pipe 0
+ * 10 Retries with 2ms spacing
+ * All Features enabled */
 const NRF24_register_data_st NRF24_default_register_set[] =
 {
     { CONFIG,       0x0E},
-	{ EN_AUTO_ACK,  0x00},
+	{ EN_AUTO_ACK,  0x01},
 	{ EN_RXADDR,    0x01},
     { SETUP_AW,     0x03},
-	{ SETUP_RETR,   0x00},
+	{ SETUP_RETR,   0x8A},
 	{ RF_CH,        0x6C},
 	{ RF_SETUP,     0x26},
 	{ STATUS,       0x00},
@@ -70,8 +76,8 @@ const NRF24_register_data_st NRF24_default_register_set[] =
 	{ RX_PW_P4,     0x00},
 	{ RX_PW_P5,     0x00},
 	{ FIFO_STATUS,  0x00},
-	{ DYNPD,        0x00},
-	{ FEATURE,      0x00},
+	{ DYNPD,        0x01},
+	{ FEATURE,      0x3F},
     { ADDRESS_NOP,  0x00},
 };
 

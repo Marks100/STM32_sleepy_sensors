@@ -6,9 +6,9 @@
 #define RFM69_DEFAULT_TX_POWER_LEVEL     0
 #define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  10
 
-#define AUTO_DEBUG_MODE					 1
+#define AUTO_DEBUG_MODE					 0
 #define MULTI_SPI_WRITE_CONFIG			 1
-#define SENSOR_ID 						NODE_OWN_ADDRESS
+#define SENSOR_ID 						 1
 
 
 #if !defined ( RFM69HW ) && !defined ( RFM69W ) && !defined ( RFM69HW_SUPER )
