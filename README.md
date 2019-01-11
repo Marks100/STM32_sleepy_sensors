@@ -1,2 +1,2 @@
 # STM32_sleepy_end_device
-External RTC based sleedy end node
+External RTC based sleepy end node
