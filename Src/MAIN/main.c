@@ -23,9 +23,9 @@
 
 u16_t delay_timer = 0u;
 u32_t ctr = 0u;
-const u8_t NRF24_data_pipe_default_s [5] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE};
 u8_t  NRF24_register_readback_s[NRF24_DEFAULT_CONFIGURATION_SIZE];
 u8_t data_to_send_s[10];
+u16_t random_number;
 
 int main(void)
 {
@@ -66,6 +66,27 @@ int main(void)
 			/* Send the data */
 			NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
 
+			/* Set the seed */
+			srand( get_counter() );
+
+			/* Grab the now "random :)" number */
+			random_number = rand()%100;
+
+			while( random_number == 0 )
+			{
+				random_number = rand()%100;
+			}
+			data_to_send_s[0] = random_number;
+
+			delay_us( 60000 );
+			delay_us( 60000 );
+			delay_us( 60000 );
+			delay_us( 60000 );
+			delay_us( 60000 );
+
+			/* Send the data */
+			NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
+
 			/* Disable the I2C peripheral and clock to save power */
 			HAL_I2C_de_init();
 
@@ -88,8 +109,17 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
-				/* Toggle LED which connected to PC13*/
-				HAL_BRD_toggle_led();
+				/* Set the seed */
+				srand( 5 );
+
+				/* Grab the now "random :)" number */
+				random_number = rand()%100;
+
+				while( random_number == 0 )
+				{
+					random_number = rand()%100;
+				}
+				data_to_send_s[0] = random_number;
 
 				NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
 
@@ -153,7 +183,7 @@ void delay_us(u16_t us)
 			"1: \n\t"\
 			"SUB R0, #1\n\t"\
 			"CMP R0, #0\n\t"\
-			"BNE 1b \n\t" : : [loops] "r" (10*us) : "memory"\
+			"BNE 1b \n\t" : : [loops] "r" (8*us) : "memory"\
 		      );
 }
 

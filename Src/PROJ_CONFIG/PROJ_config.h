@@ -4,7 +4,7 @@
 #define STM32 							 1
 #define RFM69W
 #define RFM69_DEFAULT_TX_POWER_LEVEL     0
-#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  10
+#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  4
 
 #define AUTO_DEBUG_MODE					 0
 #define MULTI_SPI_WRITE_CONFIG			 1

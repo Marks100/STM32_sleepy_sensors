@@ -52,7 +52,7 @@
  * All Features enabled */
 const NRF24_register_data_st NRF24_default_register_set[] =
 {
-    { CONFIG,       0x0E},
+    { CONFIG,       0x4E},
 	{ EN_AUTO_ACK,  0x01},
 	{ EN_RXADDR,    0x01},
     { SETUP_AW,     0x03},

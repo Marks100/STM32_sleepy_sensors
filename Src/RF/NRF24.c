@@ -38,11 +38,11 @@
 
 /* ^ different data pipes that can be used :) */
 STATIC const u8_t NRF24_data_pipe_default_s [5] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE};
-STATIC const u8_t NRF24_data_pipe_custom_s_1[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
-STATIC const u8_t NRF24_data_pipe_custom_s_2[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xAA};
-STATIC const u8_t NRF24_data_pipe_custom_s_3[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xBB};
-STATIC const u8_t NRF24_data_pipe_custom_s_4[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xCC};
-STATIC const u8_t NRF24_data_pipe_custom_s_5[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xDD};
+STATIC const u8_t NRF24_data_pipe_custom_s_1[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xAA};
+STATIC const u8_t NRF24_data_pipe_custom_s_2[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xBB};
+STATIC const u8_t NRF24_data_pipe_custom_s_3[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xCC};
+STATIC const u8_t NRF24_data_pipe_custom_s_4[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xDD};
+STATIC const u8_t NRF24_data_pipe_custom_s_5[5] = {0xBB, 0xCC, 0xDD, 0xEE, 0xEE};
 STATIC const u8_t NRF24_data_pipe_test_s[5];
 
 NRF24_state_et NRF24_state_s = NRF24_POWERING_UP;
@@ -859,18 +859,23 @@ pass_fail_et NRF24_open_write_data_pipe( u8_t pipe_num, const u8_t* data_pipe_ad
 *
 *******************************************************************************
 */
-pass_fail_et NRF24_read_data_pipe( u8_t pipe_num, const u8_t* data_p )
+pass_fail_et NRF24_open_read_data_pipe( u8_t pipe_num, const u8_t* data_pipe_address )
 {
+    u8_t payload_size = 32u;
+
     /* 6 pipes can be opened, let the user select from 0 - 5 and auto correct their
     selection if we need to */
-    if( pipe_num > 5 )
+    if( pipe_num > NRF_MAX_NUM_PIPES )
     {
-        pipe_num = 5;
+        pipe_num = NRF_MAX_NUM_PIPES;
     }
 
     /* we will add an offset of "0x0A" onto the pipe number as this is the starting address of
     the pipe registers and always make the address of the pipe 5 bytes long*/
-    NRF24_read_registers( R_REGISTER, ( NRF24_registers_et)( pipe_num + 0x0A ), (u8_t*)data_p, 5 );
+    NRF24_write_registers( W_REGISTER, ( NRF24_registers_et)( pipe_num + NRF_DATA_PIPE_OFFSET ), (u8_t*)data_pipe_address, 5 );
+
+    NRF24_write_registers( W_REGISTER, TX_ADDR, (u8_t*)data_pipe_address, 5 );
+    NRF24_write_registers( W_REGISTER, ( RX_PW_P0 + pipe_num ) , &payload_size, 1 );
 
     return ( PASS );
 }
@@ -1786,7 +1791,6 @@ void NRF24_ce_select( low_high_et state )
 
 void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 {
-	u16_t random_number;
 	u8_t i = 0u;
 
     HAL_BRD_set_NRF_power_pin_state( ON );
@@ -1797,12 +1801,13 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 	/* Setup initial register values */
 	NRF24_set_configuration( NRF24_DEFAULT_CONFIG );
 
-	/* Set channel and power levels */
-	NRF24_set_PA_TX_power( RF_MAX_TX_PWR );
-	NRF24_set_rf_data_rate( RF24_250KBPS );
-
 	/* open up the data pipe to communicate with the receiver */
 	NRF24_open_write_data_pipe( 0, NRF24_data_pipe_default_s );
+
+	/* Set channel and power levels */
+	NRF24_set_PA_TX_power( RF_MAX_TX_PWR );
+
+	NRF24_set_rf_data_rate( RF24_250KBPS );
 
 	/* Flush out the tx and rx buffers to get ready for tx */
 	NRF24_complete_flush();
@@ -1820,7 +1825,7 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 		/* Send the configured payload */
 		NRF24_send_payload();
 
-		delay_us(2000);
+		delay_us(20000);
 
 		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
 		{
