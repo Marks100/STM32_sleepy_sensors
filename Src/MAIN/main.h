@@ -7,6 +7,7 @@
 void delay_ms(u16_t);
 void delay_us(u16_t us);
 u32_t get_counter( void );
+u8_t generate_random_number( void );
 
 
 #endif

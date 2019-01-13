@@ -9,6 +9,7 @@
 #define AUTO_DEBUG_MODE					 0
 #define MULTI_SPI_WRITE_CONFIG			 1
 #define SENSOR_ID 						 1
+#define SENSOR_TYPE						 2
 
 
 #if !defined ( RFM69HW ) && !defined ( RFM69W ) && !defined ( RFM69HW_SUPER )

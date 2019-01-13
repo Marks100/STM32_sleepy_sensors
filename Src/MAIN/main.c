@@ -15,6 +15,7 @@
 #include "HAL_ADC.h"
 #include "HAL_SPI.h"
 #include "NVM.h"
+#include "RTC.h"
 #include "HAL_I2C.h"
 #include "HAL_UART.h"
 #include "NRF24.h"
@@ -24,8 +25,10 @@
 u16_t delay_timer = 0u;
 u32_t ctr = 0u;
 u8_t  NRF24_register_readback_s[NRF24_DEFAULT_CONFIGURATION_SIZE];
-u8_t data_to_send_s[10];
-u16_t random_number;
+u8_t  data_to_send_s[10];
+u8_t  time_array_s[RTC_TIME_ARRAY_SIZE];
+u8_t  old_val = 0u;
+
 
 int main(void)
 {
@@ -63,26 +66,7 @@ int main(void)
 	{
 		if( debug_mode != ENABLE )
 		{
-			/* Send the data */
-			NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
-
-			/* Set the seed */
-			srand( get_counter() );
-
-			/* Grab the now "random :)" number */
-			random_number = rand()%100;
-
-			while( random_number == 0 )
-			{
-				random_number = rand()%100;
-			}
-			data_to_send_s[0] = random_number;
-
-			delay_us( 60000 );
-			delay_us( 60000 );
-			delay_us( 60000 );
-			delay_us( 60000 );
-			delay_us( 60000 );
+			populate_rf_frame();
 
 			/* Send the data */
 			NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
@@ -109,17 +93,7 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
-				/* Set the seed */
-				srand( 5 );
-
-				/* Grab the now "random :)" number */
-				random_number = rand()%100;
-
-				while( random_number == 0 )
-				{
-					random_number = rand()%100;
-				}
-				data_to_send_s[0] = random_number;
+				populate_rf_frame();
 
 				NRF_simple_send( data_to_send_s, sizeof( data_to_send_s ), 1u );
 
@@ -166,6 +140,43 @@ void MAIN_SYSTICK_init( void )
 
 	/* Trigger an interrupt every 1ms */
 	SysTick_Config(72000);
+}
+
+
+
+
+u8_t generate_random_number( void )
+{
+	u8_t randomiser;
+	u8_t random_number;
+
+	RTC_grab_current_running_time( time_array_s );
+	randomiser =  time_array_s[0];
+
+    /* Set the seed */
+	srand( randomiser );
+
+    /* Grab the now "random :)" number */
+    random_number = rand()%100;
+
+	return ( random_number );
+}
+
+
+void populate_rf_frame( void )
+{
+	data_to_send_s[0] = generate_random_number();
+	data_to_send_s[1] = SENSOR_ID;
+	data_to_send_s[2] = SENSOR_TYPE;
+
+	if( old_val == data_to_send_s[0] )
+	{
+		old_val = data_to_send_s[0] + 1;
+	}
+	else
+	{
+		old_val = data_to_send_s[0];
+	}
 }
 
 
