@@ -1827,11 +1827,12 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 
 		delay_us( 20000 );
 
+		//while( HAL_BRD_NRF24_read_irq_pin() == HIGH );
+
 		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
 		{
 			/* Clear the Data sent bit or else we cant send any more data */
 			NRF24_status_register_clr_bit( TX_DS );
-
 		}
 		else if( NRF24_check_status_mask( RF24_MAX_RETR_REACHED, &NRF24_status_register_s ) == HIGH )
 		{
