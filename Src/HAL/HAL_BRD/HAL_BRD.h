@@ -64,6 +64,7 @@ void HAL_BRD_set_NRF_power_pin_state( off_on_et state );
 false_true_et HAL_BRD_get_rtc_trigger_status( void );
 void HAL_BRD_set_rtc_trigger_status( false_true_et state );
 disable_enable_et HAL_BRD_read_debug_pin( void );
+low_high_et HAL_BRD_NRF24_read_irq_pin( void );
 void HAL_BRD_get_SW_version_num( u8_t* version_num_p );
 void HAL_BRD_get_HW_version_num( u8_t* version_num_p );
 

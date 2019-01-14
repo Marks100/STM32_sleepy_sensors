@@ -1825,7 +1825,7 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 		/* Send the configured payload */
 		NRF24_send_payload();
 
-		delay_us(25000);
+		delay_us( 20000 );
 
 		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
 		{

@@ -51,6 +51,12 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
+	/* Configure the NRF irq ( Data Sent ) input pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
 	/* small delay to allow the button tp settle */
 	delay_us(500);
 
@@ -485,18 +491,15 @@ void HAL_BRD_NRF24_spi_slave_select( low_high_et state )
 
 
 
-void HAL_BRD_set_spi_pins_for_lp( void )
+
+
+low_high_et HAL_BRD_NRF24_read_irq_pin( void )
 {
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE );
+	low_high_et state;
 
-	/* Configure the GPIOs */
-	GPIO_InitTypeDef GPIO_InitStructure;
+	state = HAL_BRD_read_pin_state(GPIOA, GPIO_Pin_12 );
 
-	/* Setup the SPI pins (PA5, PA6, PA7 ) */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	return ( state );
 }
 
 /*!
