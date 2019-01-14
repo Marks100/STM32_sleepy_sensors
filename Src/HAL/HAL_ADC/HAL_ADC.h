@@ -39,6 +39,8 @@ void HAL_ADC_init( void ) ;
 void HAL_ADC_de_init( void );
 u16_t HAL_ADC_sample_batt_voltage( void );
 
+u16_t HAL_ADC_measure_temp( void );
+
 
 
 #endif
