@@ -1796,7 +1796,7 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
     HAL_BRD_set_NRF_power_pin_state( ON );
 
     /* The NRF chip needs 1.5 ms to wake up from off */
-	delay_us(2000);
+	delay_us(1600);
 
 	/* Setup initial register values */
 	NRF24_set_configuration( NRF24_DEFAULT_CONFIG );
@@ -1816,7 +1816,7 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 	NRF24_set_low_level_mode( NRF_TX_MODE );
 
 	/* The NRF chip needs 130us ms to transition to tx mode */
-	delay_us(500);
+	delay_us(300);
 
 	for( i = 0u; i < num; i++ )
 	{
@@ -1825,7 +1825,7 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 		/* Send the configured payload */
 		NRF24_send_payload();
 
-		delay_us(20000);
+		delay_us(25000);
 
 		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
 		{

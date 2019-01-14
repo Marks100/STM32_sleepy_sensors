@@ -41,10 +41,14 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* Configure the power pin for the NRF24l01 */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	/* Configure the power pin for the NRF24l01
+	   This is very sensitive, if i configure the pin as output PP here then the PIN
+	   goes high and the transistor tries to turn on, and thus powers the NRF chip and
+	   This causes problems, so if i init the PIN as input then the external resistor keeps the
+	   PIN in the correct state, then when i want the PIN to go high i init it as an output*/
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	/* small delay to allow the button tp settle */
@@ -255,11 +259,20 @@ void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
 {
 	if( state == ON )
 	{
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_3, LOW );
+		/* Configure the GPIOs */
+		GPIO_InitTypeDef GPIO_InitStructure;
+
+		/* Configure the power pin for the NRF24l01 */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_11, LOW );
 	}
 	else
 	{
-	    HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_3, HIGH );
+	    HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_11, HIGH );
 	}
 }
 

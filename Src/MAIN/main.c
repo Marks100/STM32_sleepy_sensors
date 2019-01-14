@@ -32,7 +32,7 @@ u8_t  old_val = 0u;
 
 int main(void)
 {
-	ctr = 0;
+  	ctr = 0;
 
 	RCC_DeInit();
 	SystemInit();
@@ -53,8 +53,6 @@ int main(void)
 
 	/* Initialise the NRF24 variables */
 	NRF24_init();
-
-	HAL_BRD_set_NRF_power_pin_state( OFF );
 
 	if( debug_mode == ENABLE )
 	{
@@ -165,9 +163,16 @@ u8_t generate_random_number( void )
 
 void populate_rf_frame( void )
 {
+	u8_t buff[30];
+
 	data_to_send_s[0] = generate_random_number();
 	data_to_send_s[1] = SENSOR_ID;
 	data_to_send_s[2] = SENSOR_TYPE;
+
+	sprintf( buff, "\r\nRandom number is is %d\r\n", data_to_send_s[0] );
+
+	//SERIAL_Send_data( buff );
+	//SERIAL_Send_data( "\r\n" );
 
 	if( old_val == data_to_send_s[0] )
 	{
