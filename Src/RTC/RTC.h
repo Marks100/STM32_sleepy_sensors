@@ -1,6 +1,5 @@
-#ifndef HAL_BRD_H
-#define HAL_BRD_H
-
+#ifndef RTC_H
+#define RTC_H
 
 
 /***************************************************************************************************
@@ -9,15 +8,52 @@
 #include "C_defs.h"
 #include "COMPILER_defs.h"
 
-#include "stm32f10x_gpio.h"
-#include "stm32f10x_rcc.h"
-
-
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-/* None */
+#define RTC_EXT_MAX_WAKEUP_TIME_SEC 	15300u
+#define RTC_EXT_I2C_ADDRESS				0xA2
+#define RTC_EXT_MAX_NUM_REGS			16u
+#define RTC_TIME_ARRAY_SIZE				4u
 
+
+#define RTC_EXT_TIMER_INT_ENABLE_BIT (1<<0)
+#define RTC_EXT_ALARM_INT_ENABLE_BIT (1<<1)
+#define RTC_EXT_TIMER_INT_ACTIVE_BIT (1<<2)
+#define RTC_EXT_ALARM_INT_ACTIVE_BIT (1<<3)
+
+#define RTC_EXT_ALARM_1HZ_BIT (1<<1)
+#define RTC_EXT_ALARM_1_OVER60HZ_BIT (1<<0)
+
+typedef enum
+{
+	Control_status_1 = 0u,
+	Control_status_2,
+	VL_seconds,
+	Minutes,
+	Hours,
+	Days,
+	Weekdays,
+	Century_months,
+	Years,
+	Minute_alarm,
+	Hour_alarm,
+	Day_alarm,
+	Weekday_alarm,
+	CLKOUT_control,
+	Timer_control,
+	Timer
+} RTC_EXT_registers_et;
+
+
+
+typedef enum
+{
+	ClK_OUT_32768_HZ = 0u,
+	ClK_OUT_1024_HZ,
+	ClK_OUT_32_HZ,
+	ClK_OUT_1_HZ,
+} RTC_clk_out_setting_et;
 
 
 /***************************************************************************************************
@@ -37,42 +73,17 @@
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
 /* None */
-extern u8_t debug_mode;
+
 
 
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-
-void HAL_BRD_init( void );
-low_high_et HAL_BRD_read_pin_state( GPIO_TypeDef * port, u16_t pin );
-void HAL_BRD_set_pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state );
-
-void HAL_BRD_set_batt_monitor_state( disable_enable_et state );
-void HAL_BRD_set_rf_enable_pin( disable_enable_et state );
-void HAL_BRD_toggle_led( void );
-void HAL_BRD_set_LED( off_on_et state );
-void HAL_BRD_set_debug_mode_LED( off_on_et state );
-void HAL_BRD_toggle_debug_mode_led( void );
-void HAL_BRD_RFM69_set_enable_pin_state( low_high_et state );
-void HAL_BRD_RFM69_set_reset_pin_state( low_high_et state );
-void HAL_BRD_RFM69_spi_slave_select( low_high_et state );
-void HAL_BRD_NRF24_spi_slave_select( low_high_et state );
-void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state );
-void HAL_BRD_set_NRF_power_pin_state( off_on_et state );
-
-false_true_et HAL_BRD_get_rtc_trigger_status( void );
-void HAL_BRD_set_rtc_trigger_status( false_true_et state );
-disable_enable_et HAL_BRD_read_debug_pin( void );
-low_high_et HAL_BRD_NRF24_read_irq_pin( void );
-void HAL_BRD_get_SW_version_num( u8_t* version_num_p );
-void HAL_BRD_get_HW_version_num( u8_t* version_num_p );
-
-void HAL_BRD_set_spi_pins_for_lp( void );
-
-void delay_ms(u16_t);
-void delay_us(u16_t us);
+void RTC_ext_init( void );
+void RTC_set_wakeup_time( u32_t seconds );
+void RTC_grab_current_running_time( u8_t* data_p );
 
 
+#endif /* RTC_H multiple inclusion guard */
 
-#endif
+/****************************** END OF FILE *******************************************************/

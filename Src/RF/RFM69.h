@@ -43,7 +43,9 @@
 #define RFM69_MAX_DATA_LEN       66u
 #define RFM69_MAX_PAYLOAD_LEN    64u  //! We will stick to this as this is the maximum number of bytes that can use the AES128 encryption scheme ( 66byte FIFO )- 2 CRC bytes */
 
-#define NODE_OWN_ADDRESS	     0x01
+#define RFM69_TIMEOUT            400u
+#define OWN_NODE_ADDRESS	     0x01
+#define END_NODE_ADDRESS	     0x01
 
 #define BIT_MASK_1_BIT 1
 #define BIT_MASK_2_BIT 3
@@ -1150,6 +1152,7 @@ typedef enum
 typedef enum
 {
     RFM69_433_DEFAULT_CONFIG,
+    RFM69_433_ONLINE_CONFIG,
     RFM69_CFG_MAX
 } RFM69_static_configuration_et;
 
@@ -1234,6 +1237,14 @@ typedef enum
     RFM69_DIO_MODE_3,
 } RFM69_DIO_map_mode_et;
 
+typedef enum
+{
+    RFM69_PACKET_TYPE_1 = 0u,
+    RFM69_PACKET_TYPE_2,
+    RFM69_PACKET_TYPE_3,
+    RFM69_PACKET_TYPE_4,
+}RFM69_packet_type_et;
+
 typedef struct
 {
    RFM69_registers_et RFM69_register;
@@ -1291,7 +1302,7 @@ false_true_et RFM69_trigger_RSSi_measurement( void );
 false_true_et RFM69_set_encryption_key( u8_t* key, false_true_et state );
 false_true_et RFM69_set_DIO_mapping( u8_t pin, RFM69_DIO_map_mode_et mode );
 false_true_et RFM69_write_to_FIFO( u8_t* buffer, u8_t len );
-false_true_et RFM69_Send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address );
+false_true_et RFM69_send_frame( u8_t* buffer, u8_t len, u8_t rx_node_address );
 void          RFM69_update_packet_sent( false_true_et state );
 
 
