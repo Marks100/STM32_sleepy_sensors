@@ -201,11 +201,11 @@ void populate_rf_frame( void )
 	//battery_voltage = ( battery_voltage / BATTERY_DIVISION );
 
 	/* Calculate the temperature in celcius, and add the offset */
-	temperature = calculate_temperature();
-	temperature += TEMPERATURE_OFFSET;
+	//temperature = calculate_temperature();
+	//temperature += TEMPERATURE_OFFSET;
 
 	/* Calculate the Humidity */
-	humidity = calculate_humidity();
+	//humidity = calculate_humidity();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_ID;
