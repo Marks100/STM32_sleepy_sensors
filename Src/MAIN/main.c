@@ -21,7 +21,7 @@
 #include "NRF24.h"
 #include "main.h"
 
-
+RCC_ClocksTypeDef RCC_Clocks;
 u16_t delay_timer = 0u;
 u8_t  NRF24_register_readback_s[NRF24_DEFAULT_CONFIGURATION_SIZE];
 u8_t  NRF24_rf_frame_s[10];
@@ -61,6 +61,8 @@ int main(void)
 {
 	RCC_DeInit();
 	SystemInit();
+
+	RCC_GetClocksFreq (&RCC_Clocks);
 
 	RCC_HCLKConfig(RCC_SYSCLK_Div1);
 	RCC_PCLK1Config(RCC_HCLK_Div1);
@@ -150,7 +152,7 @@ void MAIN_SYSTICK_init( void )
 	RCC_ClocksTypeDef RCC_Clocks;
 	RCC_GetClocksFreq (&RCC_Clocks);
 
-	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK );
+	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK_Div8 );
 
 	/* Trigger an interrupt every 1ms */
 	SysTick_Config(72000);
@@ -294,12 +296,22 @@ void delay_ms(u16_t ms)
 
 void delay_us(u16_t us)
 {
+	/* If we are just delaying time then we want to do this as efficiently as possible,
+	 * Lets reduce the clock speed down as low as we can to do this ( /256 ), this means we are 256
+	 * times slower than what we originally were running at */
+
+	RCC_HCLKConfig(RCC_SYSCLK_Div8);
+	RCC_GetClocksFreq(&RCC_Clocks);
+
 	asm volatile (	"MOV R0,%[loops]\n\t"\
 			"1: \n\t"\
 			"SUB R0, #1\n\t"\
 			"CMP R0, #0\n\t"\
-			"BNE 1b \n\t" : : [loops] "r" (8*us) : "memory"\
+			"BNE 1b \n\t" : : [loops] "r" (1*us) : "memory"\
 		      );
+
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);
+	RCC_GetClocksFreq (&RCC_Clocks);
 }
 
 
