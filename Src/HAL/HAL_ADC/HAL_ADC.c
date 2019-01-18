@@ -61,7 +61,7 @@ u16_t HAL_ADC_measure_NTC_temp_raw( void )
 {
     u16_t result = 0;
 
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_7Cycles5);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_239Cycles5);
 
     /* Start ADC1 Software Conversion */
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);

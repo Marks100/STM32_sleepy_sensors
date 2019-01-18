@@ -4,7 +4,7 @@
 #define STM32 							 1u
 #define RFM69W
 #define RFM69_DEFAULT_TX_POWER_LEVEL     0u
-#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  180u
+#define RTC_EXT_DEFAULT_WAKEUP_TIME_SEC  10u
 #define BATTERY_DIVISION				 17u
 #define TEMPERATURE_OFFSET				 20u
 #define NUM_ADC_TEMP_SAMPLES			 10u
@@ -13,7 +13,7 @@
 
 #define TEMP_NOT_AVAILABLE				0xFF
 
-#define AUTO_DEBUG_MODE					 0u
+#define AUTO_DEBUG_MODE					 1u
 #define MULTI_SPI_WRITE_CONFIG			 1u
 #define SENSOR_ID 						 1u
 #define SENSOR_TYPE						 2u

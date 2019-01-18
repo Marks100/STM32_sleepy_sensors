@@ -203,7 +203,7 @@ void populate_rf_frame( void )
 
 	/* Calculate the temperature in celcius, and add the offset */
 	temperature_NTC = calculate_NTC_temperature();
-	temperature_NTC += TEMPERATURE_OFFSET;
+ 	temperature_NTC += TEMPERATURE_OFFSET;
 
 	/* Calculate the Humidity */
 	//humidity = calculate_humidity();
@@ -228,7 +228,11 @@ s8_t calculate_NTC_temperature( void )
 {
 	u8_t i = 0u;
 	double result = 0.0f;
+	float voltage;
 	s8_t temperature;
+
+	HAL_BRD_set_temp_sensor_enable_pin( ON );
+	delay_us(40);
 
 	for ( i = 0; i < NUM_ADC_TEMP_SAMPLES; i++)
 	{
@@ -236,11 +240,15 @@ s8_t calculate_NTC_temperature( void )
 		result += HAL_ADC_measure_NTC_temp_raw();
 	}
 
+	HAL_BRD_set_temp_sensor_enable_pin( OFF );
+
 	result = ( result / NUM_ADC_TEMP_SAMPLES );
 
+	voltage = ( ( result / 4096.0 ) * 3.0 );
+
 	/* shift it right by 2, this essentially now becomes a 10bit ADC reading */
-	//result = result>>2;
 	result = result/4.0f;
+
 	result += 0.5f;
 
 	/*! I have already used excel to create a lookup table to convert from voltage to temperature
