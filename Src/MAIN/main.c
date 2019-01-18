@@ -192,9 +192,8 @@ u8_t generate_random_number( void )
 
 void populate_rf_frame( void )
 {
-	u8_t  buff[30];
 	u8_t  data_len = 10u;
-	s8_t  temperature = 30u;
+	s8_t  temperature_NTC;
 	u8_t  humidity = 100u;
 	u16_t battery_voltage;
 
@@ -203,8 +202,8 @@ void populate_rf_frame( void )
 	//battery_voltage = ( battery_voltage / BATTERY_DIVISION );
 
 	/* Calculate the temperature in celcius, and add the offset */
-	//temperature = calculate_temperature();
-	//temperature += TEMPERATURE_OFFSET;
+	temperature_NTC = calculate_NTC_temperature();
+	temperature_NTC += TEMPERATURE_OFFSET;
 
 	/* Calculate the Humidity */
 	//humidity = calculate_humidity();
@@ -213,43 +212,36 @@ void populate_rf_frame( void )
 	NRF24_rf_frame_s[1] =  SENSOR_ID;
 	NRF24_rf_frame_s[2] =  SENSOR_TYPE;
 	NRF24_rf_frame_s[3] =  data_len;
-	NRF24_rf_frame_s[4] =  temperature;
+	NRF24_rf_frame_s[4] =  temperature_NTC;
 	NRF24_rf_frame_s[5] =  humidity;
 	NRF24_rf_frame_s[6] =  battery_voltage;
-	NRF24_rf_frame_s[7] =  'E';
-	NRF24_rf_frame_s[8] =  'M';
-	NRF24_rf_frame_s[9] =  'P';
+	NRF24_rf_frame_s[7] =  'M';
+	NRF24_rf_frame_s[8] =  'P';
+	NRF24_rf_frame_s[9] = '\0';
 	NRF24_rf_frame_s[10] = '\0';
-
-	if( old_val == NRF24_rf_frame_s[0] )
-	{
-		old_val = NRF24_rf_frame_s[0] + 1;
-	}
-	else
-	{
-		old_val = NRF24_rf_frame_s[0];
-	}
 }
 
 
 
 
-s8_t calculate_temperature( void )
+s8_t calculate_NTC_temperature( void )
 {
 	u8_t i = 0u;
-	u32_t result = 0u;
+	double result = 0.0f;
 	s8_t temperature;
 
 	for ( i = 0; i < NUM_ADC_TEMP_SAMPLES; i++)
 	{
 		/* Read the actual adc value */
-		result += HAL_ADC_measure_temp();
+		result += HAL_ADC_measure_NTC_temp_raw();
 	}
 
 	result = ( result / NUM_ADC_TEMP_SAMPLES );
 
 	/* shift it right by 2, this essentially now becomes a 10bit ADC reading */
-	result = result >> 2u;
+	//result = result>>2;
+	result = result/4.0f;
+	result += 0.5f;
 
 	/*! I have already used excel to create a lookup table to convert from voltage to temperature
 	using the steinheart equation as this processor ( STM32 ) cannot compute the LOG of a variable ???
@@ -270,7 +262,7 @@ s8_t calculate_temperature( void )
 		result -= MIN_TEMP_ARRAY_VAL;
 
 		/* now index into the table */
-		temperature = NTS_LOOKUP_TABLE[result];
+		temperature = NTS_LOOKUP_TABLE[(u32_t)result];
 	}
 
 	return ( temperature );

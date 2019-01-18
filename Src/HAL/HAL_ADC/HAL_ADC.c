@@ -16,6 +16,9 @@ void HAL_ADC_init( void )
 {
 	ADC_InitTypeDef ADC_InitStructure;
 
+	/* Enable the ADC clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE_);
+
 	RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 
 	ADC_DeInit(ADC1);
@@ -54,7 +57,7 @@ void HAL_ADC_de_init( void )
 
 
 
-u16_t HAL_ADC_measure_temp( void )
+u16_t HAL_ADC_measure_NTC_temp_raw( void )
 {
     u16_t result = 0;
 
@@ -74,6 +77,8 @@ u16_t HAL_ADC_measure_temp( void )
 
     return (result);
 }
+
+
 
 
 
