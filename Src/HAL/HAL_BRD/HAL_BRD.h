@@ -54,6 +54,7 @@ void HAL_BRD_toggle_led( void );
 void HAL_BRD_set_LED( off_on_et state );
 void HAL_BRD_set_debug_mode_LED( off_on_et state );
 void HAL_BRD_toggle_debug_mode_led( void );
+void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin );
 void HAL_BRD_RFM69_set_enable_pin_state( low_high_et state );
 void HAL_BRD_RFM69_set_reset_pin_state( low_high_et state );
 void HAL_BRD_RFM69_spi_slave_select( low_high_et state );

@@ -86,6 +86,7 @@ int main(void)
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
 		//SERIAL_init();
+
 	}
 
 	while (1)
@@ -125,8 +126,6 @@ int main(void)
 				populate_rf_frame();
 
 				NRF_simple_send( NRF24_rf_frame_s, sizeof( NRF24_rf_frame_s ), 1u );
-
-				HAL_BRD_toggle_led();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );
@@ -204,6 +203,9 @@ void populate_rf_frame( void )
 	/* Calculate the temperature in celcius, and add the offset */
 	temperature_NTC = calculate_NTC_temperature();
  	temperature_NTC += TEMPERATURE_OFFSET;
+
+
+ 	battery_voltage = HAL_ADC_measure_batt_voltage();
 
 	/* Calculate the Humidity */
 	//humidity = calculate_humidity();

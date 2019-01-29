@@ -91,9 +91,6 @@ void HAL_BRD_init( void )
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-		/* Turn the led off straight away to save power */
-		HAL_BRD_set_debug_mode_LED( ON );
-
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
@@ -345,7 +342,7 @@ void HAL_BRD_set_LED( off_on_et state )
 ***************************************************************************************************/
 void HAL_BRD_toggle_debug_mode_led( void )
 {
-    HAL_BRD_Toggle_Pin_state( GPIOA, GPIO_Pin_8 );
+    HAL_BRD_toggle_pin_state( GPIOA, GPIO_Pin_8 );
 }
 
 

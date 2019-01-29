@@ -32,6 +32,7 @@
 
 #include "C_defs.h"
 #include "STDC.h"
+#include "HAL_BRD.h"
 #include "NVM.h"
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"
@@ -88,7 +89,14 @@ void RTC_ext_init( void )
 	HAL_I2C_write_multiple_register( RTC_EXT_I2C_ADDRESS, VL_seconds, time_array, sizeof( time_array ) );
 
 	/* Now adjust it with the currently stored NVM value */
-	RTC_set_wakeup_time( NVM_info_s.NVM_generic_data_blk_s.sleep_time );
+	if( debug_mode == ENABLE )
+	{
+		RTC_set_wakeup_time( 2u );
+	}
+	else
+	{
+		RTC_set_wakeup_time( NVM_info_s.NVM_generic_data_blk_s.sleep_time );
+	}
 
 	HAL_I2C_read_multiple_registers( RTC_EXT_I2C_ADDRESS, Control_status_1, data_burst, sizeof( data_burst ) );
 }

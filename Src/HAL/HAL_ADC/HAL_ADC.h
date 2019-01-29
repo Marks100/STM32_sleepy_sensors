@@ -37,10 +37,12 @@ typedef enum
 ***************************************************************************************************/
 void HAL_ADC_init( void ) ;
 void HAL_ADC_de_init( void );
-u16_t HAL_ADC_sample_batt_voltage( void );
+u16_t HAL_ADC_measure_batt_voltage( void );
 
 u16_t HAL_ADC_measure_NTC_temp_raw( void );
 u16_t HAL_ADC_measure_STM32_temp_raw( void );
+u16_t HAL_ADC_measure_vref_internal( void )
+;
 
 
 

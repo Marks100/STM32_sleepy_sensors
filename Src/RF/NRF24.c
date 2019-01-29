@@ -1825,17 +1825,19 @@ void NRF_simple_send( u8_t* data_p, u8_t len, u8_t num )
 		/* Send the configured payload */
 		NRF24_send_payload();
 
-		delay_us( 20000 );
+		delay_us( 30000 );
 
 		if( NRF24_check_status_mask( RF24_TX_DATA_SENT, &NRF24_status_register_s ) == HIGH )
 		{
 			/* Clear the Data sent bit or else we cant send any more data */
 			NRF24_status_register_clr_bit( TX_DS );
+			HAL_BRD_toggle_debug_mode_led();
 		}
 		else if( NRF24_check_status_mask( RF24_MAX_RETR_REACHED, &NRF24_status_register_s ) == HIGH )
 		{
 			/* Clear the max retry bit before sending any further data */
 			NRF24_status_register_clr_bit( MAX_RT );
+			HAL_BRD_toggle_led();
 		}
 	}
 

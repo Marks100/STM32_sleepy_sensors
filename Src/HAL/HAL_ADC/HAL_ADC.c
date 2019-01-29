@@ -57,6 +57,34 @@ void HAL_ADC_de_init( void )
 
 
 
+u16_t HAL_ADC_measure_vref_internal( void )
+{
+    u16_t result = 0;
+
+    // Enable Temperature sensor
+    ADC_TempSensorVrefintCmd(ENABLE);
+
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 1, ADC_SampleTime_239Cycles5);
+
+    /* Start ADC1 Software Conversion */
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
+    /* wait for conversion complete */
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+
+    /* read ADC value */
+    result = ADC_GetConversionValue(ADC1);
+
+    /* clear EOC flag */
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
+
+    ADC_TempSensorVrefintCmd(DISABLE);
+
+    return (result);
+}
+
+
+
 u16_t HAL_ADC_measure_NTC_temp_raw( void )
 {
     u16_t result = 0;
@@ -79,6 +107,31 @@ u16_t HAL_ADC_measure_NTC_temp_raw( void )
 }
 
 
+u16_t HAL_ADC_measure_batt_voltage( void )
+{
+	u16_t reference;
+    float result;
+
+    reference = HAL_ADC_measure_vref_internal();
+
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_239Cycles5);
+
+    /* Start ADC1 Software Conversion */
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
+    /* wait for conversion complete */
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+
+    /* read ADC value */
+    result = ADC_GetConversionValue(ADC1);
+
+    /* clear EOC flag */
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
+
+    result = ( ( 1200.0 / (float)reference ) * 4096.0 );
+
+    return ((u16_t)result);
+}
 
 
 
