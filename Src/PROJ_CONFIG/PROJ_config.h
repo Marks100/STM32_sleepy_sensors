@@ -15,8 +15,10 @@
 
 #define AUTO_DEBUG_MODE					 1u
 #define MULTI_SPI_WRITE_CONFIG			 1u
-#define SENSOR_ID 						 1u
-#define SENSOR_TYPE						 2u
+#define SENSOR_ID 						 0xAAAA
+#define SENSOR_TYPE						 1u
+#define PACKET_TYPE						 5u
+#define MODE_TYPE						 10u
 
 
 #if !defined ( RFM69HW ) && !defined ( RFM69W ) && !defined ( RFM69HW_SUPER )

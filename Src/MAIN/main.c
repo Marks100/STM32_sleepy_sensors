@@ -201,26 +201,26 @@ void populate_rf_frame( void )
 	//battery_voltage = ( battery_voltage / BATTERY_DIVISION );
 
 	/* Calculate the temperature in celcius, and add the offset */
-	temperature_NTC = calculate_NTC_temperature();
- 	temperature_NTC += TEMPERATURE_OFFSET;
+	//temperature_NTC = calculate_NTC_temperature();
+ 	//temperature_NTC += TEMPERATURE_OFFSET;
 
 
- 	battery_voltage = HAL_ADC_measure_batt_voltage();
+ 	//battery_voltage = HAL_ADC_measure_batt_voltage();
 
 	/* Calculate the Humidity */
 	//humidity = calculate_humidity();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
-	NRF24_rf_frame_s[1] =  SENSOR_ID;
-	NRF24_rf_frame_s[2] =  SENSOR_TYPE;
-	NRF24_rf_frame_s[3] =  data_len;
-	NRF24_rf_frame_s[4] =  temperature_NTC;
-	NRF24_rf_frame_s[5] =  humidity;
-	NRF24_rf_frame_s[6] =  battery_voltage;
-	NRF24_rf_frame_s[7] =  'M';
-	NRF24_rf_frame_s[8] =  'P';
-	NRF24_rf_frame_s[9] = '\0';
-	NRF24_rf_frame_s[10] = '\0';
+	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
+	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 << 8u );
+	NRF24_rf_frame_s[3] =  ( SENSOR_ID & 0x00FF );
+	NRF24_rf_frame_s[4] =  PACKET_TYPE;
+	NRF24_rf_frame_s[5] =  MODE_TYPE;
+	NRF24_rf_frame_s[6] =  7u;
+	NRF24_rf_frame_s[7] =  0xAA;
+	NRF24_rf_frame_s[8] =  0xBB;
+	NRF24_rf_frame_s[9] =  0xCC;
+	NRF24_rf_frame_s[10] = 0xDD;
 }
 
 
