@@ -19,6 +19,7 @@
 #include "HAL_I2C.h"
 #include "HAL_UART.h"
 #include "NRF24.h"
+#include "BMP280.h"
 #include "main.h"
 
 RCC_ClocksTypeDef RCC_Clocks;
@@ -81,6 +82,8 @@ int main(void)
 
 	/* Initialise the NRF24 variables */
 	NRF24_init();
+
+	BMP280_init();
 
 	if( debug_mode == ENABLE )
 	{
@@ -192,8 +195,6 @@ u8_t generate_random_number( void )
 void populate_rf_frame( void )
 {
 	u8_t  data_len = 10u;
-	s8_t  temperature_NTC;
-	u8_t  humidity = 100u;
 	u16_t battery_voltage;
 
 	/* Calculate the battery voltage */
@@ -212,7 +213,7 @@ void populate_rf_frame( void )
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
-	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 << 8u );
+	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 >> 8u );
 	NRF24_rf_frame_s[3] =  ( SENSOR_ID & 0x00FF );
 	NRF24_rf_frame_s[4] =  PACKET_TYPE;
 	NRF24_rf_frame_s[5] =  MODE_TYPE;
