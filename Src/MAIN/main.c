@@ -83,7 +83,35 @@ int main(void)
 	/* Initialise the NRF24 variables */
 	NRF24_init();
 
-	BMP280_init();
+//	BMP280_init();
+
+
+
+long temperature = 0;
+	long pressure = 0;
+
+
+	BMP280_Init();
+
+
+
+
+
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+			bmp280Convert(&temperature, &pressure);
+
+
 
 	if( debug_mode == ENABLE )
 	{
