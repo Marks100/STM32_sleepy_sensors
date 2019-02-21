@@ -83,35 +83,7 @@ int main(void)
 	/* Initialise the NRF24 variables */
 	NRF24_init();
 
-//	BMP280_init();
-
-
-
-long temperature = 0;
-	long pressure = 0;
-
-
-	BMP280_Init();
-
-
-
-
-
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-			bmp280Convert(&temperature, &pressure);
-
-
+	BMP280_init();
 
 	if( debug_mode == ENABLE )
 	{
@@ -238,6 +210,8 @@ void populate_rf_frame( void )
 
 	/* Calculate the Humidity */
 	//humidity = calculate_humidity();
+
+	BMP280_trigger_meas();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
