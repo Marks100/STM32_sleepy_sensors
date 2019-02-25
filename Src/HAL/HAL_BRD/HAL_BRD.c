@@ -58,12 +58,12 @@ void HAL_BRD_init( void )
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
 	/* Configure the Temp sensor enable pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-	/* small delay to allow the button tp settle */
+	/* small delay to allow the button to settle */
 	delay_us(500);
 
 	debug_mode = HAL_BRD_read_debug_pin();
@@ -284,6 +284,38 @@ void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
 	    HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_11, HIGH );
 	}
 }
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the BMP280 pin state
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_BMP280_power_pin_state( off_on_et state )
+{
+	if( state == ON )
+	{
+		/* Configure the GPIOs */
+		GPIO_InitTypeDef GPIO_InitStructure;
+
+		/* Configure the power pin for the BMP280 */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, LOW );
+	}
+	else
+	{
+	    HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, HIGH );
+	}
+}
+
 
 /**************************************************************************************************
 EXTERNAL API's

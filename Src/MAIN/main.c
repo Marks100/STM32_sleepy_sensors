@@ -77,20 +77,17 @@ int main(void)
 	HAL_ADC_init();
 	NVM_init();
 
+	if( debug_mode == ENABLE )
+	{
+		/* In debug mode lets init the debug usart as this consumes lots of power */
+		//SERIAL_init();
+	}
+
 	/* Initialise the RTC */
 	RTC_ext_init();
 
 	/* Initialise the NRF24 variables */
 	NRF24_init();
-
-	BMP280_init();
-
-	if( debug_mode == ENABLE )
-	{
-		/* In debug mode lets init the debug usart as this consumes lots of power */
-		//SERIAL_init();
-
-	}
 
 	while (1)
 	{
@@ -117,7 +114,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			PWR_EnterSTANDBYMode();
+			//PWR_EnterSTANDBYMode();
 		}
 		else
 		{
@@ -197,20 +194,6 @@ void populate_rf_frame( void )
 	u8_t  data_len = 10u;
 	u16_t battery_voltage;
 
-	/* Calculate the battery voltage */
-	//battery_voltage = HAL_ADC_sample_batt_voltage();
-	//battery_voltage = ( battery_voltage / BATTERY_DIVISION );
-
-	/* Calculate the temperature in celcius, and add the offset */
-	//temperature_NTC = calculate_NTC_temperature();
- 	//temperature_NTC += TEMPERATURE_OFFSET;
-
-
- 	//battery_voltage = HAL_ADC_measure_batt_voltage();
-
-	/* Calculate the Humidity */
-	//humidity = calculate_humidity();
-
 	BMP280_trigger_meas();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
@@ -227,59 +210,6 @@ void populate_rf_frame( void )
 }
 
 
-
-
-s8_t calculate_NTC_temperature( void )
-{
-	u8_t i = 0u;
-	double result = 0.0f;
-	float voltage;
-	s8_t temperature;
-
-	HAL_BRD_set_temp_sensor_enable_pin( ON );
-	delay_us(40);
-
-	for ( i = 0; i < NUM_ADC_TEMP_SAMPLES; i++)
-	{
-		/* Read the actual adc value */
-		result += HAL_ADC_measure_NTC_temp_raw();
-	}
-
-	HAL_BRD_set_temp_sensor_enable_pin( OFF );
-
-	result = ( result / NUM_ADC_TEMP_SAMPLES );
-
-	voltage = ( ( result / 4096.0 ) * 3.0 );
-
-	/* shift it right by 2, this essentially now becomes a 10bit ADC reading */
-	result = result/4.0f;
-
-	result += 0.5f;
-
-	/*! I have already used excel to create a lookup table to convert from voltage to temperature
-	using the steinheart equation as this processor ( STM32 ) cannot compute the LOG of a variable ???
-	however the temperature range is very extreme and we do not need that kind of range
-	so we we will limit the temperature from -20 to 120 which gives us 895 values */
-
-	if( ( result < MIN_TEMP_ARRAY_VAL ) || ( result > MAX_TEMP_ARRAY_VAL ) )
-	{
-		/* These values are out of range!!! */
-		temperature = TEMP_NOT_AVAILABLE;
-	}
-	else
-	{
-		/* The ADC value seems reasonable so lets grab a value from the lookup table */
-
-		/* First we need to take an offset away from the ADC reading as we are not using the full
-		swing of values */
-		result -= MIN_TEMP_ARRAY_VAL;
-
-		/* now index into the table */
-		temperature = NTS_LOOKUP_TABLE[(u32_t)result];
-	}
-
-	return ( temperature );
-}
 
 
 u8_t calculate_humidity( void )

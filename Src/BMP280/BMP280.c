@@ -28,8 +28,9 @@
 extern NVM_info_st NVM_info_s;
 
 BMP280_calib_st BMP280_calib_s;
-u32_t BMP280_pressure_s;
-u32_t BMP280_temperature_s;
+s32_t BMP280_pressure_s;
+s32_t BMP280_temperature_s;
+false_true_et BMP280_init_s;
 
 /***************************************************************************************************
 **                              Data declarations and definitions                                 **
@@ -39,8 +40,10 @@ u32_t BMP280_temperature_s;
 
 void BMP280_init( void )
 {
-	BMP280_pressure_s = 0u;
-	BMP280_temperature_s = 0u;
+	BMP280_init_s = FALSE;
+
+	BMP280_pressure_s = 0;
+	BMP280_temperature_s = 0;
 
 	u8_t register_data;
 	u8_t id = 0u;
@@ -61,9 +64,14 @@ void BMP280_init( void )
 	register_data = 0u;
 	HAL_I2C_read_register( BMP280_I2C_ADDR, BMP280_CONFIG, &register_data );
 
+	delay_us( 1000u );
 	BMP280_read_calib_values();
 
+	delay_us( 1000u );
+
 	BMP280_set_mode( BMP280_SLEEP_MODE );
+
+	BMP280_init_s = TRUE;
 }
 
 
@@ -183,19 +191,31 @@ void BMP280_convert( u32_t* temperature, u32_t* pressure)
 
 void BMP280_trigger_meas( void )
 {
-  u8_t status;
-  BMP280_set_mode( BMP280_FORCED_MODE );
+	u8_t status;
 
-  status = BMP280_read_status();
+	HAL_BRD_set_BMP280_power_pin_state( ON );
 
-  while( ( status & BMP280_MEASURING ) == BMP280_MEASURING )
-  {
-    status = BMP280_read_status();
-  }
+	/* give the BMP280 time to start up */
+	delay_us( 3000u );
+
+	BMP280_init();
+
+	BMP280_set_mode( BMP280_FORCED_MODE );
+
+	delay_us( 3000u );
+
+	status = BMP280_read_status();
+
+	while( ( status & BMP280_MEASURING ) == BMP280_MEASURING )
+	{
+		status = BMP280_read_status();
+	}
 
 	BMP280_convert( &BMP280_temperature_s, &BMP280_pressure_s );
 
 	BMP280_set_mode( BMP280_SLEEP_MODE );
+
+	HAL_BRD_set_BMP280_power_pin_state( OFF );
 }
 
 

@@ -62,6 +62,7 @@ void HAL_BRD_NRF24_spi_slave_select( low_high_et state );
 void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state );
 void HAL_BRD_set_temp_sensor_enable_pin( off_on_et state );
 void HAL_BRD_set_NRF_power_pin_state( off_on_et state );
+void HAL_BRD_set_BMP280_power_pin_state( off_on_et state );
 
 false_true_et HAL_BRD_get_rtc_trigger_status( void );
 void HAL_BRD_set_rtc_trigger_status( false_true_et state );
