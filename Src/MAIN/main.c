@@ -93,6 +93,8 @@ int main(void)
 	{
 		if( debug_mode != ENABLE )
 		{
+			BMP280_trigger_meas();
+
 			populate_rf_frame();
 
 			/* Disable the ADC before the RF transmission to save as much power as possible */
@@ -114,7 +116,7 @@ int main(void)
 			PWR_WakeUpPinCmd(ENABLE);
 
 			/* Enters STANDBY mode */
-			//PWR_EnterSTANDBYMode();
+			PWR_EnterSTANDBYMode();
 		}
 		else
 		{
@@ -123,6 +125,8 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
+				BMP280_trigger_meas();
+
 				populate_rf_frame();
 
 				NRF_simple_send( NRF24_rf_frame_s, sizeof( NRF24_rf_frame_s ), 1u );
@@ -193,8 +197,6 @@ void populate_rf_frame( void )
 {
 	u8_t  data_len = 10u;
 	u16_t battery_voltage;
-
-	BMP280_trigger_meas();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_TYPE;

@@ -202,18 +202,17 @@ void BMP280_trigger_meas( void )
 
 	BMP280_set_mode( BMP280_FORCED_MODE );
 
-	delay_us( 3000u );
+	delay_us( 20000u );
 
 	status = BMP280_read_status();
 
 	while( ( status & BMP280_MEASURING ) == BMP280_MEASURING )
 	{
 		status = BMP280_read_status();
+		delay_us( 5000u );
 	}
 
 	BMP280_convert( &BMP280_temperature_s, &BMP280_pressure_s );
-
-	BMP280_set_mode( BMP280_SLEEP_MODE );
 
 	HAL_BRD_set_BMP280_power_pin_state( OFF );
 }
