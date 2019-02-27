@@ -16,6 +16,9 @@ void HAL_ADC_init( void )
 {
 	ADC_InitTypeDef ADC_InitStructure;
 
+	/* Enable the ADC clock */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE_);
+
 	RCC_ADCCLKConfig(RCC_PCLK2_Div4);
 
 	ADC_DeInit(ADC1);
@@ -54,11 +57,39 @@ void HAL_ADC_de_init( void )
 
 
 
-u16_t HAL_ADC_measure_temp( void )
+u16_t HAL_ADC_measure_vref_internal( void )
 {
     u16_t result = 0;
 
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_7Cycles5);
+    // Enable Temperature sensor
+    ADC_TempSensorVrefintCmd(ENABLE);
+
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_Vrefint, 1, ADC_SampleTime_239Cycles5);
+
+    /* Start ADC1 Software Conversion */
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
+    /* wait for conversion complete */
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+
+    /* read ADC value */
+    result = ADC_GetConversionValue(ADC1);
+
+    /* clear EOC flag */
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
+
+    ADC_TempSensorVrefintCmd(DISABLE);
+
+    return (result);
+}
+
+
+
+u16_t HAL_ADC_measure_NTC_temp_raw( void )
+{
+    u16_t result = 0;
+
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_3, 1, ADC_SampleTime_239Cycles5);
 
     /* Start ADC1 Software Conversion */
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
@@ -73,6 +104,33 @@ u16_t HAL_ADC_measure_temp( void )
     ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
 
     return (result);
+}
+
+
+u16_t HAL_ADC_measure_batt_voltage( void )
+{
+	u16_t reference;
+    float result;
+
+    reference = HAL_ADC_measure_vref_internal();
+
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_239Cycles5);
+
+    /* Start ADC1 Software Conversion */
+    ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+
+    /* wait for conversion complete */
+    while(ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC) == RESET);
+
+    /* read ADC value */
+    result = ADC_GetConversionValue(ADC1);
+
+    /* clear EOC flag */
+    ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
+
+    result = ( ( 1200.0 / (float)reference ) * 4096.0 );
+
+    return ((u16_t)result);
 }
 
 

@@ -32,6 +32,7 @@
 
 #include "C_defs.h"
 #include "STDC.h"
+#include "HAL_BRD.h"
 #include "NVM.h"
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"

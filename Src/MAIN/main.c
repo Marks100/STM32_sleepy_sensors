@@ -19,9 +19,10 @@
 #include "HAL_I2C.h"
 #include "HAL_UART.h"
 #include "NRF24.h"
+#include "BMP280.h"
 #include "main.h"
 
-
+RCC_ClocksTypeDef RCC_Clocks;
 u16_t delay_timer = 0u;
 u8_t  NRF24_register_readback_s[NRF24_DEFAULT_CONFIGURATION_SIZE];
 u8_t  NRF24_rf_frame_s[10];
@@ -62,6 +63,8 @@ int main(void)
 	RCC_DeInit();
 	SystemInit();
 
+	RCC_GetClocksFreq (&RCC_Clocks);
+
 	RCC_HCLKConfig(RCC_SYSCLK_Div1);
 	RCC_PCLK1Config(RCC_HCLK_Div1);
 	RCC_PCLK2Config(RCC_HCLK_Div1);
@@ -74,22 +77,24 @@ int main(void)
 	HAL_ADC_init();
 	NVM_init();
 
-	/* Initialise the RTC */
-	RTC_ext_init();
-
-	/* Initialise the NRF24 variables */
-	NRF24_init();
-
 	if( debug_mode == ENABLE )
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
 		//SERIAL_init();
 	}
 
+	/* Initialise the RTC */
+	RTC_ext_init();
+
+	/* Initialise the NRF24 variables */
+	NRF24_init();
+
 	while (1)
 	{
 		if( debug_mode != ENABLE )
 		{
+			BMP280_trigger_meas();
+
 			populate_rf_frame();
 
 			/* Disable the ADC before the RF transmission to save as much power as possible */
@@ -120,11 +125,11 @@ int main(void)
 
 			if( HAL_BRD_get_rtc_trigger_status() == TRUE )
 			{
+				BMP280_trigger_meas();
+
 				populate_rf_frame();
 
 				NRF_simple_send( NRF24_rf_frame_s, sizeof( NRF24_rf_frame_s ), 1u );
-
-				HAL_BRD_toggle_led();
 
 				/* Set the trigger back to false */
 				HAL_BRD_set_rtc_trigger_status( FALSE );
@@ -150,7 +155,7 @@ void MAIN_SYSTICK_init( void )
 	RCC_ClocksTypeDef RCC_Clocks;
 	RCC_GetClocksFreq (&RCC_Clocks);
 
-	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK );
+	SysTick_CLKSourceConfig( SysTick_CLKSource_HCLK_Div8 );
 
 	/* Trigger an interrupt every 1ms */
 	SysTick_Config(72000);
@@ -190,89 +195,25 @@ u8_t generate_random_number( void )
 
 void populate_rf_frame( void )
 {
-	u8_t  buff[30];
 	u8_t  data_len = 10u;
-	s8_t  temperature = 30u;
-	u8_t  humidity = 100u;
 	u16_t battery_voltage;
 
-	/* Calculate the battery voltage */
-	//battery_voltage = HAL_ADC_sample_batt_voltage();
-	//battery_voltage = ( battery_voltage / BATTERY_DIVISION );
-
-	/* Calculate the temperature in celcius, and add the offset */
-	//temperature = calculate_temperature();
-	//temperature += TEMPERATURE_OFFSET;
-
-	/* Calculate the Humidity */
-	//humidity = calculate_humidity();
+	s32_t temperature = BMP280_get_temperature();
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
-	NRF24_rf_frame_s[1] =  SENSOR_ID;
-	NRF24_rf_frame_s[2] =  SENSOR_TYPE;
-	NRF24_rf_frame_s[3] =  data_len;
-	NRF24_rf_frame_s[4] =  temperature;
-	NRF24_rf_frame_s[5] =  humidity;
-	NRF24_rf_frame_s[6] =  battery_voltage;
-	NRF24_rf_frame_s[7] =  'E';
-	NRF24_rf_frame_s[8] =  'M';
-	NRF24_rf_frame_s[9] =  'P';
-	NRF24_rf_frame_s[10] = '\0';
-
-	if( old_val == NRF24_rf_frame_s[0] )
-	{
-		old_val = NRF24_rf_frame_s[0] + 1;
-	}
-	else
-	{
-		old_val = NRF24_rf_frame_s[0];
-	}
+	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
+	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 >> 8u );
+	NRF24_rf_frame_s[3] =  ( SENSOR_ID & 0x00FF );
+	NRF24_rf_frame_s[4] =  PACKET_TYPE;
+	NRF24_rf_frame_s[5] =  MODE_TYPE;
+	NRF24_rf_frame_s[6] =  7u;
+	NRF24_rf_frame_s[7] =  ( ( temperature & 0x0000FF00 ) >> 8u );
+	NRF24_rf_frame_s[8] =  ( temperature & 0x0000FF );  //round the first part
+	NRF24_rf_frame_s[9] =  0xCC;
+	NRF24_rf_frame_s[10] = 0xDD;
 }
 
 
-
-
-s8_t calculate_temperature( void )
-{
-	u8_t i = 0u;
-	u32_t result = 0u;
-	s8_t temperature;
-
-	for ( i = 0; i < NUM_ADC_TEMP_SAMPLES; i++)
-	{
-		/* Read the actual adc value */
-		result += HAL_ADC_measure_temp();
-	}
-
-	result = ( result / NUM_ADC_TEMP_SAMPLES );
-
-	/* shift it right by 2, this essentially now becomes a 10bit ADC reading */
-	result = result >> 2u;
-
-	/*! I have already used excel to create a lookup table to convert from voltage to temperature
-	using the steinheart equation as this processor ( STM32 ) cannot compute the LOG of a variable ???
-	however the temperature range is very extreme and we do not need that kind of range
-	so we we will limit the temperature from -20 to 120 which gives us 895 values */
-
-	if( ( result < MIN_TEMP_ARRAY_VAL ) || ( result > MAX_TEMP_ARRAY_VAL ) )
-	{
-		/* These values are out of range!!! */
-		temperature = TEMP_NOT_AVAILABLE;
-	}
-	else
-	{
-		/* The ADC value seems reasonable so lets grab a value from the lookup table */
-
-		/* First we need to take an offset away from the ADC reading as we are not using the full
-		swing of values */
-		result -= MIN_TEMP_ARRAY_VAL;
-
-		/* now index into the table */
-		temperature = NTS_LOOKUP_TABLE[result];
-	}
-
-	return ( temperature );
-}
 
 
 u8_t calculate_humidity( void )
@@ -294,12 +235,22 @@ void delay_ms(u16_t ms)
 
 void delay_us(u16_t us)
 {
+	/* If we are just delaying time then we want to do this as efficiently as possible,
+	 * Lets reduce the clock speed down as low as we can to do this ( /256 ), this means we are 256
+	 * times slower than what we originally were running at */
+
+	RCC_HCLKConfig(RCC_SYSCLK_Div8);
+	RCC_GetClocksFreq(&RCC_Clocks);
+
 	asm volatile (	"MOV R0,%[loops]\n\t"\
 			"1: \n\t"\
 			"SUB R0, #1\n\t"\
 			"CMP R0, #0\n\t"\
-			"BNE 1b \n\t" : : [loops] "r" (8*us) : "memory"\
+			"BNE 1b \n\t" : : [loops] "r" (1*us) : "memory"\
 		      );
+
+	RCC_HCLKConfig(RCC_SYSCLK_Div1);
+	RCC_GetClocksFreq (&RCC_Clocks);
 }
 
 

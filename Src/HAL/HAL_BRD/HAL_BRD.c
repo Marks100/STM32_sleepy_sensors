@@ -57,7 +57,13 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-	/* small delay to allow the button tp settle */
+	/* Configure the Temp sensor enable pin */
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	/* small delay to allow the button to settle */
 	delay_us(500);
 
 	debug_mode = HAL_BRD_read_debug_pin();
@@ -84,9 +90,6 @@ void HAL_BRD_init( void )
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 		GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-		/* Turn the led off straight away to save power */
-		HAL_BRD_set_debug_mode_LED( ON );
 
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
 		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
@@ -282,6 +285,38 @@ void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
 	}
 }
 
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the BMP280 pin state
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_BMP280_power_pin_state( off_on_et state )
+{
+	if( state == ON )
+	{
+		/* Configure the GPIOs */
+		GPIO_InitTypeDef GPIO_InitStructure;
+
+		/* Configure the power pin for the BMP280 */
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, LOW );
+	}
+	else
+	{
+	    HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, HIGH );
+	}
+}
+
+
 /**************************************************************************************************
 EXTERNAL API's
 ***************************************************************************************************/
@@ -339,7 +374,7 @@ void HAL_BRD_set_LED( off_on_et state )
 ***************************************************************************************************/
 void HAL_BRD_toggle_debug_mode_led( void )
 {
-    HAL_BRD_Toggle_Pin_state( GPIOA, GPIO_Pin_8 );
+    HAL_BRD_toggle_pin_state( GPIOA, GPIO_Pin_8 );
 }
 
 
@@ -358,6 +393,21 @@ void HAL_BRD_set_debug_mode_LED( off_on_et state )
 	HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_8, state);
 }
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the state of the debug mode the led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_temp_sensor_enable_pin( off_on_et state )
+{
+	HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_2, state);
+}
 
 
 
