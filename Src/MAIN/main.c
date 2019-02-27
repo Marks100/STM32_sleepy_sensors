@@ -198,6 +198,8 @@ void populate_rf_frame( void )
 	u8_t  data_len = 10u;
 	u16_t battery_voltage;
 
+	s32_t temperature = BMP280_get_temperature();
+
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
 	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 >> 8u );
@@ -205,8 +207,8 @@ void populate_rf_frame( void )
 	NRF24_rf_frame_s[4] =  PACKET_TYPE;
 	NRF24_rf_frame_s[5] =  MODE_TYPE;
 	NRF24_rf_frame_s[6] =  7u;
-	NRF24_rf_frame_s[7] =  0xAA;
-	NRF24_rf_frame_s[8] =  0xBB;
+	NRF24_rf_frame_s[7] =  ( ( temperature & 0x0000FF00 ) >> 8u );
+	NRF24_rf_frame_s[8] =  ( temperature & 0x0000FF );  //round the first part
 	NRF24_rf_frame_s[9] =  0xCC;
 	NRF24_rf_frame_s[10] = 0xDD;
 }

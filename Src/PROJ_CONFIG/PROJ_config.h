@@ -13,7 +13,7 @@
 
 #define TEMP_NOT_AVAILABLE				0xFF
 
-#define AUTO_DEBUG_MODE					 0u
+#define AUTO_DEBUG_MODE					 1u
 #define MULTI_SPI_WRITE_CONFIG			 1u
 #define SENSOR_ID 						 0xAA02
 #define SENSOR_TYPE						 1u
