@@ -36,10 +36,10 @@ void HAL_BRD_init( void )
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Configure the DEBUG selector pin, its important that this comes first */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
 	/* Configure the power pin for the NRF24l01
 	   This is very sensitive, if i configure the pin as output PP here then the PIN
@@ -81,8 +81,7 @@ void HAL_BRD_init( void )
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 		GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-		/* Turn the led off straight away to save power */
-		HAL_BRD_set_LED( OFF );
+		HAL_BRD_set_onboard_LED( OFF );
 
 		/* configure the debug mode led ( this lets us know we are in debug mode and will only be turned
 		on in debug mode */
@@ -338,13 +337,13 @@ EXTERNAL API's
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_toggle_led( void )
+void HAL_BRD_toggle_onboard_led( void )
 {
     HAL_BRD_toggle_pin_state( GPIOC, GPIO_Pin_13 );
 }
 
 
-void HAL_BRD_set_LED( off_on_et state )
+void HAL_BRD_set_onboard_LED( off_on_et state )
 {
 	low_high_et val;
 
@@ -426,7 +425,7 @@ disable_enable_et HAL_BRD_read_debug_pin( void )
 	low_high_et state;
 	disable_enable_et mode;
 
-	state = HAL_BRD_read_pin_state(GPIOA, GPIO_Pin_4 );
+	state = HAL_BRD_read_pin_state(GPIOB, GPIO_Pin_5 );
 
 	mode = (( state == HIGH ) ? ENABLE : DISABLE );
 

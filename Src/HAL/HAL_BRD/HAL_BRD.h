@@ -50,8 +50,8 @@ void HAL_BRD_set_pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 
 void HAL_BRD_set_batt_monitor_state( disable_enable_et state );
 void HAL_BRD_set_rf_enable_pin( disable_enable_et state );
-void HAL_BRD_toggle_led( void );
-void HAL_BRD_set_LED( off_on_et state );
+void HAL_BRD_toggle_onboard_led( void );
+void HAL_BRD_set_onboard_LED( off_on_et state );
 void HAL_BRD_set_debug_mode_LED( off_on_et state );
 void HAL_BRD_toggle_debug_mode_led( void );
 void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin );

@@ -81,6 +81,7 @@ int main(void)
 	{
 		/* In debug mode lets init the debug usart as this consumes lots of power */
 		//SERIAL_init();
+		HAL_BRD_set_onboard_LED( ON );
 	}
 
 	/* Initialise the RTC */
@@ -202,7 +203,7 @@ void populate_rf_frame( void )
 
 	NRF24_rf_frame_s[0] =  generate_random_number();
 	NRF24_rf_frame_s[1] =  SENSOR_TYPE;
-	NRF24_rf_frame_s[2] =  ( SENSOR_ID & 0xFF00 >> 8u );
+	NRF24_rf_frame_s[2] =  ( ( SENSOR_ID & 0xFF00 ) >> 8u );
 	NRF24_rf_frame_s[3] =  ( SENSOR_ID & 0x00FF );
 	NRF24_rf_frame_s[4] =  PACKET_TYPE;
 	NRF24_rf_frame_s[5] =  MODE_TYPE;

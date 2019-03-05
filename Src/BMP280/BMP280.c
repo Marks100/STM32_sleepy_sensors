@@ -48,7 +48,7 @@ void BMP280_init( void )
 	u8_t register_data;
 	u8_t id = 0u;
 
-	STDC_memcpy( &BMP280_calib_s, 0x00, sizeof( BMP280_calib_s ) );
+	STDC_memset( &BMP280_calib_s, 0x00, sizeof( BMP280_calib_s ) );
 
 	id = BMP280_read_id();
 
