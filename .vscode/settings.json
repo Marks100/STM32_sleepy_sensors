@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "stm32f0xx_exti.h": "c",
+        "compiler_config.h": "c",
+        "versions.h": "c",
+        "stm32f10x_rcc.h": "c",
+        "misc.h": "c",
+        "systick_mgr.h": "c",
+        "c_defs.h": "c"
+    }
+}

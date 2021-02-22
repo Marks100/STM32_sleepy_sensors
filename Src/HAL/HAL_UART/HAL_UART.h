@@ -12,7 +12,7 @@
 **                              Defines                                                           **
 ***************************************************************************************************/
 #define RX_BUF_SIZE 80
-#define TX_BUF_SIZE 100
+#define TX_BUF_SIZE 250
 
 
 /***************************************************************************************************
@@ -38,11 +38,12 @@
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void SERIAL_init( void );
-void SERIAL_Send_data(const char *pucBuffer);
-void SERIAL_clear_RXBuffer(void);
-void SERIAL_clear_TXBuffer(void);
-void SERIAL_msg_handler( void );
+void HAL_USART1_init( void );
+void HAL_USART1_close( void );
+void HAL_USART1_send_data(const char *pucBuffer, u16_t data_size );
+void HAL_USART2_init( void );
+void HAL_USART2_close( void );
+void HAL_USART2_send_data(const char *pucBuffer, u16_t data_size );
 
 
 

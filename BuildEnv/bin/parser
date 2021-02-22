@@ -1,0 +1,54 @@
+#!/bin/bash
+ 
+usage()
+{
+	echo "Usage: usage [-f filename] [-v | -h] output_path"
+	echo "	-f optional arg to set file name"
+	echo "	-v prints the version number of the script"
+	echo "	-h prints the help menu"
+	exit
+}
+
+if [ $# -lt 1 ]; then
+    usage
+    exit 1
+fi
+
+#setup defaults
+VERSION=1.0
+filename=build_info.txt
+	
+echo $OPTIND
+echo $#
+
+while getopts "f:hv" opt; do
+  case $opt in
+    f)
+      echo "filename manually set to $OPTARG" >&2
+	  filename=$OPTARG
+      ;;
+	h)
+	  echo "Scripth for generating build info"
+	  usage
+	  ;;
+	v)
+	  echo "$(basename $0) v$VERSION"
+	  ;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+	  usage
+      ;;
+  esac
+done
+
+#grab the output path from ARG1
+file_path=${@:$OPTIND:1}
+target=$file_path/$filename
+touch $target
+echo "Build date: $(date)" >> $target
+echo""
+echo "SW version: $(sVersion -l)" >> $target
+printf "\nGit Branch: $(git branch | awk '// { print $2; }')" >> $target
+printf "\nGit Hash: $(git rev-parse HEAD)" >> $target
+printf "\nGit last HEAD commit: $(git show HEAD | sed -n 3p | cut -d: -f2-4)" >>$target
+printf "\n\nUncommited file changes:\n$(git diff --name-only)" >> $target

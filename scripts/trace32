@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Find the name of the elf file and set this as an environment variable
+export LAUTERBACH_EXE=$(cygpath -w $(find $PTLD/Build_output/ -type f -name *.elf*))
+
+# Trace32 should now be able to use that env variable
+cd $PTLD/tool_cfg/Lauterbach && t32marm -c $PTLD/tool_cfg/Lauterbach/config.t32 -s $PTLD/tool_cfg/Lauterbach/Stm32f103.cmm &

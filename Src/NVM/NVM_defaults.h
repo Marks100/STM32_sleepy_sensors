@@ -26,6 +26,7 @@
 #define NVM_DEFAULTS_H
 
 #include "PROJ_config.h"
+#include "SEN_MGR.h"
 #include "NVM.h"
 
 /***************************************************************************************************
@@ -44,9 +45,17 @@
 
 const NVM_generic_data_blk_st      NVM_DEFAULT_GENERIC_DATA_BLK_s =
 {
-	RTC_EXT_DEFAULT_WAKEUP_TIME_SEC,						//!Sleep time
-	NRF24_SETUP_RX
+	SEN_MGR_DEFAULT_SEN_ID,
+	1,
+	SEN_MGR_DEFAULT_WAKEUP_TIME_SEC,  //periodic wakep 
+	{
+		{ "help" },			          //default CLI commands
+		{ "ver" },
+		{ "reset" },
+		{ "nvm" },
+		{ "" },
+		{ "" },
+	}
 };
-
 
 #endif

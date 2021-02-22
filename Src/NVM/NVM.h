@@ -1,16 +1,15 @@
 #ifndef NVM_H
 #define NVM_H
 
-//#include "COMPILER_defs.h"
-//#include "COMPILER_config.h"
 #include "C_defs.h"
-#include "NRF24.h"
+#include "CLI_MGR.h"
 
 /***************************************************************************************************
 **                              Defines                                                          **
 ***************************************************************************************************/
-#define NVM_FLASH_PTR_START_ADDR     ((u32_t)0x08008000)
-#define NVM_FLASH_PTR_END_ADDR		 ((u32_t)0x080087FF)
+#define NVM_FLASH_PTR_START_ADDR     ((u32_t)0x801FC00)
+#define NVM_FLASH_PTR_END_ADDR		 ((u32_t)0x801FFFF)
+#define NVM_FLASH_SIZE               (1023u)
 
 #define MAX_NUM_FLASH_BYTES       256u
 #define CRC_BYTE                  255u
@@ -40,7 +39,7 @@ typedef enum
 /**************************************************************************************************/
 typedef enum
 {
-    NVM_VERS_GENERIC_DATA         = 90,
+    NVM_VERS_GENERIC_DATA         = 1,
 } NVM_blk_version_et;
 /***************************************************************************************************
 This is the version number of the NVM block, This needs to be incremented when changing the layout
@@ -50,8 +49,10 @@ the structure of the block or when adding new bytes in
 
 typedef struct
 {
-    u32_t sleep_time;
-    NRF24_state_et nrf_startup_tx_rx_mode;
+    u16_t sensor_id;
+    u8_t  sensor_type;
+    u32_t wakeup_period_sec;
+    CLI_MGR_cmd_st cmd_list[CLI_MGR_MAX_COMMAND_HISTORY];
 
 } NVM_generic_data_blk_st;
 

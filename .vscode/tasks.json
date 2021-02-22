@@ -1,0 +1,109 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks":
+     [
+        {
+            "label": "c++: g++.exe build active file",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "C:\\SVN_source\\Tools\\gcc-linaro\\gcc-linaro-arm-linux-gnueabihf-4.8-2013.11_win32\\bin\\arm-linux-gnueabihf-g++.exe",
+            "args": ["-g", "-c", "${file}", "-o", "${fileDirname}\\${fileBasenameNoExtension}.o"],
+      "problemMatcher": ["$gcc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+            }
+        },
+        {
+            "label": "flash_device",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "coflash.exe program STM32F103C8 Build_output/STM32_RF_HUB.elf --adapter-name=ST-Link --port=SWD --adapter-clk=500000 --erase=all --reset=SYSRESETREQ --driver=C:/CooCox/CoIDE/flash/stm32f10x_md_128.elf",
+        },
+        {
+            "label": "all",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe all",
+        },
+        {
+            "label": "build_clean",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe build_clean",
+        },
+        {
+            "label": "rebuild",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe rebuild",
+        },
+        {
+            "label": "test_specific",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe ${fileBasenameNoExtension}.test",
+        },
+        {
+            "label": "test_specific_lcov",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe ${fileBasenameNoExtension}.test_lcov",
+        },
+        {
+            "label": "test_all",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe test_all",
+        },
+        {
+            "label": "test_clean",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe test_clean",
+        },
+        {
+            "label": "total_clean",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe total_clean",
+        },
+        {
+            "label": "gen_lcov_report",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe gen_lcov_report",
+        },
+        {
+            "label": "total_clean",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe total_clean",
+        },
+        {
+            "label": "memory_stats",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe memory_stats",
+        },
+        {
+            "label": "release_package",
+            "type": "shell",
+            "options": { "cwd": "${workspaceFolder}" },
+            "command": "mingw32-make.exe release_package",
+        },
+        {
+            "label": "trace32",
+            "type": "process",
+            "command": "bash",
+            "args": ["trace32"],
+            "isBackground": true,
+        },
+    ]
+}
+
+
+
+//"command": "cd ${env:PTLD}/tool_cfg/Lauterbach; t32marm -c ${env:PTLD}/tool_cfg/Lauterbach/config.t32 -s ${env:PTLD}/tool_cfg/Lauterbach/Stm32f103.cmm",

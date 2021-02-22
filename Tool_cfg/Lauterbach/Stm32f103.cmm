@@ -1,0 +1,78 @@
+; --------------------------------------------------------------------------------
+; @Title: Demo script for STM32F103ZE on STM3210E-EVAL (FLASH)
+; @Description:
+;   Programs the sieve demo application into the processor internal flash and
+;   sets up a demo debug scenario.
+;   This script can be used as a template for flashing an application.
+;   Prerequisites:
+;    * Connect Debug Cable to CN7 using Adapter LA-3770
+;      or
+;      Connect Combiprobe/uTrace to CN7
+; @Keywords: ARM, Cortex-M3, Flash
+; @Author: STK
+; @Board: STM3210E-EVAL
+; @Chip: STM32F103ZE
+; @Copyright: (C) 1989-2018 Lauterbach GmbH, licensed for use with TRACE32(R) only
+; --------------------------------------------------------------------------------
+; $Id: stm3210e-eval_sieve_flash.cmm 13346 2018-10-19 14:43:44Z skrausse $
+
+
+WinCLEAR
+DO ToolBar.men
+
+; Grab the name of the exe from the environment variables
+&exe=OS.ENV("LAUTERBACH_EXE")
+
+; --------------------------------------------------------------------------------
+; initialize and start the debugger
+RESet
+SYStem.RESet
+SYStem.CPU STM32F103C8
+SYStem.CONFIG.DEBUGPORTTYPE SWD
+IF COMBIPROBE()||UTRACE()
+(
+  SYStem.CONFIG.CONNECTOR MIPI20T
+)
+SYStem.Option DUALPORT ON
+SYStem.MemAccess DAP
+SYStem.JtagClock 10MHz
+Trace.DISable
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; Flash programming
+
+; prepare flash programming (declarations)
+DO ~~/demo/arm/flash/stm32f10x.cmm PREPAREONLY
+
+; ReProgram Flash
+FLASH.ReProgram ALL
+Data.LOAD.Elf &exe
+FLASH.ReProgram OFF
+
+; --------------------------------------------------------------------------------
+; Reset the target again
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; start program execution
+Go.direct main
+WAIT !STATE.RUN()
+
+; --------------------------------------------------------------------------------
+; open some windows
+Mode.Hll
+WinPOS 0. 0. 116. 44.
+List.auto
+WinPOS 120. 0. 75. 15.
+Frame.view
+WinPOS 120. 21. 75. 10.
+Var.Watch
+Var.AddWatch MODE_MGR_tick_timer_msecs_s
+WinPOS 120. 37. 75. 10.
+Register.view /SpotLight
+setup.var.%Hex %Decimal %SpotLight %Index
+
+
+
+ENDDO

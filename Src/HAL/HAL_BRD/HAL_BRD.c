@@ -4,13 +4,11 @@
 #include "stm32f10x.h"
 #include "misc.h"
 
-#include "autoversion.h"
-#include "main.h"
+#include "MODE_MGR.h"
+#include "SYSTICK_MGR.h"
+#include "RTC.h"
 #include "HAL_BRD.h"
-
-false_true_et HAL_BRD_rtc_triggered_s;
-disable_enable_et debug_mode;
-
+#include "HAL_config.h"
 
 /*!
 ****************************************************************************************************
@@ -36,74 +34,67 @@ void HAL_BRD_init( void )
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Configure the DEBUG selector pin, its important that this comes first */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_5;
+	GPIO_InitStructure.GPIO_Pin = DEBUG_SEL_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(DEBUG_SEL_PORT, &GPIO_InitStructure);
 
-	/* Configure the power pin for the NRF24l01
-	   This is very sensitive, if i configure the pin as output PP here then the PIN
-	   goes high and the transistor tries to turn on, and thus powers the NRF chip and
-	   This causes problems, so if i init the PIN as input then the external resistor keeps the
-	   PIN in the correct state, then when i want the PIN to go high i init it as an output*/
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	/* Configure the power pin for the NRF24l01 and set it low immediately*/
+	GPIO_InitStructure.GPIO_Pin = NRF_PWR_EN_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(NRF_PWR_EN_PORT, &GPIO_InitStructure);
+	HAL_BRD_set_NRF_power_pin_state(LOW);
 
 	/* Configure the NRF irq ( Data Sent ) input pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+	GPIO_InitStructure.GPIO_Pin = NRF_IRQ_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(NRF_IRQ_PORT, &GPIO_InitStructure);
 
-	/* Configure the Temp sensor enable pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	/* Configure the Temp sensor enable pin and Set it LOW immediately */
+	GPIO_InitStructure.GPIO_Pin = BMP280_PWR_EN_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_Init(BMP280_PWR_EN_PORT, &GPIO_InitStructure);
+	HAL_BRD_set_BMP280_power_pin_state(LOW);
 
-	/* small delay to allow the button to settle */
-	delay_us(500);
+	/* Configure the GPIO_LED pin and set LOW immediately */
+	GPIO_InitStructure.GPIO_Pin = ONBOARD_LED_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(ONBOARD_LED_PORT, &GPIO_InitStructure);
+	HAL_BRD_set_onboard_led( OFF );
 
-	debug_mode = HAL_BRD_read_debug_pin();
+	/* small delay to allow any noise on the button to settle */
+	SYSTICK_MGR_delay_us(500);
 
-	#if( AUTO_DEBUG_MODE == 1 )
-		debug_mode = ENABLE_;
-	#endif
+	/* Interogates the HW Debug pin to see if Debug mode is required */
+	MODE_MGR_read_operating_mode();
 
-
-	if( debug_mode == ENABLE_ )
+	if( MODE_MGR_get_operating_mode() == MODE_MGR_DEBUG_MODE )
 	{
-		/* Configure the GPIO_LED pin */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-		GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-		HAL_BRD_set_onboard_LED( OFF );
-
 		/* configure the debug mode led ( this lets us know we are in debug mode and will only be turned
 		on in debug mode */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+		GPIO_InitStructure.GPIO_Pin = DEBUG_MODE_LED_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_Init(DEBUG_MODE_LED_PORT, &GPIO_InitStructure);
 
 		/* Configure the wakeup ( or in debug mode interrupt ) pin */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+		GPIO_InitStructure.GPIO_Pin = HW_WAKEUP_PIN;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_Init(HW_WAKEUP_PORT, &GPIO_InitStructure);
 
 		/* If we are in debug mode then we can configure the wakeup pin to have an ISR */
-		GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource0 );
+		GPIO_EXTILineConfig(HW_WAKEUP_PORT_SRC, HW_WAKEUP_PIN_SRC );
 
 		EXTI_InitTypeDef EXTI_InitStruct;
 
-		EXTI_InitStruct.EXTI_Line = EXTI_Line0 ;
+		EXTI_InitStruct.EXTI_Line = HW_WAKEUP_EXT_LINE;
 		EXTI_InitStruct.EXTI_LineCmd = ENABLE;
-		EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
+		EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt;
 		EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
 		EXTI_Init(&EXTI_InitStruct);
 
@@ -122,50 +113,35 @@ void HAL_BRD_init( void )
 	}
 
 	/* Configure the NRF24 NCS pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Pin = NRF_CS_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	GPIO_Init(NRF_CS_PORT, &GPIO_InitStructure);
 
 	/* Configure the NRF24 CE pin */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Pin = NRF_CE_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	/* Enable the "RFM69 packet sent" interrupt on pin A1 */
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-	GPIO_EXTILineConfig(GPIO_PortSourceGPIOA, GPIO_PinSource1 );
-
-	EXTI_InitTypeDef EXTI_InitStruct;
-
-	EXTI_InitStruct.EXTI_Line = EXTI_Line1 ;
-	EXTI_InitStruct.EXTI_LineCmd = ENABLE;
-	EXTI_InitStruct.EXTI_Mode = EXTI_Mode_Interrupt ;
-	EXTI_InitStruct.EXTI_Trigger = EXTI_Trigger_Rising;
-	EXTI_Init(&EXTI_InitStruct);
-
-	NVIC_InitTypeDef NVIC_InitStruct;
-
-	/* Add IRQ vector to NVIC */
-	NVIC_InitStruct.NVIC_IRQChannel = EXTI1_IRQn;
-	/* Set priority */
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0x00;
-	/* Set sub priority */
-	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0x00;
-	/* Enable interrupt */
-	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	/* Add to NVIC */
-	NVIC_Init(&NVIC_InitStruct);
-
-	HAL_BRD_rtc_triggered_s = TRUE;
+	GPIO_Init(NRF_CE_PORT, &GPIO_InitStructure);
 }
 
 
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Resets the board
+*
+*   \author        MS
+*
+*   \return        low_high_et
+*
+***************************************************************************************************/
+void HAL_BRD_reset( void )
+{
+	NVIC_SystemReset();
+}
 
 
 
@@ -179,26 +155,17 @@ void HAL_BRD_init( void )
 *
 *   \author        MS
 *
-*   \return        low_high_et
+*   \return        low_high_et state of the PIN
 *
 ***************************************************************************************************/
 low_high_et HAL_BRD_read_pin_state( GPIO_TypeDef * port, u16_t pin )
 {
 	low_high_et returnType;
 
-	if( ( port->IDR & pin ) == pin )
-	{
-		returnType = HIGH;
-	}
-	else
-	{
-		returnType = LOW;
-	}
+	returnType = (low_high_et)GPIO_ReadInputDataBit( port, pin );
 
 	return ( returnType );
 }
-
-
 
 
 
@@ -215,15 +182,10 @@ low_high_et HAL_BRD_read_pin_state( GPIO_TypeDef * port, u16_t pin )
 ***************************************************************************************************/
 void HAL_BRD_set_pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 {
-	if( state == HIGH)
-	{
-		port->ODR |= pin;
-	}
-	else
-	{
-		port->ODR &= ~pin;
-	}
+	GPIO_WriteBit( port, pin, (BitAction)state );
 }
+
+
 
 
 
@@ -239,8 +201,12 @@ void HAL_BRD_set_pin_state(  GPIO_TypeDef * port, u16_t pin, low_high_et state )
 ***************************************************************************************************/
 void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin )
 {
+	low_high_et state;
+
     /* Firstly read the PIN state */
-    if( ( port->ODR & pin ) == pin )
+	state = HAL_BRD_read_pin_state( port, pin );
+
+    if( state == HIGH )
     {
         HAL_BRD_set_pin_state( port, pin, LOW );
     }
@@ -251,86 +217,34 @@ void HAL_BRD_toggle_pin_state(  GPIO_TypeDef * port, u16_t pin )
 }
 
 
-
-
 /*!
 ****************************************************************************************************
 *
-*   \brief         Toggles Any PIN on any PORT
+*   \brief         Sets thestate of the onboard LED
 *
 *   \author        MS
 *
 *   \return        None
 *
 ***************************************************************************************************/
-void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
-{
+void HAL_BRD_set_onboard_led( off_on_et state )
+{	
+	/* Onboard LED is inverse logic */
 	if( state == ON )
 	{
-		/* Configure the GPIOs */
-		GPIO_InitTypeDef GPIO_InitStructure;
-
-		/* Configure the power pin for the NRF24l01 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_11, LOW );
+		HAL_BRD_set_pin_state( ONBOARD_LED_PORT, ONBOARD_LED_PIN, LOW );
 	}
 	else
 	{
-	    HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_11, HIGH );
+		HAL_BRD_set_pin_state( ONBOARD_LED_PORT, ONBOARD_LED_PIN, HIGH );
 	}
 }
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the BMP280 pin state
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_BMP280_power_pin_state( off_on_et state )
-{
-	if( state == ON )
-	{
-		/* Configure the GPIOs */
-		GPIO_InitTypeDef GPIO_InitStructure;
-
-		/* Configure the power pin for the BMP280 */
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
-		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-		GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-		HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, LOW );
-	}
-	else
-	{
-	    HAL_BRD_set_pin_state( GPIOB, GPIO_Pin_9, HIGH );
-	}
-}
-
-
-/**************************************************************************************************
-EXTERNAL API's
-***************************************************************************************************/
-
-
-
-
-
-
 
 
 /*!
 ****************************************************************************************************
 *
-*   \brief         Toggles the led
+*   \brief         Toggles the onboard LED
 *
 *   \author        MS
 *
@@ -339,24 +253,59 @@ EXTERNAL API's
 ***************************************************************************************************/
 void HAL_BRD_toggle_onboard_led( void )
 {
-    HAL_BRD_toggle_pin_state( GPIOC, GPIO_Pin_13 );
+	HAL_BRD_toggle_pin_state( ONBOARD_LED_PORT, ONBOARD_LED_PIN );
 }
 
 
-void HAL_BRD_set_onboard_LED( off_on_et state )
-{
-	low_high_et val;
 
-	/* LED is inverse logic so flip the states */
-	if( state == OFF )
-	{
-		val = HIGH;
-	}
-	else
-	{
-		val = LOW;
-	}
-	HAL_BRD_set_pin_state( GPIOC, GPIO_Pin_13, val);
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the state oftheNRF PWR pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
+{
+	HAL_BRD_set_pin_state( NRF_PWR_EN_PORT, NRF_PWR_EN_PIN, state );
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the BMP280 power pin state
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_BMP280_power_pin_state( off_on_et state )
+{
+	HAL_BRD_set_pin_state( BMP280_PWR_EN_PORT, BMP280_PWR_EN_PIN, state );
+}
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the state of the debug mode the led
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+void HAL_BRD_set_debug_mode_LED( off_on_et state )
+{
+	HAL_BRD_set_pin_state( DEBUG_MODE_LED_PORT, DEBUG_MODE_LED_PIN, state );
 }
 
 
@@ -373,40 +322,9 @@ void HAL_BRD_set_onboard_LED( off_on_et state )
 ***************************************************************************************************/
 void HAL_BRD_toggle_debug_mode_led( void )
 {
-    HAL_BRD_toggle_pin_state( GPIOA, GPIO_Pin_8 );
+    HAL_BRD_toggle_pin_state( DEBUG_MODE_LED_PORT, DEBUG_MODE_LED_PIN );
 }
 
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the state of the debug mode the led
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_debug_mode_LED( off_on_et state )
-{
-	HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_8, state);
-}
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the state of the debug mode the led
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_temp_sensor_enable_pin( off_on_et state )
-{
-	HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_2, state);
-}
 
 
 
@@ -420,19 +338,14 @@ void HAL_BRD_set_temp_sensor_enable_pin( off_on_et state )
 *   \return        None
 *
 ***************************************************************************************************/
-disable_enable_et HAL_BRD_read_debug_pin( void )
+low_high_et HAL_BRD_read_debug_mode_pin( void )
 {
 	low_high_et state;
-	disable_enable_et mode;
 
-	state = HAL_BRD_read_pin_state(GPIOB, GPIO_Pin_5 );
+	state = HAL_BRD_read_pin_state( DEBUG_SEL_PORT, DEBUG_SEL_PIN );
 
-	mode = (( state == HIGH ) ? ENABLE : DISABLE );
-
-	return( mode );
+	return( state );
 }
-
-
 
 
 
@@ -441,60 +354,7 @@ disable_enable_et HAL_BRD_read_debug_pin( void )
 /*!
 ****************************************************************************************************
 *
-*   \brief         Toggles the heartbeat pin
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_toggle_heartbeat_pin(  void )
-{
-    HAL_BRD_Toggle_Pin_state( GPIOB, GPIO_Pin_11 );
-}
-
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         returns the  status of the RTC trigger
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-false_true_et HAL_BRD_get_rtc_trigger_status( void )
-{
-	return ( HAL_BRD_rtc_triggered_s );
-}
-
-
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the trigger state of the RTC
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_set_rtc_trigger_status( false_true_et state )
-{
-	HAL_BRD_rtc_triggered_s = state;
-}
-
-
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         SETS the rf enable pin
+*   \brief         Sets the rf CE pin state
 *
 *   \author        MS
 *
@@ -503,14 +363,7 @@ void HAL_BRD_set_rtc_trigger_status( false_true_et state )
 ***************************************************************************************************/
 void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state )
 {
-	if( state == HIGH )
-	{
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_10, HIGH );
-	}
-	else
-	{
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_10, LOW );
-	}
+	HAL_BRD_set_pin_state( NRF_CE_PORT, NRF_CE_PIN, state );
 }
 
 
@@ -518,7 +371,7 @@ void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state )
 /*!
 ****************************************************************************************************
 *
-*   \brief         SETS the SPI chip select pin for the RF module
+*   \brief         Sets the SPI chip select pin state for the RF module
 *
 *   \author        MS
 *
@@ -527,70 +380,39 @@ void HAL_BRD_NRF24_set_ce_pin_state( low_high_et state )
 ***************************************************************************************************/
 void HAL_BRD_NRF24_spi_slave_select( low_high_et state )
 {
-	if( state == HIGH )
-	{
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_9, HIGH );
-	}
-	else
-	{
-		HAL_BRD_set_pin_state( GPIOA, GPIO_Pin_9, LOW );
-	}
+	HAL_BRD_set_pin_state( NRF_CS_PORT, NRF_CS_PIN, state );
 }
 
 
 
 
 
-
+/*!
+****************************************************************************************************
+*
+*   \brief         Reads the state of the IRQ Pin for the NRF module
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
 low_high_et HAL_BRD_NRF24_read_irq_pin( void )
 {
 	low_high_et state;
 
-	state = HAL_BRD_read_pin_state(GPIOA, GPIO_Pin_12 );
+	state = HAL_BRD_read_pin_state( NRF_IRQ_PORT, NRF_IRQ_PIN );
 
 	return ( state );
 }
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the trigger state of the RTC
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_get_SW_version_num( u8_t* version_num_p )
-{
-	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
-	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
-	version_num_p[2] = SLEEP_SENSORS_VERSION_VERIFICATION;
-}
-
-
-/*!
-****************************************************************************************************
-*
-*   \brief         Sets the trigger state of the RTC
-*
-*   \author        MS
-*
-*   \return        None
-*
-***************************************************************************************************/
-void HAL_BRD_get_HW_version_num( u8_t* version_num_p )
-{
-	version_num_p[0] = SLEEP_SENSORS_VERSION_MAJOR;
-	version_num_p[1] = SLEEP_SENSORS_VERSION_PATCH;
-}
 
 
 
 /*!
 ****************************************************************************************************
 *
-*   \brief         ISR
+*   \brief         Interrupt Handler ( 0 )
 *
 *   \author        MS
 *
@@ -606,11 +428,23 @@ void EXTI0_IRQHandler(void)
 		/* Clear interrupt flag */
 		EXTI_ClearITPendingBit(EXTI_Line0);
 
-		HAL_BRD_rtc_triggered_s = TRUE;
+		/* Set the alarm status of the RTC module */
+		RTC_alarm_triggered();
 	}
 }
 
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Interrupt Handler ( 1 )
+*
+*   \author        MS
+*
+*   \return        low_high_et
+*
+***************************************************************************************************/
 void EXTI1_IRQHandler(void)
 {
 	/* Make sure that interrupt flag is set */
@@ -626,19 +460,16 @@ void EXTI1_IRQHandler(void)
 
 
 
-
-
 /*!
 ****************************************************************************************************
 *
-*   \brief         Interrupt Handler
+*   \brief         Interrupt Handler ( 10 - 15 )
 *
 *   \author        MS
 *
 *   \return        low_high_et
 *
 ***************************************************************************************************/
-/* Handle PB12 interrupt */
 void EXTI15_10_IRQHandler(void)
 {
 	/* Make sure that interrupt flag is set */
