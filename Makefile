@@ -10,7 +10,7 @@ AS        := $(ARM)-as
 AR        := $(ARM)-ar
 NM        := $(ARM)-nm
 STRIP     := $(ARM)-strip
-
+hghghgh
 
 PROJECT_NAME	:= STM32_sleepy_sensors
 
