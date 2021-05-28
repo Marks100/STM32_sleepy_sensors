@@ -26,6 +26,7 @@ AR        := $(ARM)-ar
 NM        := $(ARM)-nm
 STRIP     := $(ARM)-strip
 
+
 STM32_SRC_DIRS           := Src Workspace
 BUILD_OUT_DIR            := Build_output
 STM32_LINKER_SCRIPT 	 := Workspace/linker_script/arm-gcc-link.ld
