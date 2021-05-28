@@ -72,6 +72,7 @@ CFLAGS :=  \
 	-g \
 	$(OPTIMISATION) \
 	-c \
+	-Wl,--print-memory-usage \
 	-MMD \
 	-DSTM32DRIVERS \
 	-DSTM32F103C8 \

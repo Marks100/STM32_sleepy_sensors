@@ -39,8 +39,7 @@
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
 void SYSTICK_MGR_init( void );
-void SYSTICK_MGR_delay_ms(u16_t ms);
-void SYSTICK_MGR_delay_us(u16_t us);
+void SYSTICK_MGR_delay_us(u32_t us);
 
 
 #endif /* SYSTICK_MGR_H multiple inclusion guard */

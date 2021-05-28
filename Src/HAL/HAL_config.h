@@ -13,11 +13,11 @@
 #define HW_WAKEUP_PIN_SRC   GPIO_PinSource0
 #define HW_WAKEUP_EXT_LINE  EXTI_Line0
 
-#define USART1_TX_PORT      GPIOA
-#define USART1_TX_PIN       GPIO_Pin_2
- 
-#define USART1_RX_PORT      GPIOA
-#define USART1_RX_PIN       GPIO_Pin_3
+#define USART2_TX_PORT      GPIOA
+#define USART2_TX_PIN       GPIO_Pin_2
+
+#define USART2_RX_PORT      GPIOA
+#define USART2_RX_PIN       GPIO_Pin_3
  
 #define SPI1_PORT           GPIOA      
 #define SPI1_SCK_PIN        GPIO_Pin_5    
@@ -38,7 +38,6 @@
 
 #define NRF_IRQ_PORT        GPIOA
 #define NRF_IRQ_PIN         GPIO_Pin_12
- 
 
 
 #define DEBUG_SEL_PORT      GPIOB

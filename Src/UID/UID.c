@@ -1,25 +1,24 @@
 /*! \file
 *               Author: mstewart
-*   \brief      SYSTICK_MGR module
+*   \brief      UID: Unique stm32 ID module
 */
 /***************************************************************************************************
 **                              Includes                                                          **
 ***************************************************************************************************/
-#include "stm32f10x_rcc.h"
-#include "misc.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "STDC.h"
 #include "C_defs.h"
-#include "HAL_BRD.h"
+#include "UID.h"
 
 
 
 /***************************************************************************************************
 **                              Data declarations and definitions                                 **
 ***************************************************************************************************/
-STATIC u16_t             SYSTICK_MGR_cnt_s;
-STATIC RCC_ClocksTypeDef RCC_Clocks_s;
-
+UID_st UID_s;
+ 
 
 /***************************************************************************************************
 **                              Public Functions                                                  **
@@ -36,21 +35,19 @@ STATIC RCC_ClocksTypeDef RCC_Clocks_s;
 *   \note
 *
 ***************************************************************************************************/
-void SYSTICK_MGR_init( void )
+void UID_read_uinique_id( void )
 {
-	RCC_GetClocksFreq(&RCC_Clocks_s);
-
-	/* Trigger an interrupt every 1ms */
-	SysTick_Config(RCC_Clocks_s.SYSCLK_Frequency/1000u);
-
-    SYSTICK_MGR_cnt_s = 0u;
+	UID_s.uid0 = (*(u16_t*)UID_BASE_ADDRESS);
+	UID_s.uid1 = (*(u16_t*)(UID_BASE_ADDRESS+2u));
+	UID_s.uid2 = (*(u32_t*)(UID_BASE_ADDRESS+4u));
+	UID_s.uid3 = (*(u32_t*)(UID_BASE_ADDRESS+8u));
 }
 
 
 /*!
 ****************************************************************************************************
 *
-*   \brief         Microsecond delay API
+*   \brief         Reads the lowest 8bits of the HW UID
 *
 *   \author        MS
 *
@@ -59,29 +56,18 @@ void SYSTICK_MGR_init( void )
 *   \note
 *
 ***************************************************************************************************/
-void __attribute__((optimize("O3"))) SYSTICK_MGR_delay_us(u32_t us)
+u8_t UID_get_unique_id_8( void )
 {
-	u32_t i;
-	u32_t j;
+	UID_read_uinique_id();
 
-	for( j=0u; j<us; j++ )
-	{
-		for( i=0u; i<(RCC_Clocks_s.SYSCLK_Frequency/10000000u); i++ )
-		{
-			#ifdef TEST
-				/* #if this out for testing as its not needed */
-			#else
-				asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
-			#endif
-		}
-	}
+	return( UID_s.uid0 & 0xFF );
 }
 
 
 /*!
 ****************************************************************************************************
 *
-*   \brief        ISR for systick handler
+*   \brief         Reads the lowest 16bits of the HW UID
 *
 *   \author        MS
 *
@@ -90,15 +76,37 @@ void __attribute__((optimize("O3"))) SYSTICK_MGR_delay_us(u32_t us)
 *   \note
 *
 ***************************************************************************************************/
-void SysTick_Handler( void )
+u16_t UID_get_unique_id_16( void )
 {
-	SYSTICK_MGR_cnt_s ++;
+	UID_read_uinique_id();
 
-	if( SYSTICK_MGR_cnt_s > 4u )
-	{
-		SYSTICK_MGR_cnt_s = 0u;
-	}
+	return( UID_s.uid0 );
 }
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Reads the lowest 32bits of the HW UID
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+u32_t UID_get_unique_id_32( void )
+{
+	u32_t id;
+	UID_read_uinique_id();
+
+	id = UID_s.uid0;
+	id |= ( ( UID_s.uid1 & 0x0000FFFF ) << 16u );
+
+	return( id );
+}
+
 
 /***************************************************************************************************
 **                              Private Functions                                                 **

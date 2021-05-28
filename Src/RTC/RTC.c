@@ -10,6 +10,11 @@
 #include "stm32f10x_gpio.h"
 #include "misc.h"
 
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "C_defs.h"
 #include "STDC.h"
 #include "main.h"
@@ -18,6 +23,7 @@
 #include "COMPILER_defs.h"
 #include "HAL_I2C.h"
 #include "SEN_MGR.h"
+#include "CLI_MGR.h"
 #include "RTC.h"
 
 
@@ -30,26 +36,19 @@ STATIC pass_fail_et  RTC_failure_status_s;
 STATIC RTC_time_st   RTC_time_s;
 STATIC false_true_et RTC_alarm_set_s;
 
-STATIC const u8_t RTC_EXT_default_register_values[ RTC_EXT_MAX_NUM_REGS ] =
+STATIC const RTC_EXT_reg_config_st RTC_EXT_SST_config_c[] =
 {
-	0x00,	//Control_status_1
-	0x11,	//Control_status_2
-	0x00,	//VL_seconds
-	0x00,	//Minutes
-	0x00,	//Hours
-	0x00,	//Days
-	0x00,	//Weekdays
-	0x00,	//Century_months
-	0x00,	//Years
-	0x00,	//Minute_alarm
-	0x00,	//Hour_alarm
-	0x00,	//Day_alarm
-	0x00,	//Weekday_alarm
-	0x83,	//CLKOUT_control
-	0x82,	//Timer_control
-	SEN_MGR_DEFAULT_WAKEUP_TIME_SEC
+	{ Control_status_1, 0x00 },
+	{ Control_status_2, 0x11 },
+	{ CLKOUT_control,   0x83 },
+	{ Timer_control,    0x82 },
 };
 
+
+STATIC const RTC_EXT_config_table_st RTC_EXT_SST_config_table_c[] =
+{
+	{ RTC_EXT_SST_config_c, 4u }
+};
 
 
 /*!
@@ -85,29 +84,24 @@ void RTC_init( void )
 *   \note
 *
 ***************************************************************************************************/
-void RTC_setup_default_config( void )
+void RTC_set_configuration( RTC_EXT_configuration_et config )
 {
-	u8_t data_readback[RTC_EXT_MAX_NUM_REGS];
+	RTC_EXT_reg_config_st* data_p;
+	u8_t len;
+	u8_t i;
 
-	/* Read back the current register data */
-	HAL_I2C1_read_multiple_registers( RTC_EXT_I2C_ADDRESS, Control_status_1, data_readback, sizeof( data_readback ) );
+	len = RTC_EXT_SST_config_table_c[config].config_len;
+	data_p = RTC_EXT_SST_config_table_c[config].dataset;
 
-	/* Grab the value for current time on the RTC ( in BCD ) as we will write this down
-	 again after the configuration has been set */
-	RTC_time_s.seconds = RTC_bcd_to_int( data_readback[VL_seconds] );
-	RTC_time_s.minutes = RTC_bcd_to_int( data_readback[Minutes] );
-	RTC_time_s.hours   = RTC_bcd_to_int( data_readback[Hours] );
-	RTC_time_s.days    = RTC_bcd_to_int( data_readback[Days] );
-	RTC_time_s.years   = RTC_bcd_to_int( data_readback[Years] );
-	
-	/* Now write down the default config */
-	HAL_I2C1_write_multiple_registers( RTC_EXT_I2C_ADDRESS, Control_status_1, (u8_t*)RTC_EXT_default_register_values, sizeof( RTC_EXT_default_register_values ) );
+	for( i=0; i<len; i++ )
+	{
+		HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, data_p->reg, &data_p->data, 1u );
+		data_p += 1;
+	}
 
-	/* Now write the time value down again */
-	HAL_I2C1_write_multiple_registers( RTC_EXT_I2C_ADDRESS, VL_seconds, &RTC_time_s.seconds, sizeof( RTC_time_st ) );
-
-	/* Now set the wakeup alarm with the currently stored NVM value */
-	RTC_set_wakeup_time( SEN_MGR_get_wakeup_time_sec() );
+	RTC_set_wakeup_time( NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec );
+	//RTC_reset_date_and_time();
+	RTC_update_current_rtc_time();
 }
 
 
@@ -150,13 +144,13 @@ void RTC_ext_clear_int( void )
 	u8_t data;
 
 	/* Read the register first to get the old value */
-	HAL_I2C1_read_single_register(RTC_EXT_I2C_ADDRESS, Control_status_2, &data );
+	HAL_I2C1_read_registers(RTC_EXT_I2C_ADDRESS, Control_status_2, &data, 1u );
 
 	/* Clear the inerrupt active bit */
 	data &= !RTC_EXT_TIMER_INT_ACTIVE_BIT;
 
 	/* Write the data back down again :) */
-	HAL_I2C1_write_single_register( RTC_EXT_I2C_ADDRESS, Control_status_2, &data );
+	HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, Control_status_2, &data, 1u );
 }
 
 
@@ -179,37 +173,41 @@ void RTC_set_wakeup_time( u32_t seconds )
 	u8_t set_val;
 
 	/* Read the register first to get the old value */
-	HAL_I2C1_read_single_register( RTC_EXT_I2C_ADDRESS, Timer_control, &data );
+	HAL_I2C1_read_registers( RTC_EXT_I2C_ADDRESS, Timer_control, &data, 1u );
 
-	/* The 1Hz bit is always set for this appication, this gives us wakeup times of up to 255 secs,
-	if  we want longer than this we divide the clock by 60 to give us 60 times longer */
-	data |= RTC_EXT_ALARM_1HZ_BIT;
+	/* Clear the old values */
+	data &= ~RTC_EXT_ALARM_BIT_MASK;
 
 	if( seconds > U8_T_MAX )
 	{
-		/* We have selected a wakeup timer of greater than 60 secs.., so we will set the 1/60Hz
-		flag and this will slow the clock by a factor of 60 */
-		data |= RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		/* Typically the timer is ticked at 1hz and the reg is 8bit so we can hold 255 secs here,
+		If we want to go beyond that we can divide the clock for the timer by 60 giving us 60 times longer durations
+		eg 255 * 60 = 15300 secs */
+		data |= RTC_EXT_ALARM_1_OVER60HZ;
 	
 		/* Now need to work out what value to set the timer to, given that it wil now be 60 times slower,
 		This does lead to some resolution issues but we will round up or down as best we can to find the 
 		nearest setting that we can get so that its closest to the requested value*/
-		set_val = (seconds+(RTC_EXT_ALARM_1_OVER60HZ_VAL/2u)/RTC_EXT_ALARM_1_OVER60HZ_VAL);
+		
+		/* round to nearest 60*/
+		set_val = ((seconds+60)/60u);
 	}
 	else
 	{
-		/* We have chosen a time value of less than 255 so we can directly use that setting */
-		set_val = seconds;
-
 		/* set the correct hz bit*/
-		data &= ~RTC_EXT_ALARM_1_OVER60HZ_BIT;
+		data |= RTC_EXT_ALARM_1HZ;
+		
+		/* We have chosen a time value of less than 255 so we can directly use that value */
+		set_val = seconds;
 	}
 
 	/* Now write down the configured settings */
-	HAL_I2C1_write_single_register( RTC_EXT_I2C_ADDRESS, Timer_control, &data );
-	HAL_I2C1_write_single_register( RTC_EXT_I2C_ADDRESS, Timer, &set_val );
-}
+	HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, Timer_control, &data, 1u );
+	HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, Timer, &set_val, 1u );
 
+	NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec = seconds;
+	//NVM_tick();
+}
 
 
 
@@ -227,13 +225,12 @@ void RTC_set_wakeup_time( u32_t seconds )
 ***************************************************************************************************/
 void RTC_update_current_rtc_time( void )
 {
-	u32_t run_time = 0u;
 	u8_t data_readback[RTC_TIME_ARRAY_SIZE];
 	
-	HAL_I2C1_read_multiple_registers( RTC_EXT_I2C_ADDRESS, VL_seconds, data_readback, RTC_TIME_ARRAY_SIZE );
+	HAL_I2C1_read_registers( RTC_EXT_I2C_ADDRESS, VL_seconds, data_readback, RTC_TIME_ARRAY_SIZE );
 
 	/* Update the time local struct while we are here */
-	RTC_time_s.seconds = RTC_bcd_to_int( data_readback[0u] );
+	RTC_time_s.seconds = RTC_bcd_to_int( data_readback[0u] & RTC_VL_SECS_MASK );
 	RTC_time_s.minutes = RTC_bcd_to_int( data_readback[1u] );
 	RTC_time_s.hours   = RTC_bcd_to_int( data_readback[2u] );
 	RTC_time_s.days    = RTC_bcd_to_int( data_readback[3u] );
@@ -302,14 +299,16 @@ pass_fail_et RTC_get_failure_status( void )
 ***************************************************************************************************/
 void RTC_reset_date_and_time( void )
 {
-	/* Reset the structure to 0 */
+	u8_t data[RTC_TIME_ARRAY_SIZE] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+	/* Reset the time structure */
 	RTC_time_s.seconds = 0u;
 	RTC_time_s.days    = 0u;
 	RTC_time_s.hours   = 0u;
 	RTC_time_s.days    = 0u;
 
-	/* And write that doen to the RTC */
-	HAL_I2C1_write_multiple_registers( RTC_EXT_I2C_ADDRESS, VL_seconds, &RTC_time_s.seconds, 4u );
+	/* And write that down to the RTC */
+	HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, VL_seconds, data, sizeof( data ) );
 }
 
 

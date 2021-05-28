@@ -5,6 +5,7 @@
 **                              Includes                                                          **
 ***************************************************************************************************/
 #include "C_defs.h"
+#include "NRF24_config.h"
 
 
 
@@ -87,9 +88,11 @@
 #define NRF_MAX_CHANNEL_SELECTION   126u
 #define NRF_DEF_CHANNEL_SELECTION   108u
 #define NRF_MAX_NUM_PIPES           5u
+#define NRF_DATA_PIPE_SIZE          5u
 #define NRF_MAX_NUM_RETRIES         15u
 #define NRF_DATA_PIPE_OFFSET        10u
 #define NRF_MAX_PAYLOAD_SIZE        32u
+#define NRF_PAYLOAD_BUFFERS         3u
 
 
 
@@ -231,24 +234,6 @@ typedef enum
 
 typedef enum
 {
-    NRF24_DEFAULT_CONFIG,
-    NRF24_CFG_MAX
-} NRF24_static_configuration_et;
-
-typedef struct
-{
-   NRF24_registers_et NRF24_register;
-   u8_t register_data;
-} NRF24_register_data_st;
-
-typedef struct
-{
-    NRF24_register_data_st* buffer_p;  //! pointer to configuration
-    u16_t length;                      //! length of configuration
-} NRF24_static_configuration_st;
-
-typedef enum
-{
     RF24_RX_DATA_READY = 0u,
     RF24_TX_DATA_SENT,
     RF24_MAX_RETR_REACHED,
@@ -266,6 +251,13 @@ typedef enum
 } NRF24_fifo_masks_et;
 
 
+
+typedef struct
+{
+    u8_t a;
+    u8_t b;
+} trial_st;
+
 /***************************************************************************************************
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
@@ -276,11 +268,9 @@ typedef enum
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-pass_fail_et         NRF24_setup_low_level_regs( void );
+pass_fail_et         NRF24_setup_transceiver( void );
 false_true_et        NRF24_reg_static_check( NRF24_registers_et reg );
-pass_fail_et         NRF24_set_configuration( NRF24_static_configuration_et config );
-pass_fail_et         NRF24_read_registers( NRF24_instruction_et instruction, NRF24_registers_et address, u8_t read_data[], u8_t num_bytes );
-pass_fail_et         NRF24_write_registers( NRF24_instruction_et instruction, NRF24_registers_et address, u8_t write_data[], u8_t num_bytes );
+pass_fail_et         NRF24_set_configuration( NRF24_configuration_et config );
 pass_fail_et         NRF24_set_low_level_mode( NRF24_low_level_mode_et mode );
 pass_fail_et         NRF24_set_channel( u8_t channel );
 pass_fail_et         NRF24_flush_rx( void ) ;
@@ -299,21 +289,20 @@ pass_fail_et         NRF24_send_payload( u8_t* buffer, u8_t len );
 pass_fail_et         NRF24_get_payload( u8_t* buffer );
 pass_fail_et         NRF24_toggle_features_register( void );
 pass_fail_et         NRF24_set_AA_data_pipe( disable_enable_et state, u8_t pipe_num );
+pass_fail_et         NRF24_set_pipe_payload_size( u8_t size, u8_t pipe_num );
 pass_fail_et         NRF24_set_reuse_tx_payload( disable_enable_et state );
 pass_fail_et         NRF24_set_dynamic_payloads( disable_enable_et state, u8_t pipe_num );
 void                 NRF24_setup_address_widths( NRF24_address_width_et value );
 pass_fail_et         NRF24_enable_data_pipe( disable_enable_et state, u8_t pipe_num );
 pass_fail_et         NRF24_setup_retries( NRF24_retransmitt_time_et time, u8_t counts );
-low_high_et          NRF24_check_status_mask( NRF24_status_masks_et mask, u8_t* data_p );
-low_high_et          NRF24_check_fifo_mask( NRF24_fifo_masks_et mask, u8_t* data_p );
+low_high_et          NRF24_check_status_mask( NRF24_status_masks_et mask );
+low_high_et          NRF24_check_fifo_mask( NRF24_fifo_masks_et mask );
 pass_fail_et         NRF24_read_data_pipe( u8_t pipe_num, const u8_t* data_p );
 u8_t 				 NRF24_get_retry_count( void );
 pass_fail_et 		 NRF24_setup_dynamic_ack( disable_enable_et state );
+pass_fail_et         NRF24_set_tx_address( u8_t data_pipe_address[NRF_DATA_PIPE_SIZE] );
 
-pass_fail_et         NRF24_read_all_registers( u8_t* data_p );
 void                 NRF24_complete_flush( void );
-void                 NRF24_spi_slave_select( low_high_et state );
-void                 NRF24_ce_select( low_high_et state );
 pass_fail_et         NRF24_handle_acks( void );
 pass_fail_et         NRF24_handle_tx_failures( void );
 false_true_et        NRF24_check_for_packet_received( void );

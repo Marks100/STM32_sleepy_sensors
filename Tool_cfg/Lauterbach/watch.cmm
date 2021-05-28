@@ -30,7 +30,7 @@ List.auto
 
 WinPOS 0.0 0.0 116. 44. 16. 1. W006
 WinTABS 10. 10. 25.
-List e:`RTC_setup_default_config`
+List e:`RTC_set_configuration`
 
 WinPOS 120.0 21.0 75. 10. 0. 0. W002
 Var.Watch

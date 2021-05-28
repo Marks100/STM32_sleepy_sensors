@@ -15,9 +15,12 @@
 #include "HAL_ADC.h"
 #include "HAL_SPI.h"
 #include "HAL_I2C.h"
-#include "NVM.h"
-#include "HAL_BRD.h"
+#include "CLI_MGR.h"
 #include "MODE_MGR.h"
+#include "RF_MGR.h"
+#include "RNG_MGR.h"
+#include "RTC.h"
+#include "SEN_MGR.h"
 
 
 
@@ -58,6 +61,31 @@ void MODE_MGR_init( void )
 *****************************************************************************/
 void MODE_MGR_tick( void )
 {
+    if( MODE_MGR_get_operating_mode() == MODE_MGR_NORMAL_MODE )
+	{
+        MODE_MGR_run_activity();
+
+		/* Enter Low power Mode */
+		MODE_MGR_enter_lowpower_mode();
+	}
+	else
+	{
+		/* Handle the serial messages */
+		CLI_MGR_message_handler();
+
+		/* Check if theRTC alarm has been triggered */
+		if( TRUE == RTC_get_alarm_status() )
+		{
+			HAL_BRD_set_onboard_led( ON );
+			
+            MODE_MGR_run_activity();
+			
+            HAL_BRD_set_onboard_led( OFF );
+		
+        	/* Clear the RTC alarm */
+			RTC_clear_alarm();
+		}
+	}
 }
 
 
@@ -170,4 +198,27 @@ void MODE_MGR_enter_lowpower_mode( void )
 
     /* Enters STANDBY mode */
     PWR_EnterSTANDBYMode();
+}
+
+
+/*!
+*******************************************************************************
+*
+*   \brief          Carries out normal sensor duties
+*
+*   \author         MS
+*
+*   \return         none
+*
+*****************************************************************************/
+void MODE_MGR_run_activity( void )
+{
+    /* Update the temperature */
+	SEN_MGR_update_temperature();  
+	/* Update the runtime */
+	SEN_MGR_update_run_time(); 
+	/* Populate all the data into the RF frame */
+	RF_MGR_populate_rf_frame();
+	/* Send the data */
+	RF_MGR_send_rf_frame();
 }

@@ -15,6 +15,7 @@
 #define RF_MGR_MSG_RETRY_CNT         2u
 
 #define RF_WATCHDOG_TIMEOUT			 ( 60u * 60u )	//1hr
+#define RF_MGR_READBACK_REG          ( 0 )
 
 
 /***************************************************************************************************

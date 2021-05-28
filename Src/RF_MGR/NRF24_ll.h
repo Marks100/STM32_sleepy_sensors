@@ -1,17 +1,16 @@
-#ifndef HAL_SPI_H
-#define HAL_SPI_H
+#ifndef NRF24_LL_H
+#define NRF24_LL_H
 
 /***************************************************************************************************
 **                              Includes                                                          **
 ***************************************************************************************************/
 #include "C_defs.h"
+#include "NRF24.h"
 
 
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-/* None */
-
 
 
 /***************************************************************************************************
@@ -26,7 +25,6 @@
 /* None */
 
 
-
 /***************************************************************************************************
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
@@ -37,15 +35,10 @@
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void  HAL_SPI1_init( void );
-void  HAL_SPI2_init( void );
-void  HAL_SPI1_de_init( void );
-void  HAL_SPI2_de_init( void );
-void  HAL_SPI1_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI2_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI1_clear_receive_spi_buffer( void );
-
-
-#endif /* HAL_SPI_H multiple inclusion guard */
+void NRF24_ll_read_registers( NRF24_instruction_et instruction, NRF24_registers_et address, u8_t read_data[], u8_t num_bytes );
+void NRF24_ll_write_registers( NRF24_instruction_et instruction, NRF24_registers_et address, u8_t write_data[], u8_t num_bytes );
+void NRF24_ll_spi_slave_select( low_high_et state );
+void NRF24_ll_ce_select( low_high_et state );
+#endif /* NRF24_LL_H multiple inclusion guard */
 
 /****************************** END OF FILE *******************************************************/

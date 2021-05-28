@@ -16,12 +16,15 @@
 
     /* TYPEDEFS */
 #if ( defined STM32 )
-    typedef unsigned char   u8_t;       //!< unsigned 8bit type
-    typedef unsigned short  u16_t;      //!< unsigned 16bit type
-    typedef unsigned long   u32_t;      //!< unsigned 32bit type
-    typedef signed char     s8_t;       //!< signed 8bit type
-    typedef signed short    s16_t;      //!< signed 16bit type
-    typedef signed long     s32_t;      //!< signed 32bit type
+
+	typedef unsigned char      u8_t;       //!< unsigned 8bit type
+    typedef unsigned short     u16_t;      //!< unsigned 16bit type
+    typedef unsigned long      u32_t;      //!< unsigned 32bit type
+    typedef unsigned long long u64_t;      //!< unsigned 64bit type
+    typedef signed char        s8_t;       //!< signed 8bit type
+    typedef signed short       s16_t;      //!< signed 16bit type
+    typedef signed long        s32_t;      //!< signed 32bit type
+    typedef signed long long   s64_t;      //!< signed 64bit type
 
     /* Compiler specific for assembly */
     #define ASM(x)    _asm(x)
@@ -41,12 +44,14 @@
 #else
 	#error "NO ENVIRONMENT CONFIGURED"
 
-	typedef unsigned char   u8_t;       //!< unsigned 8bit type
-    typedef unsigned short  u16_t;      //!< unsigned 16bit type
-    typedef unsigned long   u32_t;      //!< unsigned 32bit type
-    typedef signed char     s8_t;       //!< signed 8bit type
-    typedef signed short    s16_t;      //!< signed 16bit type
-    typedef signed long     s32_t;      //!< signed 32bit type
+	typedef unsigned char      u8_t;       //!< unsigned 8bit type
+    typedef unsigned short     u16_t;      //!< unsigned 16bit type
+    typedef unsigned long      u32_t;      //!< unsigned 32bit type
+    typedef unsigned long long u64_t;      //!< unsigned 64bit type
+    typedef signed char        s8_t;       //!< signed 8bit type
+    typedef signed short       s16_t;      //!< signed 16bit type
+    typedef signed long        s32_t;      //!< signed 32bit type
+    typedef signed long long   s64_t;      //!< signed 64bit type
 
     /* Compiler specific for assembly */
     #define ASM(x)    _asm(x)

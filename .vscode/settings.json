@@ -6,6 +6,11 @@
         "stm32f10x_rcc.h": "c",
         "misc.h": "c",
         "systick_mgr.h": "c",
-        "c_defs.h": "c"
+        "c_defs.h": "c",
+        "chksum.h": "c",
+        "dbg_mgr.h": "c",
+        "stdio.h": "c",
+        "compiler_defs.h": "c",
+        "nvm.h": "c"
     }
 }

@@ -17,7 +17,7 @@
 #include "STDC.h"
 #include "COMPILER_defs.h"
 #include "HAL_config.h"
-#include "DBG_LOG_MGR.h"
+#include "DBG_MGR.h"
 #include "HAL_I2C.h"
 
 
@@ -98,235 +98,75 @@ void HAL_I2C1_de_init( void )
 
 
 
-void HAL_I2C1_generate_start( void )
+void HAL_I2C1_write_single_register( u8_t dev_add, u8_t reg_add, u8_t* data )
 {
-	u16_t timeout = 0;
-
-	I2C_GenerateSTART(I2C1,ENABLE);
-	while( !I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("I2C timeout");
-			break;
-		}
-	}
+	HAL_I2C1_write_registers( dev_add, reg_add, data, 1u );
 }
 
 
-void HAL_I2C1_send_7bit_address_TX( u8_t dev_add )
+void HAL_I2C1_write_registers( u8_t dev_add, u8_t reg_add, u8_t* data, u8_t num_bytes )
 {
-	u16_t timeout = 0;
-	/* Shift the 7 bit adress across to the left */
-	dev_add = ( dev_add << 1 );
+	I2C_GenerateSTART(I2C1, ENABLE);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
-	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Transmitter);
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+	I2C_Send7bitAddress(I2C1, ( dev_add << 1u ), I2C_Direction_Transmitter);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+
+	I2C_SendData(I2C1, reg_add);
+	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+
+	while( num_bytes-- )
 	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("7 bit adress problem");
-			break;
-		}
+		I2C_SendData(I2C1, *data);
+		while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 	}
-}
 
-
-void HAL_I2C1_send_7bit_address_RX( u8_t dev_add )
-{
-	u16_t timeout = 0;
-	/* Shift the 7 bit adress across to the left */
-	dev_add = ( dev_add << 1 );
-
-	I2C_Send7bitAddress(I2C1, dev_add, I2C_Direction_Receiver);
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("7 bit adress problem");
-			break;
-		}
-	}
-}
-
-
-
-void HAL_I2C1_send_data( u8_t data )
-{
-	u16_t timeout = 0;
-
-	I2C_SendData(I2C1, data);
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("I2C timeout");
-			break;
-		}
-	}
-}
-
-
-void HAL_I2C1_receive_data( u8_t* data )
-{
-	u16_t timeout = 0;
-	false_true_et error = FALSE;
-
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			error = TRUE;
-			DBG_LOG_MGR_LOGGER("I2C timeout");
-			break;
-		}
-	}
-	if( error == FALSE )
-	{
-		*data = I2C_ReceiveData(I2C1);
-	}
-}
-
-
-void HAL_I2C1_generate_stop( void )
-{
 	I2C_GenerateSTOP(I2C1, ENABLE);
 }
 
 
-void HAL_I2C1_finish_read( void )
+void HAL_I2C1_read_single_registers( u8_t dev_add, u8_t reg_add, u8_t* data )
 {
-	u16_t timeout = 0;
-
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("I2C timeout");
-			break;
-		}
-	}
-
-	I2C_ReceiveData(I2C1);
-}
-
-
-
-void HAL_I2C1_finish_write( void )
-{
-	u16_t timeout = 0;
-
-	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
-	{
-		if( timeout++ >= HAL_I2C_LL_TIMEOUT )
-		{
-			/* something is wrong */
-			DBG_LOG_MGR_LOGGER("I2C timeout");
-			break;
-		}
-	}
-}
-
-
-
-void HAL_I2C1_write_single_register( u8_t dev_add, u8_t reg_add, u8_t* data )
-{
-	HAL_I2C1_generate_start();
-
-	HAL_I2C1_send_7bit_address_TX(dev_add);
-
-	HAL_I2C1_send_data(reg_add);
-
-	HAL_I2C1_send_data(*data);
-
-	HAL_I2C1_generate_stop();
-
-	HAL_I2C1_finish_write();
+	HAL_I2C1_read_registers( dev_add, reg_add, data, 1u );
 }
 
 
 
 
-void HAL_I2C1_write_multiple_registers( u8_t dev_add, u8_t reg_start_add, u8_t* data, u8_t num_bytes )
-{
-	u8_t i = 0u;
-
-	HAL_I2C1_generate_start();
-
-	HAL_I2C1_send_7bit_address_TX(dev_add);
-
-	HAL_I2C1_send_data(reg_start_add);
-
-	for( i = 0; i < num_bytes; i++ )
-	{
-		HAL_I2C1_send_data(data[i]);
-	}
-
-	HAL_I2C1_generate_stop();
-
-	HAL_I2C1_finish_write();
-}
-
-
-
-
-void HAL_I2C1_read_single_register( u8_t dev_add, u8_t reg_add, u8_t* data )
+void HAL_I2C1_read_registers( u8_t dev_add, u8_t reg_add, u8_t* data, u8_t num_bytes )
 {
 	I2C_AcknowledgeConfig(I2C1,ENABLE);
+  	I2C_GenerateSTART(I2C1,ENABLE);
 
-	HAL_I2C1_generate_start();
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
+  	I2C_Send7bitAddress(I2C1, ( dev_add << 1u ), I2C_Direction_Transmitter);
 
-	HAL_I2C1_send_7bit_address_TX(dev_add);
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
 
-	HAL_I2C1_send_data(reg_add);
+  	I2C_SendData(I2C1,reg_add);
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
 
-	HAL_I2C1_generate_start();
+  	I2C_GenerateSTART(I2C1,ENABLE);
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_MODE_SELECT));
 
-	HAL_I2C1_send_7bit_address_RX(dev_add);
+  	I2C_Send7bitAddress(I2C1, ( dev_add << 1u ), I2C_Direction_Receiver);
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
 
-	HAL_I2C1_receive_data( data );
-
-	HAL_I2C1_generate_stop();
-	I2C_AcknowledgeConfig(I2C1,DISABLE);
-
-	HAL_I2C1_finish_read();
-}
-
-
-void HAL_I2C1_read_multiple_registers( u8_t dev_add, u8_t reg_start_add, u8_t* data, u8_t num_bytes )
-{
-	u8_t i = 0u;
-
-	I2C_AcknowledgeConfig(I2C1,ENABLE);
-
-	HAL_I2C1_generate_start();
-
-	HAL_I2C1_send_7bit_address_TX(dev_add);
-
-	HAL_I2C1_send_data(reg_start_add);
-
-	HAL_I2C1_generate_start();
-
-	HAL_I2C1_send_7bit_address_RX(dev_add);
-
-	for( i = 0; i < num_bytes ; i++ )
+	while( num_bytes-- )
 	{
-		HAL_I2C1_receive_data( &data[i] );
+  		while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
+  		*data = I2C_ReceiveData(I2C1);
+  		data ++;
 	}
 
-	HAL_I2C1_generate_stop();
-	I2C_AcknowledgeConfig(I2C1,DISABLE);
+  	I2C_GenerateSTOP(I2C1,ENABLE);
+  	I2C_AcknowledgeConfig(I2C1,DISABLE);
 
-	HAL_I2C1_finish_read();
+  	while (!I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED));
+  	I2C_ReceiveData(I2C1);
 }
 
-//
+
 ///***************************************************************************************************
 //**                              ISR Handlers                                                      **
 //***************************************************************************************************/

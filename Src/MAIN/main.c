@@ -18,7 +18,7 @@
 #include "SYSTICK_MGR.h"
 #include "RNG_MGR.h"
 #include "RF_MGR.h"
-#include "DBG_LOG_MGR.h"
+#include "DBG_MGR.h"
 #include "SEN_MGR.h"
 #include "VER.h"
 #include "MAIN.h"
@@ -28,9 +28,6 @@ int main(void)
 {
 	RCC_ClocksTypeDef RCC_Clocks;
 	
-	RCC_DeInit();
-	SystemInit();
-
 	RCC_GetClocksFreq (&RCC_Clocks);
 	RCC_HCLKConfig(RCC_SYSCLK_Div1);
 	RCC_PCLK1Config(RCC_HCLK_Div1);
@@ -38,11 +35,13 @@ int main(void)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR, ENABLE);
 
 	/* Important that these modules get initialised early */
+	DBG_MGR_init();
 	SYSTICK_MGR_init();
 	MODE_MGR_init();
 
 	/* Init the HW */ 
 	HAL_BRD_init();
+
 	HAL_I2C1_init();
 	HAL_SPI1_init();
 	HAL_ADC_init();
@@ -55,58 +54,20 @@ int main(void)
 	RF_MGR_init();
 	BMP280_init();
 	
-	/* Write the default config down to the RTC */
-	RTC_setup_default_config();
-
 	if( MODE_MGR_get_operating_mode() == MODE_MGR_DEBUG_MODE )
 	{
 		/* In debug mode lets init the debug uart */
-		HAL_USART1_init();
+		HAL_USART2_init();
 		CLI_MGR_init();
 		CLI_MGR_display_startup_message();
-		HAL_BRD_set_onboard_led( ON );
 	}
+
+	/* Write the default config down to the RTC */
+	RTC_set_configuration( RTC_EXT_SST_CONFIG );
 
 	while (1)
 	{
-		if( MODE_MGR_get_operating_mode() == MODE_MGR_NORMAL_MODE )
-		{
-			/* Update the temperature */
-			SEN_MGR_update_temperature();
-
-			/* Populate all the data into the RF frame */
-			RF_MGR_populate_rf_frame();
-
-			/* Send the data */
-			RF_MGR_send_rf_frame();
-
-			/* Enter Low power Mode */
-			MODE_MGR_enter_lowpower_mode();
-		}
-		else
-		{
-			/* Handle the serial messages */
-			CLI_MGR_message_handler();
-
-			/* Check if theRTC alarm has been triggered */
-			if( TRUE == RTC_get_alarm_status() )
-			{
-				/* Update the temperature */
-				SEN_MGR_update_temperature();
-
-				/* Update the runtime */
-				SEN_MGR_update_run_time();
-				
-				/* Populate all the data into the RF frame */
-				RF_MGR_populate_rf_frame();
-
-				/* Send the data */
-				RF_MGR_send_rf_frame();
-
-				/* Clear the RTC alarm */
-				RTC_clear_alarm();
-			}
-		}
+		MODE_MGR_tick(); 
 	}
 }
 

@@ -382,7 +382,7 @@ void CLI_MGR_print_prompt( false_true_et newline )
 
 void CLI_MGR_send_data( char* data, u16_t data_size )
 {
-    HAL_USART1_send_data( data, data_size );
+    HAL_USART2_send_data( data, data_size );
 }
 
 

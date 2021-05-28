@@ -38,9 +38,11 @@
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void RNG_MGR_init( void );
-void RNG_MGR_update_seed( void );
-u8_t RNG_MGR_gen_random_number( void );
+void  RNG_MGR_init( void );
+void  RNG_MGR_update_seed( void );
+u8_t  RNG_MGR_gen_random_number_u8( void );
+u16_t RNG_MGR_gen_random_number_u16( void );
+u32_t RNG_MGR_gen_random_number_u32( void );
 
 
 #endif /* RNG_MGR_H multiple inclusion guard */

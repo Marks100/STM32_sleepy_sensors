@@ -1,5 +1,5 @@
-#ifndef HAL_SPI_H
-#define HAL_SPI_H
+#ifndef NRF24_CONFIG_H
+#define NRF24_CONFIG_H
 
 /***************************************************************************************************
 **                              Includes                                                          **
@@ -10,7 +10,9 @@
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-/* None */
+#define NRF24_WRITE_CONFIG_DATA_SIZE     ( 22u )
+#define NRF24_READ_CONFIG_DATA_SIZE      ( 27u )
+
 
 
 
@@ -23,29 +25,39 @@
 /***************************************************************************************************
 **                              Data Types and Enums                                              **
 ***************************************************************************************************/
-/* None */
+typedef enum
+{
+    NRF24_SST_CONFIG,
+    NRF24_CFG_MAX
+} NRF24_configuration_et;
+
+typedef struct 
+{
+    u8_t reg;
+    u8_t len;
+    u8_t data[5];
+} NRF24_reg_config_st;
+
+typedef struct 
+{
+    NRF24_reg_config_st* dataset;
+    u8_t                 config_len;
+} NRF24_config_table_st;
 
 
 
 /***************************************************************************************************
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
-/* None */
+extern const NRF24_config_table_st NRF24_config_table_c[];
 
 
 
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void  HAL_SPI1_init( void );
-void  HAL_SPI2_init( void );
-void  HAL_SPI1_de_init( void );
-void  HAL_SPI2_de_init( void );
-void  HAL_SPI1_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI2_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI1_clear_receive_spi_buffer( void );
 
 
-#endif /* HAL_SPI_H multiple inclusion guard */
+#endif /* NRF24_CONFIG_H multiple inclusion guard */
 
 /****************************** END OF FILE *******************************************************/

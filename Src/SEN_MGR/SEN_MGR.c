@@ -13,6 +13,7 @@
 #include "NVM.h"
 #include "BMP280.h"
 #include "RTC.h"
+#include "RNG_MGR.h"
 #include "SEN_MGR.h"
 
 
@@ -40,15 +41,72 @@ SEN_MGR_data_st SEN_MGR_data_s;
 ***************************************************************************************************/
 void SEN_MGR_init( void )
 {
-	/* Load up the ID from memory */
-	SEN_MGR_data_s.sensor_id                = NVM_info_s.NVM_generic_data_blk_s.sensor_id;
-	SEN_MGR_data_s.sensor_type              = NVM_info_s.NVM_generic_data_blk_s.sensor_type;
+	SEN_MGR_update_sensor_id();
+
+	SEN_MGR_data_s.sensor_type              = SEN_MGR_SST_SEN_TYPE;
 	SEN_MGR_data_s.packet_type              = 5u;
 	SEN_MGR_data_s.wakeup_period_sec        = NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec;
 	SEN_MGR_data_s.runtime_secs             = 0u;
 	SEN_MGR_data_s.temperature              = 0;
+
+	SEN_MGR_update_stored_params();
 }
 
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+void SEN_MGR_update_sensor_id( void )
+{
+	/* If we have manually set an id up use that */
+	if( NVM_info_s.NVM_generic_data_blk_s.sensor_id != 0xFFFFFFFF )
+	{
+		SEN_MGR_data_s.sensor_id = NVM_info_s.NVM_generic_data_blk_s.sensor_id;
+	}
+	else
+	{
+		/* use a random ID if we havent manually set 1 */
+		SEN_MGR_data_s.sensor_id = RNG_MGR_gen_random_number_u32();
+	}
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Sets the sensor id ( manually )  
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+pass_fail_et SEN_MGR_set_sensor_id( u32_t id )
+{
+	pass_fail_et status = FAIL;
+
+	if( ( id > 0u ) && ( id < U32_T_MAX ) )
+	{
+		SEN_MGR_data_s.sensor_id = id;
+		SEN_MGR_update_stored_params();
+		
+		status = PASS;
+	}
+	return ( status );
+}
 
 
 /*!
@@ -69,6 +127,8 @@ void SEN_MGR_update_stored_params( void )
 	NVM_info_s.NVM_generic_data_blk_s.sensor_type = SEN_MGR_data_s.sensor_type;
 
 	NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec = SEN_MGR_data_s.wakeup_period_sec;
+
+	NVM_request_flush();
 }
 
 
@@ -94,7 +154,6 @@ pass_fail_et SEN_MGR_set_sensor_type( u8_t sensor_type )
 		SEN_MGR_data_s.sensor_type = sensor_type;
 		SEN_MGR_update_stored_params();
 		status = PASS;
-	
 	}
 	return( status );
 }
@@ -118,31 +177,7 @@ u8_t SEN_MGR_get_sensor_type( void )
 }
 
 
-/*!
-****************************************************************************************************
-*
-*   \brief         Set the sensor ID
-*
-*   \author        MS
-*
-*   \return        none
-*
-*   \note
-*
-***************************************************************************************************/
-pass_fail_et SEN_MGR_set_sensor_id( u16_t id )
-{
-	pass_fail_et status = FAIL;
 
-	if( ( id != 0u ) && ( id != 0xFFFFu ) )
-	{
-		/* Anything other than 0 and 0xFFFF are valid */
-		SEN_MGR_data_s.sensor_id = id;
-		SEN_MGR_update_stored_params();
-		status = PASS;
-	}
-	return( status );
-}
 
 
 /*!
@@ -293,7 +328,7 @@ void SEN_MGR_update_temperature( void )
 *   \note
 *
 ***************************************************************************************************/
-s16_t SEN_MGR_get_temperature( void )
+float SEN_MGR_get_temperature( void )
 {
 	return( SEN_MGR_data_s.temperature );
 }

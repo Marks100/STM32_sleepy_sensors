@@ -39,6 +39,7 @@ MODE_MGR_mode_et MODE_MGR_get_operating_mode( void );
 void             MODE_MGR_read_operating_mode( void );
 void             MODE_MGR_prepare_for_lowpower_mode( void );
 void             MODE_MGR_enter_lowpower_mode( void );
+void 			 MODE_MGR_run_activity( void );
 
 
 #endif  // Multiple Inclusion Trap

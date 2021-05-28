@@ -39,7 +39,7 @@ typedef enum
 /**************************************************************************************************/
 typedef enum
 {
-    NVM_VERS_GENERIC_DATA         = 1,
+    NVM_VERS_GENERIC_DATA         = 9,
 } NVM_blk_version_et;
 /***************************************************************************************************
 This is the version number of the NVM block, This needs to be incremented when changing the layout
@@ -49,7 +49,7 @@ the structure of the block or when adding new bytes in
 
 typedef struct
 {
-    u16_t sensor_id;
+    u32_t sensor_id;
     u8_t  sensor_type;
     u32_t wakeup_period_sec;
     CLI_MGR_cmd_st cmd_list[CLI_MGR_MAX_COMMAND_HISTORY];

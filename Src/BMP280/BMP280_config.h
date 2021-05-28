@@ -1,5 +1,5 @@
-#ifndef HAL_SPI_H
-#define HAL_SPI_H
+#ifndef BMP280_CONFIG_H
+#define BMP280_CONFIG_H
 
 /***************************************************************************************************
 **                              Includes                                                          **
@@ -10,7 +10,7 @@
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-/* None */
+
 
 
 
@@ -23,29 +23,38 @@
 /***************************************************************************************************
 **                              Data Types and Enums                                              **
 ***************************************************************************************************/
-/* None */
+typedef enum
+{
+    BMP280_SST_CONFIG,
+    BMP280_CFG_MAX
+} BMP280_configuration_et;
+
+typedef struct 
+{
+    u8_t reg;
+    u8_t data;
+} BMP280_reg_config_st;
+
+typedef struct 
+{
+    BMP280_reg_config_st* dataset;
+    u8_t                  config_len;
+} BMP280_config_table_st;
 
 
 
 /***************************************************************************************************
 **                              Exported Globals                                                  **
 ***************************************************************************************************/
-/* None */
+extern const BMP280_config_table_st BMP280_config_table_c[];
 
 
 
 /***************************************************************************************************
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
-void  HAL_SPI1_init( void );
-void  HAL_SPI2_init( void );
-void  HAL_SPI1_de_init( void );
-void  HAL_SPI2_de_init( void );
-void  HAL_SPI1_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI2_write_and_read_data( u8_t* tx_data, u8_t* rx_data, u8_t num_bytes );
-void  HAL_SPI1_clear_receive_spi_buffer( void );
 
 
-#endif /* HAL_SPI_H multiple inclusion guard */
+#endif /* BMP280_CONFIG_H multiple inclusion guard */
 
 /****************************** END OF FILE *******************************************************/

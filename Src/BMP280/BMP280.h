@@ -7,6 +7,7 @@
 ***************************************************************************************************/
 #include "C_defs.h"
 #include "COMPILER_defs.h"
+#include "BMP280_config.h"
 
 #define BMP280_DEVICE_ID	0x58
 #define BMP280_I2C_ADDR 	0x76
@@ -46,12 +47,8 @@
 #define	BMP280_FILTER_COEFFICIENT8	0x0C
 #define	BMP280_FILTER_COEFFICIENT16	0x10
 
-#define	BMP280_MODE_SLEEP			0x00
-#define	BMP280_MODE_FORCED			0x01
-#define	BMP280_MODE_NORMAL			0x03
-
-#define	BMP280_MEAS_BIT_MASK			(BMP280_OVERSAMPLING_T1 | BMP280_OVERSAMPLING_P1 | BMP280_MODE_SLEEP)
-#define	BMP280_CONFIG_BIT_MASK		    (BMP280_TSB_0_5 | BMP280_FILTER_COEFFICIENT16 )
+#define	BMP280_MEAS_BIT_MASK		(BMP280_OVERSAMPLING_T1 | BMP280_OVERSAMPLING_P1 | BMP280_MODE_SLEEP)
+#define	BMP280_CONFIG_BIT_MASK		(BMP280_TSB_0_5 | BMP280_FILTER_COEFFICIENT16 )
 
 #define BMP280_READ_TIMEOUT			20u
 
@@ -62,8 +59,8 @@
 typedef enum
 {
 	BMP280_SLEEP_MODE = 0u,
-	BMP280_NORMAL_MODE,
-	BMP280_FORCED_MODE = 3,
+	BMP280_FORCED_MODE,
+	BMP280_NORMAL_MODE = 3u,
 } BMP280_operating_modes_et;
 
 
@@ -118,7 +115,6 @@ typedef struct
 	s16_t calib_P7;
 	s16_t calib_P8;
 	s16_t calib_P9;
-
 } BMP280_calib_st;
 
 
@@ -137,15 +133,15 @@ void                 BMP280_init( void );
 u8_t                 BMP280_read_id( void );
 void                 BMP280_reset( void );
 u8_t                 BMP280_read_status( void );
-void                 BMP280_setup_default_config( void );
+void                 BMP280_setup_config( BMP280_configuration_et config );
 void                 BMP280_set_mode ( BMP280_operating_modes_et mode );
 u32_t                BMP280_read_raw_pressure_counts( void );
 u32_t                BMP280_read_raw_temp_counts( void );
 void                 BMP280_read_calib_values( void );
-void                 BMP280_convert( u32_t* temperature, u32_t* pressure);
+void                 BMP280_convert( float* temperature, u32_t* pressure);
 void                 BMP280_trigger_meas( void );
-s32_t                BMP280_get_temperature( void );
-pass_fail_et         BMP280_validate_temperature( s32_t * val );
+float                BMP280_get_temperature( void );
+pass_fail_et         BMP280_validate_temperature( float * val );
 BMP280_error_type_et BMP280_get_error_status( void );
 
 #endif /* BMP280 multiple inclusion guard */

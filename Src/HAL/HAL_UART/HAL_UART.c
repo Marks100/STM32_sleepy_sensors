@@ -38,36 +38,27 @@ STATIC u8_t HAL_UART_rx_buf_char_s;
 *   \note          Fixed baudrate for now at 9600 8N1
 *
 ***************************************************************************************************/
-void HAL_USART1_init( void )
+void HAL_USART2_init( void )
 {
 	/* Enable GPIOA clock, should be enabled anyway but just in case */
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOA, ENABLE);
 
 	/* Enable USART2 clock */
-	RCC_APB2PeriphClockCmd( RCC_APB2Periph_USART1, ENABLE );
-
-	/* NVIC Configuration */
-	NVIC_InitTypeDef NVIC_InitStructure;
-	/* Enable the USARTx Interrupt */
-	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+	RCC_APB1PeriphClockCmd( RCC_APB1Periph_USART2, ENABLE );
 
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
 	/* Configure USART1 Tx as alternate function push-pull */
-	GPIO_InitStructure.GPIO_Pin = USART1_TX_PIN;
+	GPIO_InitStructure.GPIO_Pin = USART2_TX_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-	GPIO_Init(USART1_TX_PORT, &GPIO_InitStructure);
+	GPIO_Init(USART2_TX_PORT, &GPIO_InitStructure);
 
 	/* Configure USART2 Rx as input floating */
-	GPIO_InitStructure.GPIO_Pin = USART1_RX_PIN;
+	GPIO_InitStructure.GPIO_Pin = USART2_RX_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	GPIO_Init(USART1_RX_PORT, &GPIO_InitStructure);
+	GPIO_Init(USART2_RX_PORT, &GPIO_InitStructure);
 
 	/* Configure the USART2 */
 	USART_InitTypeDef USART_InitStructure;
@@ -93,14 +84,14 @@ void HAL_USART1_init( void )
 	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
-	USART_Init(USART1, &USART_InitStructure);
+	USART_Init(USART2, &USART_InitStructure);
 
 	/* Enable USART1 */
-	USART_Cmd(USART1, ENABLE);
+	USART_Cmd(USART2, ENABLE);
 
 	/* Enable the USART2 Receive interrupt: this interrupt is generated when the
 		USART2 receive data register is not empty */
-	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
+	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
 
 	HAL_UART_rx_buf_char_s = 0u;
 }
@@ -120,7 +111,7 @@ void HAL_USART1_init( void )
 *   \note          Fixed baudrate for now at 9600 8N1
 *
 ***************************************************************************************************/
-void HAL_USART1_close( void )
+void HAL_USART2_close( void )
 {
 }
 
@@ -136,14 +127,14 @@ void HAL_USART1_close( void )
 *   \return        none
 *
 ***************************************************************************************************/
-void HAL_USART1_send_data(const char *pucBuffer, u16_t data_size )
+void HAL_USART2_send_data(const char *pucBuffer, u16_t data_size )
 {
 	u16_t byte_index = 0u;
 
     while( data_size )
     {
-        USART_SendData(USART1, pucBuffer[byte_index++] );
-        while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET)
+        USART_SendData(USART2, pucBuffer[byte_index++] );
+        while(USART_GetFlagStatus(USART2, USART_FLAG_TC) == RESET)
         {
         }
         data_size--;
@@ -157,9 +148,9 @@ void HAL_USART1_send_data(const char *pucBuffer, u16_t data_size )
 ///***************************************************************************************************
 //**                              ISR Handlers                                                      **
 //***************************************************************************************************/
-void USART1_IRQHandler(void)
+void USART2_IRQHandler(void)
 {
-	HAL_UART_rx_buf_char_s = USART_ReceiveData(USART1);
+	HAL_UART_rx_buf_char_s = USART_ReceiveData(USART2);
 
 	CLI_MGR_handle_received_char( HAL_UART_rx_buf_char_s );
 }

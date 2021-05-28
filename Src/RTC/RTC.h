@@ -11,18 +11,22 @@
 /***************************************************************************************************
 **                              Defines                                                           **
 ***************************************************************************************************/
-#define RTC_EXT_I2C_ADDRESS				0x51	/* This value gets Left Shifted in the driver */
-#define RTC_EXT_MAX_NUM_REGS			16u
-#define RTC_TIME_ARRAY_SIZE				7u
+#define RTC_EXT_I2C_ADDRESS		     (0x51)	/* This value gets Left Shifted in the driver */
+#define RTC_EXT_MAX_NUM_REGS	     (16u)
+#define RTC_TIME_ARRAY_SIZE		     (7u)
+#define RTC_VL_SECS_MASK		     (0x7F)
 
 #define RTC_EXT_TIMER_INT_ENABLE_BIT (1<<0)
 #define RTC_EXT_ALARM_INT_ENABLE_BIT (1<<1)
 #define RTC_EXT_TIMER_INT_ACTIVE_BIT (1<<2)
 #define RTC_EXT_ALARM_INT_ACTIVE_BIT (1<<3)
 
+#define RTC_EXT_ALARM_4096HZ         (0<<0)
+#define RTC_EXT_ALARM_64HZ           (1<<0)
+#define RTC_EXT_ALARM_1HZ            (1<<1)
 #define RTC_EXT_ALARM_1HZ_BIT        (1<<1)
-#define RTC_EXT_ALARM_1_OVER60HZ_BIT (1<<0)
-#define RTC_EXT_ALARM_1_OVER60HZ_VAL (60u)
+#define RTC_EXT_ALARM_1_OVER60HZ     (3<<1)
+#define RTC_EXT_ALARM_BIT_MASK       (0x03u)
 
 #define RTC_SECONDS_PER_MIN          (60u)
 #define RTC_SECONDS_PER_HOUR         (3600u)
@@ -30,7 +34,7 @@
 #define RTC_SECONDS_PER_YEAR         (31536000u)
 
 #define RTC_DEFAULT_CTRL_STATUS1_REG_VAL (0x80u)
-#define RTC_DEFAULT_CTRL_STATUS2_REG_VAL (0x00)
+#define RTC_DEFAULT_CTRL_STATUS2_REG_VAL (0x00u)
 
 
 /***************************************************************************************************
@@ -42,6 +46,13 @@
 /***************************************************************************************************
 **                              Data Types and Enums                                              **
 ***************************************************************************************************/
+typedef enum
+{
+    RTC_EXT_SST_CONFIG,
+    RTC_EXT_CFG_MAX
+} RTC_EXT_configuration_et;
+
+
 typedef enum
 {
 	Control_status_1 = 0u,
@@ -82,6 +93,18 @@ typedef struct
 } RTC_time_st;
 
 
+typedef struct 
+{
+    u8_t reg;
+    u8_t data;
+} RTC_EXT_reg_config_st;
+
+
+typedef struct 
+{
+    RTC_EXT_reg_config_st* dataset;
+    u8_t                   config_len;
+} RTC_EXT_config_table_st;
 
 
 
@@ -96,7 +119,7 @@ typedef struct
 **                              Function Prototypes                                               **
 ***************************************************************************************************/
 void	      RTC_init( void );
-void 		  RTC_setup_default_config( void );
+void 		  RTC_set_configuration( RTC_EXT_configuration_et config );
 void          RTC_set_wakeup_time( u32_t seconds );
 void		  RTC_update_current_rtc_time( void );
 u32_t         RTC_get_current_running_time_secs( void );

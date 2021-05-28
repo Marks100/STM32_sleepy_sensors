@@ -1,3 +1,10 @@
+/*! \file
+*               Author: mstewart
+*   \brief      HAL_BRD module
+*/
+/***************************************************************************************************
+**                              Includes                                                          **
+***************************************************************************************************/
 #include "stm32f10x_gpio.h"
 #include "stm32f10x_exti.h"
 #include "stm32f10x_rcc.h"
@@ -30,6 +37,9 @@ void HAL_BRD_init( void )
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
+	/* Setup pins to default low */
+	HAL_BRD_set_NRF_power_pin_state( OFF );
+
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
@@ -44,7 +54,6 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(NRF_PWR_EN_PORT, &GPIO_InitStructure);
-	HAL_BRD_set_NRF_power_pin_state(LOW);
 
 	/* Configure the NRF irq ( Data Sent ) input pin */
 	GPIO_InitStructure.GPIO_Pin = NRF_IRQ_PIN;
@@ -65,9 +74,6 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(ONBOARD_LED_PORT, &GPIO_InitStructure);
 	HAL_BRD_set_onboard_led( OFF );
-
-	/* small delay to allow any noise on the button to settle */
-	SYSTICK_MGR_delay_us(500);
 
 	/* Interogates the HW Debug pin to see if Debug mode is required */
 	MODE_MGR_read_operating_mode();
@@ -272,7 +278,15 @@ void HAL_BRD_toggle_onboard_led( void )
 ***************************************************************************************************/
 void HAL_BRD_set_NRF_power_pin_state( off_on_et state )
 {
-	HAL_BRD_set_pin_state( NRF_PWR_EN_PORT, NRF_PWR_EN_PIN, state );
+	/* Inverse logic for PNP transistor */
+	if( state == ON )
+	{
+		HAL_BRD_set_pin_state( NRF_PWR_EN_PORT, NRF_PWR_EN_PIN, LOW );
+	}
+	else
+	{
+		HAL_BRD_set_pin_state( NRF_PWR_EN_PORT, NRF_PWR_EN_PIN, HIGH );
+	}
 }
 
 
