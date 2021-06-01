@@ -28,19 +28,22 @@
 #define SUPPORTED_FOR_ALL_MODES                      0xFFFF
 
 #define HELP_HELP                "help:              Prints the help menu\r\n"
-#define HELP_VER                 "ver:               Returns the SW and HW versions of the WES\r\n"
+#define HELP_VER                 "ver:               Returns the SW and HW versions of the sensor\r\n"
 #define HELP_SET_MODE            "setmode:           Sets the operating mode of the device\r\n"
 #define HELP_RESET               "reset:             Resets CPU\r\n"
 #define HELP_NVM                 "nvm:               Returns the current NVM info\r\n"
 #define HELP_CLOCKS				 "clocks:            Reads the values of the internal clocks\r\n"
 #define HELP_TEMP				 "temp:              Reads the internal temperature value of the device\r\n"
-#define HELP_BATT				 "batt:              Reads the internal battery/supply voltoge of the device\r\n"
+#define HELP_BATT				 "batt:              Reads the battery/supply voltoge of the device\r\n"
 #define HELP_TEST                "test:              Used for random tests\r\n"
 #define HELP_SAVEMEVM            "savenvm:           Requests a flush of the NVM data into flash memory\r\n"
-#define HELP_SET_ID              "setid:             Sets the ID of the sensor \r\n"
+#define HELP_SET_ID              "setid:             Sets the ID in HEX of the sensor \r\n"
+#define HELP_RTC_CLR             "rtcclr:            Clears the stored time on the RTC \r\n"
+#define HELP_WAKEUP_TIME         "setwkp:            Sets the wakeup time of the sensor in secs \r\n"
 
 #define NULL_PARAM_LIST { { 0, (u32_t)0x0000, (u32_t)0x0000 } }
-#define SET_ID_CMD_PARAM_LIST { { 4, (u32_t)0x0001, (u32_t)0xFFFF } }
+#define SET_ID_CMD_PARAM_LIST { { 8, (u32_t)0x1, (u32_t)0xFFFFFFFE } }
+#define SET_WAKEUP_TIME_PARAM_LIST { { 8, (u32_t)1, (u32_t)0xFFFFFFFE } }
 
 typedef enum
 {
@@ -109,6 +112,7 @@ void               CLI_MGR_clear_rx_buffer( void );
 void               CLI_MGR_print_prompt( false_true_et newline );
 false_true_et      CLI_MGR_is_space_or_newLine( char c );
 unsigned long long CLI_MGR_str_to_hex( const char* str );
+unsigned long long CLI_MGR_str_to_dec( const char* str );
 CLI_MGR_error_et   CLI_MGR_parse_cmd( char* message_string, u8_t* calc_argumen_count, char *argument_vector[], u8_t max_num_args );  
 CLI_MGR_error_et   CLI_MGR_process_cmd( u8_t  aArgCount, char *aArgVector[] );
 CLI_MGR_error_et   CLI_MGR_validate_arguments( u8_t  aArgCount, char *aArgVector[], u8_t command_index );
@@ -127,5 +131,7 @@ CLI_MGR_error_et batt_handler( u8_t aArgCount, char *aArgVector[] );
 CLI_MGR_error_et test_handler( u8_t aArgCount, char *aArgVector[] );
 CLI_MGR_error_et savenvm_handler( u8_t aArgCount, char *aArgVector[] );
 CLI_MGR_error_et set_id_handler( u8_t aArgCount, char *aArgVector[] );
+CLI_MGR_error_et rtc_clear_handler( u8_t aArgCount, char *aArgVector[] );
+CLI_MGR_error_et set_wakeup_time_handler( u8_t aArgCount, char *aArgVector[] );
 
 #endif

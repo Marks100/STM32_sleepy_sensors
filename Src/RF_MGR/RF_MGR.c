@@ -141,30 +141,20 @@ RF_MGR_rf_state_et RF_MGR_get_state( void )
 void RF_MGR_populate_rf_frame( void )
 {
 	float temp      = SEN_MGR_get_temperature();
-	u32_t id        = SEN_MGR_get_sensor_id();
-	u32_t run_time  = RTC_get_current_running_time_secs();
-	u16_t wake_time = SEN_MGR_get_wakeup_time_sec();
 
 	STDC_memset( RF_MGR_rf_frame_s, 0x00, sizeof( RF_MGR_rf_frame_s ) );
 
-	RF_MGR_rf_frame_s[0u] =  RNG_MGR_gen_random_number_u8();
-	RF_MGR_rf_frame_s[1u] =  ( ( id & 0xFF000000 ) >> 24u );
-	RF_MGR_rf_frame_s[2u] =  ( ( id & 0x00FF0000 ) >> 16u );
-	RF_MGR_rf_frame_s[3u] =  ( ( id & 0x0000FF00 ) >> 8u );
-	RF_MGR_rf_frame_s[4u] =  ( ( id & 0x000000FF ) );
+	STDC_copy_32bit_to_buffer_msb_first( &RF_MGR_rf_frame_s[0u], SEN_MGR_get_sensor_id() );
+	RF_MGR_rf_frame_s[4u] =  SEN_MGR_get_packet_type();
+	RF_MGR_rf_frame_s[5u] =  MODE_MGR_get_operating_mode();
 
-	RF_MGR_rf_frame_s[5u] =  SEN_MGR_get_packet_type();
-	RF_MGR_rf_frame_s[6u] =  MODE_MGR_get_operating_mode();
+	STDC_memcpy( &RF_MGR_rf_frame_s[6u], &temp, 4u );
 
-	STDC_memcpy( &RF_MGR_rf_frame_s[7u], &temp, 4u );
-
-	RF_MGR_rf_frame_s[11u] = ( ( wake_time & 0xFF00 ) >> 8u );
-	RF_MGR_rf_frame_s[12u] = ( ( wake_time & 0x00FF ) );
-	RF_MGR_rf_frame_s[13u] = ( ( run_time & 0xFF000000 ) >> 24u );
-	RF_MGR_rf_frame_s[14u] = ( ( run_time & 0x00FF0000 ) >> 16u );
-	RF_MGR_rf_frame_s[15u] = ( ( run_time & 0x0000FF00 ) >> 8u );
-	RF_MGR_rf_frame_s[16u] = ( ( run_time & 0x000000FF ) );
+	STDC_copy_16bit_to_buffer_msb_first( &RF_MGR_rf_frame_s[10u], SEN_MGR_get_wakeup_time_sec() );
+	STDC_copy_32bit_to_buffer_msb_first( &RF_MGR_rf_frame_s[12u], RTC_get_current_running_time_secs() );
+	STDC_copy_16bit_to_buffer_msb_first( &RF_MGR_rf_frame_s[16u], SEN_MGR_get_batery_voltage() );
 }
+
 
 
 /*!

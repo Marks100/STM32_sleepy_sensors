@@ -11,6 +11,7 @@
 #include "STDC.h"
 #include "C_defs.h"
 #include "NVM.h"
+#include "HAL_ADC.h"
 #include "BMP280.h"
 #include "RTC.h"
 #include "RNG_MGR.h"
@@ -192,7 +193,7 @@ u8_t SEN_MGR_get_sensor_type( void )
 *   \note
 *
 ***************************************************************************************************/
-u16_t SEN_MGR_get_sensor_id( void )
+u32_t SEN_MGR_get_sensor_id( void )
 {
 	return( SEN_MGR_data_s.sensor_id );
 }
@@ -314,6 +315,42 @@ void SEN_MGR_update_temperature( void )
 }
 
 
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Updates the battery voltage of the sensor
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+void SEN_MGR_update_batery_voltage( void )
+{
+	SEN_MGR_data_s.battery_mv = HAL_ADC_measure_batt_voltage();
+}
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Returns the battery voltage of the sensor
+*
+*   \author        MS
+*
+*   \return        none
+*
+*   \note
+*
+***************************************************************************************************/
+u16_t SEN_MGR_get_batery_voltage( void )
+{
+	return( SEN_MGR_data_s.battery_mv );
+}
+	
 
 
 /*!

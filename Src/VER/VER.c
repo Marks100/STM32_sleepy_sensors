@@ -35,22 +35,22 @@ void VER_init( void )
 
 void VER_get_sw_version_num( u8_t * data_p )
 {
-    data_p[0] = VER_info_s.sw.major;
-    data_p[1] = VER_info_s.sw.minor;
-    data_p[1] = VER_info_s.sw.patch;
+    data_p[0u] = VER_info_s.sw.major;
+    data_p[1u] = VER_info_s.sw.minor;
+    data_p[2u] = VER_info_s.sw.patch;
 }
 
 void VER_get_hw_version_num( u8_t * data_p )
 {
-    data_p[0] = VER_info_s.hw.major;
-    data_p[1] = VER_info_s.hw.minor;
+    data_p[0u] = VER_info_s.hw.major;
+    data_p[1u] = VER_info_s.hw.minor;
 }
 
 void VER_get_build_date( u8_t * data_p )
 {
-    data_p[0] = VER_build_date_s.date;
-    data_p[1] = VER_build_date_s.month;
-    data_p[2] = VER_build_date_s.year;
+    data_p[0u] = VER_build_date_s.date;
+    data_p[1u] = VER_build_date_s.month;
+    data_p[2u] = VER_build_date_s.year;
 }
 
 

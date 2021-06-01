@@ -12,3 +12,4 @@ Workspace/logs/codb.2018-09-05.log
 Release_package/
 Build_Output/
 F030_PORT/
+Src/autoversion.h

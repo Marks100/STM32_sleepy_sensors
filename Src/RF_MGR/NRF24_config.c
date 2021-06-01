@@ -15,7 +15,7 @@ const NRF24_reg_config_st NRF24_SST_config_c[] =
 	{ EN_AUTO_ACK,  1u, { 0x01 } },
 	{ EN_RXADDR,    1u, { 0x01 } }, 
     { SETUP_AW,     1u, { 0x03 } },
-	{ SETUP_RETR,   1u, { 0x5 } },
+	{ SETUP_RETR,   1u, { 0x84 } },
 	{ RF_CH,        1u, { 0x6C } },
 	{ RF_SETUP,     1u, { 0x26 } },
 	{ RX_ADDR_P0,   5u, { 0xE7, 0xE7, 0xE7, 0xE7, 0xE7 } },

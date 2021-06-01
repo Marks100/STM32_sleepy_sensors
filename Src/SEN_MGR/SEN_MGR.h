@@ -33,6 +33,7 @@ typedef struct
     u32_t wakeup_period_sec;
     u8_t  packet_type;
     float temperature;
+    u16_t battery_mv;
 } SEN_MGR_data_st;
 
 
@@ -54,9 +55,11 @@ void         SEN_MGR_init( void );
 void         SEN_MGR_update_sensor_id( void );
 void         SEN_MGR_update_stored_params( void );
 pass_fail_et SEN_MGR_set_sensor_type( u8_t sensor_type );
+void         SEN_MGR_update_batery_voltage( void ); 
 u8_t         SEN_MGR_get_sensor_type( void );
 pass_fail_et SEN_MGR_set_sensor_id( u32_t id );
-u16_t        SEN_MGR_get_sensor_id( void );
+u32_t        SEN_MGR_get_sensor_id( void );
+u16_t        SEN_MGR_get_batery_voltage( void );
 void         SEN_MGR_set_wakeup_time_sec( u16_t wakeup_time );
 u16_t        SEN_MGR_get_wakeup_time_sec( void );
 u8_t         SEN_MGR_get_packet_type( void );

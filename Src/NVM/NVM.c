@@ -60,11 +60,11 @@ volatile FLASH_Status FLASHStatus = FLASH_COMPLETE;
 void NVM_init(void)
 {
     /* copy across the stored NVM data to a ram block*/
-     STDC_memcpy( &NVM_info_s, (u8_t*)NVM_FLASH_PTR_START_ADDR, sizeof( NVM_info_s ) );
+    STDC_memcpy( &NVM_info_s, (u8_t*)NVM_FLASH_PTR_START_ADDR, sizeof( NVM_info_s ) );
 
-     /* Now do a consistency check */
-     if( NOK == NVM_check_blk_crc_and_version( ) )
-     {
+    /* Now do a consistency check */
+    if( NOK == NVM_check_blk_crc_and_version( ) )
+    {
         /* Something is wrong as the CRC is not correct, lets grab the default values */
         NVM_info_s.NVM_generic_data_blk_s = NVM_DEFAULT_GENERIC_DATA_BLK_s;
 
@@ -73,12 +73,12 @@ void NVM_init(void)
 
         /* Write the defaults back down to NVM by triggering a FLUSH */
         NVM_write_request_s = TRUE;
-     }
+    }
 
-     /* Setup the state as NVM has now been initialised */
-     NVM_module_state_s = NVM_STATE_INITIALISED;
+    /* Setup the state as NVM has now been initialised */
+    NVM_module_state_s = NVM_STATE_INITIALISED;
 
-     NVM_tick();
+    NVM_tick();
 }
 
 

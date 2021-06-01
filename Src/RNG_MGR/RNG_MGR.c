@@ -38,6 +38,8 @@ STATIC u16_t RNG_MGR_seed_s;
 void RNG_MGR_init( void )
 {
 	RNG_MGR_seed_s = 0u;
+
+	RNG_MGR_update_seed();
 }
 
 
@@ -57,12 +59,6 @@ void RNG_MGR_init( void )
 u8_t RNG_MGR_gen_random_number_u8( void )
 {
 	u8_t random_number;
-
-	/* Update the seed */
-	RNG_MGR_update_seed();
-
-    /* Now Set the seed for srand */
-	srand( (u16_t)RNG_MGR_seed_s );
 
     /* Grab the now "random :)" number */
     random_number = ( rand()%U8_T_MAX );
@@ -86,12 +82,6 @@ u16_t RNG_MGR_gen_random_number_u16( void )
 {
 	u16_t random_number;
 
-	/* Update the seed */
-	RNG_MGR_update_seed();
-
-    /* Now Set the seed for srand */
-	srand( (u16_t)RNG_MGR_seed_s );
-
     /* Grab the now "random :)" number */
     random_number = ( rand()%U16_T_MAX );
 
@@ -114,12 +104,6 @@ u16_t RNG_MGR_gen_random_number_u16( void )
 u32_t RNG_MGR_gen_random_number_u32( void )
 {
 	u32_t random_number;
-
-	/* Update the seed */
-	RNG_MGR_update_seed();
-
-    /* Now Set the seed for srand */
-	srand( (u16_t)RNG_MGR_seed_s );
 
     /* Grab the now "random :)" number */
     random_number = ( rand()%U32_T_MAX );
@@ -145,6 +129,9 @@ void RNG_MGR_update_seed( void )
 	/* We need to create a "random" value here, and in order to do that we "seed" the rand function with
 	   part of the stm32 uid */
 	RNG_MGR_seed_s = UID_get_unique_id_16();
+
+    /* Now Set the seed for srand */
+	srand( (u16_t)RNG_MGR_seed_s );
 }
 
 

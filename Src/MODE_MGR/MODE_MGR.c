@@ -20,6 +20,7 @@
 #include "RF_MGR.h"
 #include "RNG_MGR.h"
 #include "RTC.h"
+#include "NVM.h"
 #include "SEN_MGR.h"
 
 
@@ -214,11 +215,15 @@ void MODE_MGR_enter_lowpower_mode( void )
 void MODE_MGR_run_activity( void )
 {
     /* Update the temperature */
-	SEN_MGR_update_temperature();  
+	SEN_MGR_update_temperature(); 
+    /* Update the battery voltage*/
+    SEN_MGR_update_batery_voltage(); 
 	/* Update the runtime */
 	SEN_MGR_update_run_time(); 
 	/* Populate all the data into the RF frame */
 	RF_MGR_populate_rf_frame();
 	/* Send the data */
 	RF_MGR_send_rf_frame();
+    /* Update NVM if required */        
+    NVM_tick();
 }

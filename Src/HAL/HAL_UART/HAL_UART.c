@@ -49,7 +49,7 @@ void HAL_USART2_init( void )
 	/* Configure the GPIOs */
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	/* Configure USART1 Tx as alternate function push-pull */
+	/* Configure USART2 Tx as alternate function push-pull */
 	GPIO_InitStructure.GPIO_Pin = USART2_TX_PIN;
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
@@ -92,6 +92,15 @@ void HAL_USART2_init( void )
 	/* Enable the USART2 Receive interrupt: this interrupt is generated when the
 		USART2 receive data register is not empty */
 	USART_ITConfig(USART2, USART_IT_RXNE, ENABLE);
+
+		/* NVIC Configuration */
+	NVIC_InitTypeDef NVIC_InitStructure;
+	/* Enable the USARTx Interrupt */
+	NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 
 	HAL_UART_rx_buf_char_s = 0u;
 }

@@ -100,7 +100,6 @@ void RTC_set_configuration( RTC_EXT_configuration_et config )
 	}
 
 	RTC_set_wakeup_time( NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec );
-	//RTC_reset_date_and_time();
 	RTC_update_current_rtc_time();
 }
 
@@ -206,7 +205,7 @@ void RTC_set_wakeup_time( u32_t seconds )
 	HAL_I2C1_write_registers( RTC_EXT_I2C_ADDRESS, Timer, &set_val, 1u );
 
 	NVM_info_s.NVM_generic_data_blk_s.wakeup_period_sec = seconds;
-	//NVM_tick();
+	NVM_request_flush();
 }
 
 

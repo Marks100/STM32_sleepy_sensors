@@ -53,6 +53,7 @@ int main(void)
 	RNG_MGR_init();
 	RF_MGR_init();
 	BMP280_init();
+	VER_init();
 	
 	if( MODE_MGR_get_operating_mode() == MODE_MGR_DEBUG_MODE )
 	{
