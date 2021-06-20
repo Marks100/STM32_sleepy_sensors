@@ -9,6 +9,6 @@
 #define MIN_TEMP_ARRAY_VAL				 33u
 #define MAX_TEMP_ARRAY_VAL			 	 918u
 
-#define AUTO_DEBUG_MODE					 1u
+#define AUTO_DEBUG_MODE					 0u
 
 #endif /* PROJ_CONFIG_H multiple inclusion guard */

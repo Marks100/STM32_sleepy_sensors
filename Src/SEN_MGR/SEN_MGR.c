@@ -14,6 +14,7 @@
 #include "HAL_ADC.h"
 #include "BMP280.h"
 #include "RTC.h"
+#include "UID.h"
 #include "RNG_MGR.h"
 #include "SEN_MGR.h"
 
@@ -69,15 +70,19 @@ void SEN_MGR_init( void )
 ***************************************************************************************************/
 void SEN_MGR_update_sensor_id( void )
 {
+	u32_t id;
+
+	id = NVM_info_s.NVM_generic_data_blk_s.sensor_id;
+
 	/* If we have manually set an id up use that */
-	if( NVM_info_s.NVM_generic_data_blk_s.sensor_id != 0xFFFFFFFF )
+	if( ( id != 0xFFFFFFFF ) && ( id != 0u ) )
 	{
-		SEN_MGR_data_s.sensor_id = NVM_info_s.NVM_generic_data_blk_s.sensor_id;
+		SEN_MGR_data_s.sensor_id = id;
 	}
 	else
 	{
-		/* use a random ID if we havent manually set 1 */
-		SEN_MGR_data_s.sensor_id = RNG_MGR_gen_random_number_u32();
+		/* Setup an ID if we havent manually set 1 */
+		SEN_MGR_data_s.sensor_id = UID_get_unique_id_32();
 	}
 }
 

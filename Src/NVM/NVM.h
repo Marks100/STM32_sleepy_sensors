@@ -11,9 +11,6 @@
 #define NVM_FLASH_PTR_END_ADDR		 ((u32_t)0x801FFFF)
 #define NVM_FLASH_SIZE               (1023u)
 
-#define MAX_NUM_FLASH_BYTES       256u
-#define CRC_BYTE                  255u
-
 
 /***************************************************************************************************
 **                              Structure Types                                                  **
@@ -39,7 +36,7 @@ typedef enum
 /**************************************************************************************************/
 typedef enum
 {
-    NVM_VERS_GENERIC_DATA         = 9,
+    NVM_VERS_GENERIC_DATA         = 1,
 } NVM_blk_version_et;
 /***************************************************************************************************
 This is the version number of the NVM block, This needs to be incremented when changing the layout

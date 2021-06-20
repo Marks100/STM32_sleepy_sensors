@@ -39,6 +39,8 @@
 #define NRF_IRQ_PORT        GPIOA
 #define NRF_IRQ_PIN         GPIO_Pin_12
 
+#define BL_REQUEST_PORT     GPIOB
+#define BL_REQUEST_PIN      GPIO_Pin_4
 
 #define DEBUG_SEL_PORT      GPIOB
 #define DEBUG_SEL_PIN       GPIO_Pin_5

@@ -6,6 +6,7 @@
 **                              Includes                                                          **
 ***************************************************************************************************/
 #include "stm32f10x_pwr.h"
+#include "stm32f10x_bkp.h"
 
 #include "COMPILER_defs.h"
 #include "C_defs.h"
@@ -21,6 +22,7 @@
 #include "RNG_MGR.h"
 #include "RTC.h"
 #include "NVM.h"
+#include "main.h"
 #include "SEN_MGR.h"
 
 
@@ -150,6 +152,13 @@ void MODE_MGR_read_operating_mode( void )
         MODE_MGR_set_operating_mode( MODE_MGR_NORMAL_MODE );
     }
 
+    state = HAL_BRD_read_bl_request_pin();
+    
+    if( state == HIGH )
+    {
+        MODE_MGR_setup_for_bl();
+    }
+
 #if( AUTO_DEBUG_MODE == 1 )
 		MODE_MGR_set_operating_mode( MODE_MGR_DEBUG_MODE );
 #endif
@@ -175,6 +184,10 @@ void MODE_MGR_prepare_for_lowpower_mode( void )
     HAL_SPI1_de_init();
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, DISABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, DISABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,  DISABLE);
+
+    RCC_APB1PeriphClockCmd( RCC_APB1Periph_BKP, DISABLE);
+	PWR_BackupAccessCmd(DISABLE);
 }
 
 
@@ -226,4 +239,25 @@ void MODE_MGR_run_activity( void )
 	RF_MGR_send_rf_frame();
     /* Update NVM if required */        
     NVM_tick();
+}
+
+
+/*!
+*******************************************************************************
+*
+*   \brief          Sets the system up for the BL
+*
+*   \author         MS
+*
+*   \return         none
+*
+*****************************************************************************/
+void MODE_MGR_setup_for_bl( void )
+{
+    /* Write a bit into one of the battery backed registers to signify that we 
+    should jump to the bootloader on next startup */
+    BKP_WriteBackupRegister( BOOTLOADER_BACKUP_REG, BOOTLOADER_REQUESTED );
+
+    /* Reset the device so we can jump to bootloader */
+    HAL_BRD_reset();
 }

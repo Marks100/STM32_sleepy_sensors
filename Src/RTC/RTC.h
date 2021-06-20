@@ -36,6 +36,8 @@
 #define RTC_DEFAULT_CTRL_STATUS1_REG_VAL (0x80u)
 #define RTC_DEFAULT_CTRL_STATUS2_REG_VAL (0x00u)
 
+#define RTC_MIN_WAKEUP_TIME_SECS         (1u)
+
 
 /***************************************************************************************************
 **                              Constants                                                         **

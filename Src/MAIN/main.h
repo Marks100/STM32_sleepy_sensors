@@ -4,11 +4,11 @@
 #include "c_defs.h"
 #include "compiler_defs.h"
 
-void MAIN_delay_ms(u16_t);
-void MAIN_delay_us(u16_t us);
-u8_t generate_random_number( void );
-void check_failures( void );
-void populate_rf_frame( void );
+#define BOOTLOADER_BACKUP_REG    ( BKP_DR1 )
+#define BOOTLOADER_NOT_REQUESTED ( 0u )
+#define BOOTLOADER_REQUESTED     ( 1u )
 
+void JumpToBootloader(void);
+void Bootloader_check( void );
 
 #endif

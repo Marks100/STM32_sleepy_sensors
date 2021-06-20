@@ -171,6 +171,11 @@ void RTC_set_wakeup_time( u32_t seconds )
 	u8_t data;
 	u8_t set_val;
 
+	if( seconds < RTC_MIN_WAKEUP_TIME_SECS )
+	{
+		seconds = RTC_MIN_WAKEUP_TIME_SECS;
+	}
+
 	/* Read the register first to get the old value */
 	HAL_I2C1_read_registers( RTC_EXT_I2C_ADDRESS, Timer_control, &data, 1u );
 

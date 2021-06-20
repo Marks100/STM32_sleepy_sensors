@@ -30,12 +30,13 @@
 ***************************************************************************************************/
 void HAL_BRD_init( void )
 {
-	/* Disable the JTAG as this saves us some pins :) */
-	GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,  ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+
+	/* Disable the JTAG as this saves us some pins :) */
+	GPIO_PinRemapConfig(GPIO_Remap_SWJ_NoJTRST, ENABLE);
 
 	/* Setup pins to default low */
 	HAL_BRD_set_NRF_power_pin_state( OFF );
@@ -48,6 +49,12 @@ void HAL_BRD_init( void )
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
 	GPIO_Init(DEBUG_SEL_PORT, &GPIO_InitStructure);
+
+	/* Configure the BL request pin */
+	GPIO_InitStructure.GPIO_Pin = BL_REQUEST_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_10MHz;
+	GPIO_Init(BL_REQUEST_PORT, &GPIO_InitStructure);
 
 	/* Configure the power pin for the NRF24l01 and set it low immediately*/
 	GPIO_InitStructure.GPIO_Pin = NRF_PWR_EN_PIN;
@@ -357,6 +364,27 @@ low_high_et HAL_BRD_read_debug_mode_pin( void )
 	low_high_et state;
 
 	state = HAL_BRD_read_pin_state( DEBUG_SEL_PORT, DEBUG_SEL_PIN );
+
+	return( state );
+}
+
+
+
+/*!
+****************************************************************************************************
+*
+*   \brief         Reads the state of the Bootloader request pin
+*
+*   \author        MS
+*
+*   \return        None
+*
+***************************************************************************************************/
+low_high_et HAL_BRD_read_bl_request_pin( void )
+{
+	low_high_et state;
+
+	state = HAL_BRD_read_pin_state( BL_REQUEST_PORT, BL_REQUEST_PIN );
 
 	return( state );
 }
