@@ -13,7 +13,7 @@
 ***************************************************************************************************/
 #define SEN_MGR_DEFAULT_SEN_ID          ( 0xFFFFFFFFu )
 #define SEN_MGR_SST_SEN_TYPE            ( 0x1u )
-#define SEN_MGR_DEFAULT_WAKEUP_TIME_SEC ( 2u )
+#define SEN_MGR_DEFAULT_WAKEUP_TIME_SEC ( 254u )
 #define SEN_MGR_MAX_WAKEUP_TIME_SEC 	( 15300u )
 
 /***************************************************************************************************

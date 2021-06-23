@@ -23,7 +23,7 @@ MENU.ReProgram
 		SEPARATOR
 		TOOLITEM "NODEBUG" "[:flashreset]" ""
 		(
-			DO Stm32f103_attach.cmm
+			SYStem.down
 		)
 		SEPARATOR
 		TOOLITEM "Snooper" "[:iview]" ""
